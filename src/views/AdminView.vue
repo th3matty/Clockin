@@ -1,14 +1,28 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
-    <div class="max-w-7xl mx-auto py-6 px-4">
-      <h1 class="text-2xl font-semibold text-gray-900 mb-6">Admin Dashboard</h1>
-      <div class="bg-white rounded-lg shadow p-6">
-        <p class="text-gray-500">Admin interface will be implemented in later tasks</p>
+  <ProtectedRoute :require-auth="true" require-role="admin">
+    <Layout>
+      <div class="max-w-7xl mx-auto py-6 px-4">
+        <div class="mb-6">
+          <h1 class="text-2xl font-semibold text-gray-900">Admin Dashboard</h1>
+          <p class="text-gray-600">Manage your team and oversee operations</p>
+        </div>
+        <div class="bg-white rounded-lg shadow p-6">
+          <p class="text-gray-500">Admin interface will be implemented in later tasks</p>
+          <div class="mt-4 space-y-2">
+            <p class="text-sm text-gray-600">Admin: {{ user?.full_name }}</p>
+            <p class="text-sm text-gray-600">Email: {{ user?.email }}</p>
+            <p class="text-sm text-gray-600">Role: {{ user?.role }}</p>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
+    </Layout>
+  </ProtectedRoute>
 </template>
 
 <script setup lang="ts">
-// Admin view - will be implemented in later tasks
+import ProtectedRoute from '@/components/auth/ProtectedRoute.vue'
+import Layout from '@/components/shared/Layout.vue'
+import { useAuth } from '@/composables/useAuth'
+
+const { user } = useAuth()
 </script>

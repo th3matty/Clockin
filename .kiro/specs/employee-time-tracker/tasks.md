@@ -14,34 +14,49 @@
   - Install and configure shadcn-vue components library
   - _Requirements: 9.1, 9.2, 10.1_
 
-- [ ] 2. Database Schema and Authentication Setup
+- [x] 2. Database Schema and Authentication Setup
+
+
+
   - Create Supabase database tables (users, time_entries, holiday_requests, notifications)
   - Implement Row Level Security policies for data access control
   - Configure Supabase Auth settings and user roles
   - Create database functions and triggers for calculated fields
   - _Requirements: 9.1, 9.2, 9.3, 9.4_
 
-- [ ] 3. Core Type Definitions and Interfaces
+- [x] 3. Core Type Definitions and Interfaces
+
+
+
   - Define TypeScript interfaces for User, TimeEntry, HolidayRequest, and Notification
   - Create utility types for form data and API responses
   - Implement type guards and validation helpers
   - _Requirements: 9.1, 10.4_
   
-- [ ] 4. Authentication System Implementation
+- [x] 4. Authentication System Implementation
+
+
+
   - Create Pinia auth store for managing user authentication state
   - Implement LoginForm component with form validation
   - Build ProtectedRoute component for role-based access control
   - Create useAuth composable for authentication operations
   - _Requirements: 9.1, 9.2, 9.3, 9.4, 9.5_
 
-- [ ] 5. Core Layout and Navigation Components
+- [x] 5. Core Layout and Navigation Components
+
+
+
   - Implement top navigation bar with ClockIn logo, notification bell, and user profile
   - Create role selector dropdown for switching between employee and admin views
   - Build notification dropdown panel with color-coded notification types
   - Implement routing structure with Vue Router and view switching logic
   - _Requirements: 10.1, 10.2, 10.3_
 
-- [ ] 6. User Settings System
+- [x] 6. User Settings System
+
+
+
   - Create SettingsPage component for avatar and default working hours management
   - Implement AvatarUpload component with image upload to Supabase Storage
   - Build useUserSettings composable for settings CRUD operations
@@ -68,6 +83,25 @@
   - Build useNotifications composable for real-time notification updates
   - Create notification display components with proper styling
   - _Requirements: 8.1, 8.2, 8.3, 8.4_
+
+- [ ] 9.1. Real-time Notification System and Theme Management
+  - Connect NotificationBell to Supabase for persistent notification state
+  - Implement notification CRUD operations (mark as read, delete, mark all as read)
+  - Add Supabase real-time subscriptions for live notification updates
+  - Implement dark/light theme system with user preference persistence
+  - Create theme store and theme switching functionality
+  - Add theme-aware CSS variables and component styling
+  - Store user theme preference in Supabase user settings
+  - _Requirements: 8.1, 8.2, 8.3, 8.4, 11.1, 11.2_
+
+- [ ] 9.2. Security and Storage Optimization
+  - **SECURITY CRITICAL**: Change avatars bucket from public to private
+  - Implement secure avatar URL generation with signed URLs or authentication
+  - Add proper RLS policies for avatar access (users can only access their own avatars)
+  - Optimize avatar storage with automatic cleanup of old avatars
+  - Add avatar URL expiration and refresh mechanism
+  - Implement proper file access logging for security auditing
+  - _Requirements: Security, Privacy, Storage Optimization_
 
 - [ ] 10. Holiday Request Status Management
   - Implement visual status indicators with color coding (green/blue/red)
