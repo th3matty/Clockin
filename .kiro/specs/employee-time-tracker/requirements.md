@@ -2,7 +2,7 @@
 
 ## Introduction
 
-The Employee Time Tracker is a modern web application designed to replace Excel-based time recording for a startup company. The system enables employees to log their daily working hours and lunch breaks while providing administrators with comprehensive oversight, reporting capabilities, and holiday request management. The application prioritizes simplicity, modern design, and intuitive user experience for both employees and administrators.
+ClockIn is a modern web application designed to replace Excel-based time recording for a startup company. The system enables employees to log their daily working hours and lunch breaks while providing administrators with comprehensive oversight, reporting capabilities, and holiday request management. The application prioritizes simplicity, modern design, and intuitive user experience for both employees and administrators.
 
 ## Requirements
 
@@ -24,11 +24,12 @@ The Employee Time Tracker is a modern web application designed to replace Excel-
 
 #### Acceptance Criteria
 
-1. WHEN an administrator logs in THEN they SHALL see a dashboard with all users displayed as cards
-2. WHEN user cards are displayed THEN each card SHALL show an avatar or profile picture
-3. WHEN an administrator views the dashboard THEN they SHALL see a recent activity feed
-4. WHEN holiday requests are submitted THEN they SHALL appear as notifications in the activity feed
+1. WHEN an administrator logs in THEN they SHALL see a dashboard with all users displayed as cards in a grid layout
+2. WHEN user cards are displayed THEN each card SHALL show avatar, name, role, daily/weekly hours, status badge, and remaining holidays
+3. WHEN an administrator views the dashboard THEN they SHALL see a recent activity feed in the sidebar
+4. WHEN holiday requests are submitted THEN they SHALL appear in the activity feed with approve/deny buttons
 5. WHEN an administrator clicks on a user card THEN they SHALL navigate to a detailed overview page for that employee
+6. WHEN user cards are displayed THEN they SHALL have hover effects and show current status (Active, On Holiday)
 
 ### Requirement 3: Employee Time Tracking Overview
 
@@ -70,11 +71,12 @@ The Employee Time Tracker is a modern web application designed to replace Excel-
 
 #### Acceptance Criteria
 
-1. WHEN an employee accesses the calendar THEN they SHALL see a yearly calendar view on a dedicated page
-2. WHEN an employee clicks on a calendar day THEN they SHALL be able to make a holiday request
-3. WHEN making a holiday request THEN the interface SHALL be presented as a modal dialog
+1. WHEN an employee accesses the calendar THEN they SHALL see a monthly calendar view with navigation controls
+2. WHEN an employee clicks "Request Holiday" THEN they SHALL see a modal dialog with start date, end date, and reason fields
+3. WHEN making a holiday request THEN the interface SHALL be presented as a centered modal with backdrop
 4. WHEN a holiday request is submitted THEN it SHALL be sent to administrators for approval
-5. WHEN an employee views the calendar THEN they SHALL see their remaining holiday allowance
+5. WHEN an employee views the calendar THEN they SHALL see their remaining holiday allowance in the quick stats sidebar
+6. WHEN holidays are displayed on calendar THEN approved holidays SHALL be green and pending SHALL be blue
 
 ### Requirement 7: Holiday Request Status Management
 
@@ -94,9 +96,10 @@ The Employee Time Tracker is a modern web application designed to replace Excel-
 #### Acceptance Criteria
 
 1. WHEN holiday requests are processed THEN employees SHALL receive appropriate notifications
-2. WHEN notifications are displayed THEN they SHALL be clearly visible to the employee
-3. WHEN an employee logs in THEN they SHALL see any pending notifications
-4. WHEN notifications are viewed THEN they SHALL provide clear information about the request status
+2. WHEN notifications are displayed THEN they SHALL appear in a dropdown panel from the notification bell icon
+3. WHEN an employee clicks the notification bell THEN they SHALL see a panel with color-coded notifications
+4. WHEN notifications are viewed THEN they SHALL show notification type, message, and timestamp
+5. WHEN the notification bell has unread notifications THEN it SHALL display a red badge with count
 
 ### Requirement 9: Authentication and User Management
 

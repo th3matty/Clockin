@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Employee Time Tracker is a modern web application built with Vue 3, Tailwind CSS, shadcn-vue components, and Supabase backend. The system provides role-based interfaces for employees and administrators, focusing on time tracking, holiday management, and administrative oversight. The architecture emphasizes simplicity, modern design patterns, and efficient data management suitable for a small team (6 people) using Supabase's free tier.
+ClockIn is a modern web application built with Vue 3, Tailwind CSS, shadcn-vue components, and Supabase backend. The system provides role-based interfaces for employees and administrators, focusing on time tracking, holiday management, and administrative oversight. The architecture emphasizes simplicity, modern design patterns, and efficient data management suitable for a small team (6 people) using Supabase's free tier.
 
 ## Architecture
 
@@ -304,33 +304,52 @@ While testing is not required for the initial implementation, the architecture s
 
 ## User Experience Design
 
-### Design System
+### Design System (Based on Mock)
 
 **Color Palette:**
-- Primary: Blue tones for interactive elements
-- Success: Green for approved states
-- Warning: Blue for pending states
+- Primary: Blue (#3b82f6, #2563eb, #1d4ed8) for interactive elements and branding
+- Success: Green (#84fab0, #8fd3f4 gradient) for approved states
+- Warning: Blue/Yellow for pending states
 - Error: Red for denied/error states
-- Neutral: Gray scale for text and backgrounds
+- Neutral: Gray scale (50, 100, 600, 700, 900) for text and backgrounds
+- Background: Light gray (#f9fafb) for main background
 
 **Typography:**
-- Headings: Inter font family
-- Body text: System font stack for performance
+- Font Family: Inter (300, 400, 500, 600, 700 weights)
+- Headings: Font-semibold to font-bold
+- Body text: Regular weight with consistent line heights
 - Consistent spacing using Tailwind's spacing scale
 
 **Component Patterns:**
-- Card-based layouts for user information
-- Modal dialogs for forms and confirmations
-- Responsive grid layouts using CSS Grid
-- Consistent button styles and states
-- Simple three-field time entry form (start, lunch, end)
-- Clean settings interface with avatar upload and time defaults
+- **Navigation**: Clean top navigation with logo, notifications, and user profile
+- **Cards**: White background with subtle shadows and rounded corners (rounded-xl)
+- **Employee Time Entry**: Large card with 3-field form (start time, lunch minutes, end time)
+- **Admin User Cards**: Grid layout with avatar, name, role, and quick stats
+- **Activity Feed**: Timeline-style notifications with icons and action buttons
+- **Modals**: Centered overlay with backdrop blur for holiday requests
+- **Notifications**: Dropdown panel with color-coded notification types
 
-**Simplicity Principles:**
-- Minimal input fields - only essential information
-- Pre-filled forms using user defaults
-- Clear visual hierarchy with ample whitespace
-- Intuitive navigation with minimal clicks
+**Layout Structure:**
+- **Employee View**: 
+  - Welcome header with user greeting
+  - Main time entry card (2/3 width) + quick stats sidebar (1/3 width)
+  - Full-width holiday calendar below
+- **Admin View**:
+  - Team overview header
+  - User cards grid (2/3 width) + activity feed sidebar (1/3 width)
+  - Export controls integrated in sidebar
+
+**Interactive Elements:**
+- Hover effects with scale transforms (hover-scale)
+- Smooth color transitions on buttons and links
+- Status badges with appropriate colors (green=active, yellow=on holiday)
+- Auto-calculation of total hours in time entry form
+
+**Visual Hierarchy:**
+- Clear section headers with consistent typography
+- Proper spacing between elements
+- Color-coded status indicators
+- Icon usage for visual context (FontAwesome icons)
 
 ### Responsive Design
 

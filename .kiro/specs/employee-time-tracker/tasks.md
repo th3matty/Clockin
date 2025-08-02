@@ -1,6 +1,13 @@
 # Implementation Plan
 
-- [ ] 1. Project Setup and Core Infrastructure
+- [x] 1. Project Setup and Core Infrastructure
+
+
+
+
+
+
+
   - Initialize Vue 3 project with TypeScript, Tailwind CSS, and required dependencies
   - Configure Supabase client and environment variables
   - Set up project structure with organized folders for components, composables, stores, utils, and types
@@ -19,7 +26,7 @@
   - Create utility types for form data and API responses
   - Implement type guards and validation helpers
   - _Requirements: 9.1, 10.4_
-
+  
 - [ ] 4. Authentication System Implementation
   - Create Pinia auth store for managing user authentication state
   - Implement LoginForm component with form validation
@@ -28,10 +35,10 @@
   - _Requirements: 9.1, 9.2, 9.3, 9.4, 9.5_
 
 - [ ] 5. Core Layout and Navigation Components
-  - Implement Layout component with responsive navigation
-  - Create Navigation component with role-based menu items
-  - Build LoadingSpinner and error boundary components
-  - Implement routing structure with Vue Router
+  - Implement top navigation bar with ClockIn logo, notification bell, and user profile
+  - Create role selector dropdown for switching between employee and admin views
+  - Build notification dropdown panel with color-coded notification types
+  - Implement routing structure with Vue Router and view switching logic
   - _Requirements: 10.1, 10.2, 10.3_
 
 - [ ] 6. User Settings System
@@ -42,18 +49,18 @@
   - _Requirements: 10.1, 10.2, 10.3, 10.4, 10.5_
 
 - [ ] 7. Employee Time Entry System
-  - Create TimeEntryForm component with three fields (start, lunch, end)
-  - Implement pre-filling of form fields with user's default working hours
-  - Build useTimeEntries composable for time entry CRUD operations
-  - Add automatic time calculation logic and form validation
+  - Create large time entry card with date selector and three input fields (start time, lunch minutes, end time)
+  - Implement automatic total hours calculation and display
+  - Build quick stats sidebar cards showing weekly hours and holiday days left
+  - Add form validation and save functionality with pre-filled default values
   - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5_
 
 - [ ] 8. Employee Holiday Calendar Interface
-  - Implement HolidayCalendar component with yearly calendar view
-  - Create HolidayRequestModal for submitting holiday requests
-  - Build date selection and validation logic
-  - Integrate holiday allowance display and remaining days calculation
-  - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5_
+  - Implement monthly calendar view with navigation controls (prev/next month)
+  - Create holiday request modal with start date, end date, and reason fields
+  - Build calendar grid with color-coded holiday status (green=approved, blue=pending)
+  - Add calendar legend and "Request Holiday" button integration
+  - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5, 6.6_
 
 - [ ] 9. Notification System Implementation
   - Create Pinia notifications store for managing notification state
@@ -70,11 +77,11 @@
   - _Requirements: 7.1, 7.2, 7.3, 7.4_
 
 - [ ] 11. Administrator Dashboard Core
-  - Create Dashboard component with user cards layout
-  - Implement UserCard component with avatar and basic info display
-  - Build ActivityFeed component for recent activity display
-  - Add responsive grid layout for user cards
-  - _Requirements: 2.1, 2.2, 2.3, 2.5_
+  - Create admin dashboard with team members grid (2/3 width) and activity feed sidebar (1/3 width)
+  - Implement user cards with avatar, name, role, daily/weekly hours, status badge, and holiday count
+  - Build activity feed with color-coded notifications and approve/deny buttons for holiday requests
+  - Add hover effects and responsive grid layout for user cards
+  - _Requirements: 2.1, 2.2, 2.3, 2.5, 2.6_
 
 - [ ] 12. Administrator User Detail View
   - Implement UserDetailView component for individual employee overview
@@ -91,10 +98,10 @@
   - _Requirements: 2.4, 4.1, 4.2, 4.4_
 
 - [ ] 14. Data Export Functionality
-  - Implement PDF export using jsPDF for monthly reports
-  - Create CSV export functionality for time tracking data
-  - Build Excel export capability using appropriate library
-  - Add export controls with date range selection
+  - Create export controls panel in admin sidebar with PDF, CSV, and Excel options
+  - Implement PDF export using jsPDF with proper formatting and icons
+  - Build CSV export functionality for time tracking data
+  - Add Excel export capability with appropriate file icons and hover effects
   - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5_
 
 - [ ] 15. Real-time Updates and Subscriptions

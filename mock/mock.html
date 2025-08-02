@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Time Tracker - UI Mockups</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script>
+        if (typeof tailwind !== 'undefined') {
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        colors: {
+                            primary: {
+                                50: '#eff6ff',
+                                100: '#dbeafe',
+                                500: '#3b82f6',
+                                600: '#2563eb',
+                                700: '#1d4ed8'
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .status-approved {
+            background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+        }
+
+        .status-pending {
+            background: linear-gradient(135deg, #a8e6cf 0%, #dcedc1 100%);
+        }
+
+        .hover-scale {
+            transition: transform 0.2s ease;
+        }
+
+        .hover-scale:hover {
+            transform: scale(1.02);
+        }
+
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-4">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-clock text-primary-600 text-2xl"></i>
+                    </div>
+                    <h1 class="text-xl font-semibold text-gray-900">TimeTracker</h1>
+                </div>
+
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <button id="notificationBtn"
+                            class="relative p-2 text-gray-600 hover:text-primary-600 transition-colors">
+                            <i class="fas fa-bell text-lg"></i>
+                            <span
+                                class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
+                        </button>
+                    </div>
+
+                    <div class="flex items-center space-x-3">
+                        <img class="h-8 w-8 rounded-full object-cover"
+                            src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop&crop=face"
+                            alt="User">
+                        <span class="text-sm font-medium text-gray-700">John Doe</span>
+                        <select id="roleSelector"
+                            class="text-sm border-0 bg-transparent font-medium text-gray-700 focus:ring-0">
+                            <option value="employee">Employee View</option>
+                            <option value="admin">Admin View</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- Employee View -->
+        <div id="employeeView" class="view-content">
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold text-gray-900 mb-2">Welcome back, John!</h2>
+                <p class="text-gray-600">Track your time and manage your holidays with ease.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Time Entry Card -->
+                <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-lg font-semibold text-gray-900">Today's Time Entry</h3>
+                        <div class="flex items-center space-x-2">
+                            <input type="date" id="entryDate" value="2025-08-02"
+                                class="text-sm text-gray-700 border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary-500 focus:border-transparent">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Start Time</label>
+                            <input type="time" value="09:00"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Lunch Break (minutes)</label>
+                            <input type="number" value="60"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">End Time</label>
+                            <input type="time" value="17:00"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent">
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        <div class="text-sm text-gray-600">
+                            Total Hours: <span class="font-semibold text-gray-900">7.0</span>
+                        </div>
+                        <button
+                            class="bg-primary-600 text-white px-6 py-2 rounded-lg hover:bg-primary-700 transition-colors">
+                            Save Entry
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="space-y-4">
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-600">This Week</p>
+                                <p class="text-2xl font-bold text-gray-900">35.5h</p>
+                            </div>
+                            <div class="bg-green-100 p-3 rounded-full">
+                                <i class="fas fa-chart-line text-green-600"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-600">Holiday Days Left</p>
+                                <p class="text-2xl font-bold text-gray-900">18</p>
+                            </div>
+                            <div class="bg-blue-100 p-3 rounded-full">
+                                <i class="fas fa-calendar text-blue-600"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Holiday Calendar -->
+            <div class="mt-8 bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-lg font-semibold text-gray-900">Holiday Calendar</h3>
+                    <div class="flex items-center space-x-4">
+                        <div class="flex items-center space-x-2">
+                            <button id="prevMonth"
+                                class="p-2 text-gray-600 hover:text-primary-600 hover:bg-gray-100 rounded-lg transition-colors">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <span id="currentMonth"
+                                class="text-lg font-medium text-gray-900 min-w-[120px] text-center">August 2025</span>
+                            <button id="nextMonth"
+                                class="p-2 text-gray-600 hover:text-primary-600 hover:bg-gray-100 rounded-lg transition-colors">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                        <button class="text-primary-600 hover:text-primary-700 text-sm font-medium">
+                            Request Holiday
+                        </button>
+                    </div>
+                </div>
+
+                <div id="calendarGrid" class="grid grid-cols-7 gap-2 text-center">
+                    <div class="p-2 text-sm font-medium text-gray-700">Mon</div>
+                    <div class="p-2 text-sm font-medium text-gray-700">Tue</div>
+                    <div class="p-2 text-sm font-medium text-gray-700">Wed</div>
+                    <div class="p-2 text-sm font-medium text-gray-700">Thu</div>
+                    <div class="p-2 text-sm font-medium text-gray-700">Fri</div>
+                    <div class="p-2 text-sm font-medium text-gray-700">Sat</div>
+                    <div class="p-2 text-sm font-medium text-gray-700">Sun</div>
+
+                    <!-- Calendar Days will be dynamically generated -->
+                </div>
+
+                <div class="mt-4 flex items-center space-x-6 text-sm">
+                    <div class="flex items-center">
+                        <div class="w-3 h-3 bg-green-400 rounded mr-2"></div>
+                        <span>Approved</span>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="w-3 h-3 bg-blue-400 rounded mr-2"></div>
+                        <span>Pending</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin View -->
+        <div id="adminView" class="view-content hidden">
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold text-gray-900 mb-2">Admin Dashboard</h2>
+                <p class="text-gray-600">Manage your team and oversee time tracking.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Team Overview Cards -->
+                <div class="lg:col-span-2">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Team Members</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- User Card 1 -->
+                        <div
+                            class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 hover-scale cursor-pointer">
+                            <div class="flex items-center space-x-3 mb-3">
+                                <img class="h-10 w-10 rounded-full object-cover"
+                                    src="https://images.unsplash.com/photo-1494790108755-2616b612b786?w=40&h=40&fit=crop&crop=face"
+                                    alt="Sarah">
+                                <div>
+                                    <h4 class="font-medium text-gray-900">Sarah Johnson</h4>
+                                    <p class="text-sm text-gray-600">Frontend Developer</p>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4 text-sm">
+                                <div>
+                                    <p class="text-gray-600">Today</p>
+                                    <p class="font-semibold">8.0h</p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-600">This Week</p>
+                                    <p class="font-semibold">40h</p>
+                                </div>
+                            </div>
+                            <div class="mt-3 flex items-center justify-between">
+                                <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">Active</span>
+                                <span class="text-xs text-gray-500">15 holidays left</span>
+                            </div>
+                        </div>
+
+                        <!-- User Card 2 -->
+                        <div
+                            class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 hover-scale cursor-pointer">
+                            <div class="flex items-center space-x-3 mb-3">
+                                <img class="h-10 w-10 rounded-full object-cover"
+                                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face"
+                                    alt="Mike">
+                                <div>
+                                    <h4 class="font-medium text-gray-900">Mike Chen</h4>
+                                    <p class="text-sm text-gray-600">Backend Developer</p>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4 text-sm">
+                                <div>
+                                    <p class="text-gray-600">Today</p>
+                                    <p class="font-semibold">7.5h</p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-600">This Week</p>
+                                    <p class="font-semibold">37.5h</p>
+                                </div>
+                            </div>
+                            <div class="mt-3 flex items-center justify-between">
+                                <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">Active</span>
+                                <span class="text-xs text-gray-500">20 holidays left</span>
+                            </div>
+                        </div>
+
+                        <!-- User Card 3 -->
+                        <div
+                            class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 hover-scale cursor-pointer">
+                            <div class="flex items-center space-x-3 mb-3">
+                                <img class="h-10 w-10 rounded-full object-cover"
+                                    src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face"
+                                    alt="Emma">
+                                <div>
+                                    <h4 class="font-medium text-gray-900">Emma Wilson</h4>
+                                    <p class="text-sm text-gray-600">Designer</p>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4 text-sm">
+                                <div>
+                                    <p class="text-gray-600">Today</p>
+                                    <p class="font-semibold">6.0h</p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-600">This Week</p>
+                                    <p class="font-semibold">30h</p>
+                                </div>
+                            </div>
+                            <div class="mt-3 flex items-center justify-between">
+                                <span class="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full">On
+                                    Holiday</span>
+                                <span class="text-xs text-gray-500">18 holidays left</span>
+                            </div>
+                        </div>
+
+                        <!-- User Card 4 -->
+                        <div
+                            class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 hover-scale cursor-pointer">
+                            <div class="flex items-center space-x-3 mb-3">
+                                <img class="h-10 w-10 rounded-full object-cover"
+                                    src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face"
+                                    alt="David">
+                                <div>
+                                    <h4 class="font-medium text-gray-900">David Rodriguez</h4>
+                                    <p class="text-sm text-gray-600">QA Engineer</p>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4 text-sm">
+                                <div>
+                                    <p class="text-gray-600">Today</p>
+                                    <p class="font-semibold">8.5h</p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-600">This Week</p>
+                                    <p class="font-semibold">42h</p>
+                                </div>
+                            </div>
+                            <div class="mt-3 flex items-center justify-between">
+                                <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">Active</span>
+                                <span class="text-xs text-gray-500">12 holidays left</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Activity Feed -->
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h3>
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+                        <div class="space-y-4">
+                            <div class="flex items-start space-x-3">
+                                <div class="bg-blue-100 p-2 rounded-full">
+                                    <i class="fas fa-calendar text-blue-600 text-sm"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="text-sm font-medium text-gray-900">Holiday Request</p>
+                                    <p class="text-sm text-gray-600">Sarah Johnson requested 3 days off</p>
+                                    <p class="text-xs text-gray-500">2 hours ago</p>
+                                    <div class="mt-2 flex space-x-2">
+                                        <button
+                                            class="text-xs bg-green-100 text-green-800 px-3 py-1 rounded-full hover:bg-green-200">Approve</button>
+                                        <button
+                                            class="text-xs bg-red-100 text-red-800 px-3 py-1 rounded-full hover:bg-red-200">Deny</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start space-x-3">
+                                <div class="bg-green-100 p-2 rounded-full">
+                                    <i class="fas fa-clock text-green-600 text-sm"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="text-sm font-medium text-gray-900">Time Entry</p>
+                                    <p class="text-sm text-gray-600">Mike Chen logged 8 hours today</p>
+                                    <p class="text-xs text-gray-500">4 hours ago</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start space-x-3">
+                                <div class="bg-purple-100 p-2 rounded-full">
+                                    <i class="fas fa-user-plus text-purple-600 text-sm"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="text-sm font-medium text-gray-900">New User</p>
+                                    <p class="text-sm text-gray-600">David Rodriguez joined the team</p>
+                                    <p class="text-xs text-gray-500">1 day ago</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Export Controls -->
+                    <div class="mt-4 bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+                        <h4 class="font-medium text-gray-900 mb-3">Export Data</h4>
+                        <div class="space-y-2">
+                            <button
+                                class="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg flex items-center">
+                                <i class="fas fa-file-pdf text-red-500 mr-3"></i>
+                                Export as PDF
+                            </button>
+                            <button
+                                class="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg flex items-center">
+                                <i class="fas fa-file-csv text-green-500 mr-3"></i>
+                                Export as CSV
+                            </button>
+                            <button
+                                class="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg flex items-center">
+                                <i class="fas fa-file-excel text-green-600 mr-3"></i>
+                                Export as Excel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Holiday Request Modal -->
+    <div id="holidayModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">Request Holiday</h3>
+                <button id="closeModal" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <form class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Start Date</label>
+                    <input type="date"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">End Date</label>
+                    <input type="date"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Reason (Optional)</label>
+                    <textarea rows="3"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                        placeholder="Personal time off..."></textarea>
+                </div>
+
+                <div class="flex space-x-3 pt-4">
+                    <button type="button" id="cancelRequest"
+                        class="flex-1 px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
+                        Cancel
+                    </button>
+                    <button type="submit"
+                        class="flex-1 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors">
+                        Submit Request
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Notification Panel -->
+    <div id="notificationPanel"
+        class="hidden fixed top-16 right-4 w-80 bg-white rounded-xl shadow-lg border border-gray-200 p-4 z-50">
+        <div class="flex justify-between items-center mb-3">
+            <h3 class="font-semibold text-gray-900">Notifications</h3>
+            <button id="closeNotifications" class="text-gray-400 hover:text-gray-600">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <div class="space-y-3">
+            <div class="flex items-start space-x-3 p-3 bg-blue-50 rounded-lg">
+                <div class="bg-blue-100 p-2 rounded-full">
+                    <i class="fas fa-check text-blue-600 text-sm"></i>
+                </div>
+                <div class="flex-1">
+                    <p class="text-sm font-medium text-gray-900">Holiday Approved</p>
+                    <p class="text-sm text-gray-600">Your request for Aug 15-16 has been approved</p>
+                    <p class="text-xs text-gray-500">1 hour ago</p>
+                </div>
+            </div>
+
+            <div class="flex items-start space-x-3 p-3 bg-yellow-50 rounded-lg">
+                <div class="bg-yellow-100 p-2 rounded-full">
+                    <i class="fas fa-clock text-yellow-600 text-sm"></i>
+                </div>
+                <div class="flex-1">
+                    <p class="text-sm font-medium text-gray-900">Time Entry Reminder</p>
+                    <p class="text-sm text-gray-600">Don't forget to log your hours for today</p>
+                    <p class="text-xs text-gray-500">3 hours ago</p>
+                </div>
+            </div>
+
+            <div class="flex items-start space-x-3 p-3 bg-green-50 rounded-lg">
+                <div class="bg-green-100 p-2 rounded-full">
+                    <i class="fas fa-calendar text-green-600 text-sm"></i>
+                </div>
+                <div class="flex-1">
+                    <p class="text-sm font-medium text-gray-900">Holiday Request Submitted</p>
+                    <p class="text-sm text-gray-600">Your request is pending admin approval</p>
+                    <p class="text-xs text-gray-500">1 day ago</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // View switching
+        const roleSelector = document.getElementById('roleSelector');
+        const employeeView = document.getElementById('employeeView');
+        const adminView = document.getElementById('adminView');
+
+        roleSelector.addEventListener('change', function () {
+            if (this.value === 'admin') {
+                employeeView.classList.add('hidden');
+                adminView.classList.remove('hidden');
+            } else {
+                adminView.classList.add('hidden');
+                employeeView.classList.remove('hidden');
+            }
+        });
+
+        // Holiday request modal
+        const holidayModal = document.getElementById('holidayModal');
+        const closeModal = document.getElementById('closeModal');
+        const cancelRequest = document.getElementById('cancelRequest');
+
+        document.querySelector('[class*="Request Holiday"]')?.addEventListener('click', function () {
+            holidayModal.classList.remove('hidden');
+        });
+
+        [closeModal, cancelRequest].forEach(btn => {
+            btn?.addEventListener('click', function () {
+                holidayModal.classList.add('hidden');
+            });
+        });
+
+        // Notification panel
+        const notificationBtn = document.getElementById('notificationBtn');
+        const notificationPanel = document.getElementById('notificationPanel');
+        const closeNotifications = document.getElementById('closeNotifications');
+
+        notificationBtn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            notificationPanel.classList.toggle('hidden');
+        });
+
+        closeNotifications.addEventListener('click', function () {
+            notificationPanel.classList.add('hidden');
+        });
+
+        // Close notification panel when clicking outside
+        document.addEventListener('click', function (e) {
+            if (!notificationPanel.contains(e.target) && !notificationBtn.contains(e.target)) {
+                notificationPanel.classList.add('hidden');
+            }
+        });
+
+        // Close modal when clicking outside
+        holidayModal.addEventListener('click', function (e) {
+            if (e.target === holidayModal) {
+                holidayModal.classList.add('hidden');
+            }
+        });
+
+        // Auto-calculate total hours when time inputs change
+        function calculateTotalHours() {
+            const startTime = document.querySelector('input[type="time"]:first-of-type')?.value;
+            const endTime = document.querySelector('input[type="time"]:last-of-type')?.value;
+            const lunchMinutes = parseInt(document.querySelector('input[type="number"]')?.value) || 0;
+
+            if (startTime && endTime) {
+                const start = new Date(`2000-01-01T${startTime}`);
+                const end = new Date(`2000-01-01T${endTime}`);
+                const diffHours = (end - start) / (1000 * 60 * 60);
+                const totalHours = Math.max(0, diffHours - (lunchMinutes / 60));
+
+                const totalElement = document.querySelector('[class*="Total Hours"]')?.nextElementSibling;
+                if (totalElement) {
+                    totalElement.textContent = totalHours.toFixed(1);
+                }
+            }
+        }
+
+        // Add event listeners for time calculation
+        document.querySelectorAll('input[type="time"], input[type="number"]').forEach(input => {
+            input.addEventListener('change', calculateTotalHours);
+        });
+
+        // Calendar functionality
+        let currentDate = new Date(2025, 7, 2); // August 2025 (month is 0-indexed)
+        const monthNames = ["January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"];
+
+        // Sample holiday data
+        const holidayData = {
+            '2025-08-15': 'approved',
+            '2025-08-16': 'approved',
+            '2025-08-02': 'pending',
+            '2025-09-10': 'approved',
+            '2025-09-11': 'approved',
+            '2025-07-22': 'pending'
+        };
+
+        function generateCalendar(date) {
+            const year = date.getFullYear();
+            const month = date.getMonth();
+
+            // Update month display
+            document.getElementById('currentMonth').textContent = `${monthNames[month]} ${year}`;
+
+            // Clear existing calendar days (keep headers)
+            const calendarGrid = document.getElementById('calendarGrid');
+            const headers = calendarGrid.querySelectorAll('.text-gray-700');
+            calendarGrid.innerHTML = '';
+            headers.forEach(header => calendarGrid.appendChild(header));
+
+            // Get first day of month and number of days
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            const daysInMonth = lastDay.getDate();
+            const startingDayOfWeek = (firstDay.getDay() + 6) % 7; // Convert Sunday=0 to Monday=0
+
+            // Add empty cells for days before month starts
+            for (let i = 0; i < startingDayOfWeek; i++) {
+                const prevMonthDate = new Date(year, month, 1 - startingDayOfWeek + i);
+                const dayElement = document.createElement('div');
+                dayElement.className = 'p-2 text-sm text-gray-400 cursor-pointer hover:bg-gray-50 rounded';
+                dayElement.textContent = prevMonthDate.getDate();
+                calendarGrid.appendChild(dayElement);
+            }
+
+            // Add days of current month
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                const dayElement = document.createElement('div');
+
+                let classes = 'p-2 text-sm cursor-pointer hover:bg-gray-50 rounded transition-colors';
+
+                // Check if this date has holiday status
+                if (holidayData[dateString]) {
+                    if (holidayData[dateString] === 'approved') {
+                        classes += ' status-approved text-green-800';
+                    } else if (holidayData[dateString] === 'pending') {
+                        classes += ' bg-blue-100 text-blue-800';
+                    }
+                }
+
+                // Highlight current day
+                if (year === 2025 && month === 7 && day === 2) {
+                    classes += ' ring-2 ring-primary-500';
+                }
+
+                dayElement.className = classes;
+                dayElement.textContent = day;
+                dayElement.addEventListener('click', () => {
+                    console.log(`Clicked on ${dateString}`);
+                    // Here you could open the holiday request modal for this date
+                });
+
+                calendarGrid.appendChild(dayElement);
+            }
+
+            // Fill remaining cells with next month's days
+            const totalCells = calendarGrid.children.length;
+            const remainingCells = 42 - totalCells; // 6 rows × 7 days = 42 cells
+
+            for (let i = 1; i <= remainingCells && totalCells < 42; i++) {
+                const nextMonthDate = new Date(year, month + 1, i);
+                const dayElement = document.createElement('div');
+                dayElement.className = 'p-2 text-sm text-gray-400 cursor-pointer hover:bg-gray-50 rounded';
+                dayElement.textContent = nextMonthDate.getDate();
+                calendarGrid.appendChild(dayElement);
+            }
+        }
+
+        // Month navigation
+        document.getElementById('prevMonth').addEventListener('click', () => {
+            currentDate.setMonth(currentDate.getMonth() - 1);
+            generateCalendar(currentDate);
+        });
+
+        document.getElementById('nextMonth').addEventListener('click', () => {
+            currentDate.setMonth(currentDate.getMonth() + 1);
+            generateCalendar(currentDate);
+        });
+
+        // Initialize calendar
+        generateCalendar(currentDate);
+
+        // Date picker for time entry
+        const entryDateInput = document.getElementById('entryDate');
+        entryDateInput.addEventListener('change', function () {
+            const selectedDate = new Date(this.value);
+            const options = {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            };
+            console.log(`Selected date for time entry: ${selectedDate.toLocaleDateString('en-US', options)}`);
+            // Here you would typically load time entry data for the selected date
+        });
+    </script>
