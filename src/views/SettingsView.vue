@@ -15,7 +15,7 @@
               <h2 class="text-lg font-medium text-gray-900">Profile Information</h2>
               <p class="text-sm text-gray-600 mt-1">Update your profile photo and basic information</p>
             </div>
-            
+
             <div class="px-6 py-6">
               <!-- Avatar Upload -->
               <div class="mb-8">
@@ -31,14 +31,9 @@
                     <label for="full_name" class="block text-sm font-medium text-gray-700 mb-2">
                       Full Name
                     </label>
-                    <input
-                      id="full_name"
-                      v-model="profileForm.full_name"
-                      type="text"
-                      required
+                    <input id="full_name" v-model="profileForm.full_name" type="text" required
                       class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-                      :disabled="profileLoading"
-                    />
+                      :disabled="profileLoading" />
                   </div>
 
                   <!-- Email (readonly) -->
@@ -46,24 +41,16 @@
                     <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
                       Email Address
                     </label>
-                    <input
-                      id="email"
-                      :value="user?.email"
-                      type="email"
-                      readonly
-                      class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-50 text-gray-500 cursor-not-allowed"
-                    />
+                    <input id="email" :value="user?.email" type="email" readonly
+                      class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-50 text-gray-500 cursor-not-allowed" />
                     <p class="text-xs text-gray-500 mt-1">Email cannot be changed</p>
                   </div>
                 </div>
 
                 <!-- Profile Update Button -->
                 <div class="flex justify-end">
-                  <button
-                    type="submit"
-                    :disabled="profileLoading || !isProfileFormValid"
-                    class="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                  >
+                  <button type="submit" :disabled="profileLoading || !isProfileFormValid"
+                    class="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
                     {{ profileLoading ? 'Updating...' : 'Update Profile' }}
                   </button>
                 </div>
@@ -77,7 +64,7 @@
               <h2 class="text-lg font-medium text-gray-900">Default Working Hours</h2>
               <p class="text-sm text-gray-600 mt-1">Set your default start time, lunch break, and end time</p>
             </div>
-            
+
             <div class="px-6 py-6">
               <form @submit.prevent="handleSettingsUpdate" class="space-y-6">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -86,14 +73,10 @@
                     <label for="start_time" class="block text-sm font-medium text-gray-700 mb-2">
                       Start Time
                     </label>
-                    <input
-                      id="start_time"
-                      v-model="settingsForm.default_start_time"
-                      type="time"
-                      required
+                    <input id="start_time" v-model="settingsForm.default_start_time" type="time" required
                       class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-                      :disabled="settingsLoading"
-                    />
+                      :disabled="settingsLoading" @input="settingsFormInitialized = true"
+                      @change="settingsFormInitialized = true" />
                   </div>
 
                   <!-- Lunch Break -->
@@ -101,16 +84,11 @@
                     <label for="lunch_minutes" class="block text-sm font-medium text-gray-700 mb-2">
                       Lunch Break (minutes)
                     </label>
-                    <input
-                      id="lunch_minutes"
-                      v-model.number="settingsForm.default_lunch_minutes"
-                      type="number"
-                      min="0"
-                      max="480"
-                      required
+                    <input id="lunch_minutes" v-model.number="settingsForm.default_lunch_minutes" type="number" min="0"
+                      max="480" required
                       class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-                      :disabled="settingsLoading"
-                    />
+                      :disabled="settingsLoading" @input="settingsFormInitialized = true"
+                      @change="settingsFormInitialized = true" />
                     <p class="text-xs text-gray-500 mt-1">0-480 minutes (0-8 hours)</p>
                   </div>
 
@@ -119,14 +97,10 @@
                     <label for="end_time" class="block text-sm font-medium text-gray-700 mb-2">
                       End Time
                     </label>
-                    <input
-                      id="end_time"
-                      v-model="settingsForm.default_end_time"
-                      type="time"
-                      required
+                    <input id="end_time" v-model="settingsForm.default_end_time" type="time" required
                       class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-                      :disabled="settingsLoading"
-                    />
+                      :disabled="settingsLoading" @input="settingsFormInitialized = true"
+                      @change="settingsFormInitialized = true" />
                   </div>
                 </div>
 
@@ -134,18 +108,23 @@
                 <div class="bg-gray-50 rounded-lg p-4">
                   <h3 class="text-sm font-medium text-gray-900 mb-2">Preview</h3>
                   <div class="text-sm text-gray-600 space-y-1">
-                    <p><span class="font-medium">Working Day:</span> {{ settingsForm.default_start_time }} - {{ settingsForm.default_end_time }}</p>
-                    <p><span class="font-medium">Lunch Break:</span> {{ settingsForm.default_lunch_minutes }} minutes</p>
+                    <p><span class="font-medium">Working Day:</span> {{ settingsForm.default_start_time }} - {{
+                      settingsForm.default_end_time }}</p>
+                    <p><span class="font-medium">Lunch Break:</span> {{ settingsForm.default_lunch_minutes }} minutes
+                    </p>
                     <p><span class="font-medium">Total Working Hours:</span> {{ calculateWorkingHours() }} hours</p>
                   </div>
                 </div>
 
                 <!-- Validation Errors -->
-                <div v-if="validationErrors.length > 0" class="bg-red-50 border border-red-200 rounded-md p-4">
+                <div v-if="settingsFormInitialized && validationErrors.length > 0"
+                  class="bg-red-50 border border-red-200 rounded-md p-4">
                   <div class="flex">
                     <div class="flex-shrink-0">
                       <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                        <path fill-rule="evenodd"
+                          d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                          clip-rule="evenodd" />
                       </svg>
                     </div>
                     <div class="ml-3">
@@ -159,11 +138,8 @@
 
                 <!-- Settings Update Button -->
                 <div class="flex justify-end">
-                  <button
-                    type="submit"
-                    :disabled="settingsLoading || validationErrors.length > 0"
-                    class="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                  >
+                  <button type="submit" :disabled="settingsLoading || validationErrors.length > 0"
+                    class="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
                     {{ settingsLoading ? 'Updating...' : 'Update Working Hours' }}
                   </button>
                 </div>
@@ -178,7 +154,9 @@
             <div class="flex">
               <div class="flex-shrink-0">
                 <svg class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                  <path fill-rule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                    clip-rule="evenodd" />
                 </svg>
               </div>
               <div class="ml-3">
@@ -193,7 +171,9 @@
             <div class="flex">
               <div class="flex-shrink-0">
                 <svg class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                  <path fill-rule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                    clip-rule="evenodd" />
                 </svg>
               </div>
               <div class="ml-3">
@@ -239,12 +219,25 @@ const settingsLoading = ref(false)
 const showProfileSuccess = ref(false)
 const showSettingsSuccess = ref(false)
 
+// Form initialization state
+const settingsFormInitialized = ref(false)
+
 // Computed
 const isProfileFormValid = computed(() => {
   return profileForm.value.full_name.trim().length >= 2
 })
 
 const validationErrors = computed(() => {
+  // Only validate if the form has been initialized with user settings
+  if (!settingsFormInitialized.value) {
+    return []
+  }
+
+  // Additional check: only validate if we have actual user data
+  if (!user.value || !currentSettings.value) {
+    return []
+  }
+
   return validateTimeSettings(settingsForm.value)
 })
 
@@ -287,6 +280,9 @@ async function handleProfileUpdate() {
 }
 
 async function handleSettingsUpdate() {
+  // Ensure form is marked as initialized for validation
+  settingsFormInitialized.value = true
+
   if (validationErrors.value.length > 0) return
 
   try {
@@ -318,11 +314,22 @@ function initializeForms() {
     profileForm.value.full_name = user.value.full_name
   }
 
-  if (currentSettings.value && !settingsLoading.value) {
-    settingsForm.value = {
-      default_start_time: currentSettings.value.default_start_time,
-      default_lunch_minutes: currentSettings.value.default_lunch_minutes,
-      default_end_time: currentSettings.value.default_end_time
+  // Only initialize settings form if we have complete user data
+  if (currentSettings.value && !settingsLoading.value && user.value) {
+    // Ensure we have valid time values before initializing
+    const startTime = currentSettings.value.default_start_time
+    const endTime = currentSettings.value.default_end_time
+    const lunchMinutes = currentSettings.value.default_lunch_minutes
+
+    // Check if we have valid time values (not null, undefined, or empty)
+    if (startTime && endTime && typeof lunchMinutes === 'number') {
+      settingsForm.value = {
+        default_start_time: startTime.slice(0, 5), // Convert HH:MM:SS to HH:MM
+        default_lunch_minutes: lunchMinutes,
+        default_end_time: endTime.slice(0, 5) // Convert HH:MM:SS to HH:MM
+      }
+      // Only mark as initialized if we have valid data
+      settingsFormInitialized.value = true
     }
   }
 }

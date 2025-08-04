@@ -288,14 +288,14 @@ export function useUserSettings() {
   function validateTimeSettings(settings: UserSettingsFormData): string[] {
     const errors: string[] = []
 
-    // Validate time format
+    // Validate time format (HH:MM)
     const timeRegex = /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/
 
-    if (!timeRegex.test(settings.default_start_time)) {
+    if (!settings.default_start_time || !timeRegex.test(settings.default_start_time)) {
       errors.push('Start time must be in HH:MM format')
     }
 
-    if (!timeRegex.test(settings.default_end_time)) {
+    if (!settings.default_end_time || !timeRegex.test(settings.default_end_time)) {
       errors.push('End time must be in HH:MM format')
     }
 
