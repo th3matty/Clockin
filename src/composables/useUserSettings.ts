@@ -72,7 +72,8 @@ export function useUserSettings() {
       default_lunch_minutes: user.value.default_lunch_minutes || 60,
       default_end_time: user.value.default_end_time || '17:00',
       avatar_url: user.value.avatar_url,
-      weekly_target_hours: user.value.weekly_target_hours || 40.00
+      weekly_target_hours: user.value.weekly_target_hours || 40.00,
+      working_days_per_week: user.value.working_days_per_week || 5
     }
   })
 
@@ -98,7 +99,8 @@ export function useUserSettings() {
           default_lunch_minutes: settings.default_lunch_minutes,
           default_end_time: settings.default_end_time,
           avatar_url: settings.avatar_url,
-          weekly_target_hours: settings.weekly_target_hours
+          weekly_target_hours: settings.weekly_target_hours,
+          working_days_per_week: settings.working_days_per_week
         })
         .eq('id', user.value.id)
         .select()
@@ -124,7 +126,8 @@ export function useUserSettings() {
           default_lunch_minutes: data.default_lunch_minutes,
           default_end_time: data.default_end_time,
           avatar_url: data.avatar_url,
-          weekly_target_hours: data.weekly_target_hours
+          weekly_target_hours: data.weekly_target_hours,
+          working_days_per_week: data.working_days_per_week
         })
       }
 
@@ -311,6 +314,13 @@ export function useUserSettings() {
     if (settings.weekly_target_hours !== undefined) {
       if (settings.weekly_target_hours < 20 || settings.weekly_target_hours > 60) {
         errors.push('Weekly target hours must be between 20 and 60 hours')
+      }
+    }
+
+    // Validate working days per week
+    if (settings.working_days_per_week !== undefined) {
+      if (settings.working_days_per_week < 1 || settings.working_days_per_week > 7) {
+        errors.push('Working days must be between 1 and 7 days per week')
       }
     }
 

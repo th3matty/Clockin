@@ -87,6 +87,39 @@
       </div>
     </div>
 
+    <!-- Overtime Balance Card -->
+    <div class="bg-white rounded-lg shadow p-6">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+            <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+        </div>
+        <div class="ml-4 flex-1">
+          <h3 class="text-sm font-medium text-gray-900">Overtime Balance</h3>
+          <div class="flex items-baseline">
+            <p :class="[
+              'text-2xl font-semibold',
+              overtimeBalanceValue >= 0 ? 'text-green-600' : 'text-red-600'
+            ]">
+              {{ formatOvertimeBalance(overtimeBalanceValue) }}
+            </p>
+            <p class="ml-2 text-sm text-gray-500">this week</p>
+          </div>
+          <div class="mt-2">
+            <div class="flex items-center">
+              <span :class="overtimeStatusColor" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium">
+                {{ overtimeStatusText }}
+              </span>
+              <span class="ml-2 text-sm text-gray-500">{{ monthlyOvertimeHours.toFixed(1) }}h this month</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Today's Status Card -->
     <div class="bg-white rounded-lg shadow p-6">
       <div class="flex items-center">
@@ -162,6 +195,8 @@ import { computed, onMounted } from 'vue'
 import { useAuth } from '@/composables/useAuth'
 import { useTimeEntries } from '@/composables/useTimeEntries'
 import { useHolidayRequests } from '@/composables/useHolidayRequests'
+import { useOvertimeCalculations } from '@/composables/useOvertimeCalculations'
+import { useOvertimeBalance } from '@/composables/useOvertimeBalance'
 
 // Emits
 defineEmits<{
@@ -170,31 +205,37 @@ defineEmits<{
 
 // Composables
 const { user } = useAuth()
-const { weeklyHours, monthlyHours, todayEntry } = useTimeEntries()
+const { weeklyHours, monthlyHours, todayEntry, timeEntries } = useTimeEntries()
 const { remainingHolidayDays, usedHolidayDays, fetchHolidayRequests } = useHolidayRequests()
+const { calculateOvertimeStats, getOvertimeStatusColor, getOvertimeStatusText } = useOvertimeCalculations()
+const {
+  overtimeBalance,
+  workingDaysPerWeek,
+  weeklyTarget,
+  balanceStatusColor,
+  balanceStatusText,
+  formatOvertimeBalance
+} = useOvertimeBalance()
 
 // Computed
 const expectedDailyHours = computed(() => {
   if (!user.value) return 8
   
-  // Calculate based on user's default settings
-  const startTime = user.value.default_start_time || '09:00:00'
-  const endTime = user.value.default_end_time || '17:00:00'
-  const lunchMinutes = user.value.default_lunch_minutes || 60
+  // Use the flexible working days system
+  const weeklyHours = user.value.weekly_target_hours || 40
+  const workingDays = user.value.working_days_per_week || 5
   
-  const start = new Date(`2000-01-01T${startTime}`)
-  const end = new Date(`2000-01-01T${endTime}`)
-  const totalMinutes = (end.getTime() - start.getTime()) / (1000 * 60)
-  const workingMinutes = totalMinutes - lunchMinutes
-  
-  return Math.max(0, workingMinutes / 60)
+  return weeklyHours / workingDays
 })
 
-const expectedWeeklyHours = computed(() => expectedDailyHours.value * 5) // 5 working days
+const expectedWeeklyHours = computed(() => user.value?.weekly_target_hours || 40)
 
 const expectedMonthlyHours = computed(() => {
-  // Approximate 22 working days per month
-  return expectedDailyHours.value * 22
+  // Calculate based on working days per week
+  const workingDays = user.value?.working_days_per_week || 5
+  const approximateWorkingDaysPerMonth = (workingDays / 7) * 30 // Approximate
+  const result = expectedDailyHours.value * approximateWorkingDaysPerMonth
+  return Math.round(result * 100) / 100 // Fix rounding precision
 })
 
 const weeklyProgress = computed(() => {
@@ -248,6 +289,21 @@ const todayStatus = computed(() => {
     }
   }
 })
+
+// Overtime calculations
+const overtimeStats = computed(() => {
+  const weeklyTargetHours = user.value?.weekly_target_hours || 40
+  const workingDays = user.value?.working_days_per_week || 5
+  return calculateOvertimeStats(timeEntries.value, weeklyTargetHours, workingDays)
+})
+
+const weeklyOvertimeHours = computed(() => overtimeStats.value.weeklyOvertimeHours)
+const monthlyOvertimeHours = computed(() => overtimeStats.value.monthlyOvertimeHours)
+const overtimeStatusColor = computed(() => getOvertimeStatusColor(overtimeStats.value.overtimeStatus))
+const overtimeStatusText = computed(() => getOvertimeStatusText(overtimeStats.value.overtimeStatus))
+
+// Overtime balance
+const overtimeBalanceValue = computed(() => overtimeBalance.value)
 
 // Lifecycle
 onMounted(async () => {

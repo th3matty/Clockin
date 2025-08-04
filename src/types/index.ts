@@ -12,6 +12,8 @@ export interface User {
   default_lunch_minutes: number;
   default_end_time: string;
   weekly_target_hours: number; // NEW: For overtime calculation
+  working_days_per_week: number; // NEW: For flexible working days (1-7)
+  overtime_balance: number; // NEW: Accumulated overtime balance
   created_at: string;
 }
 
@@ -97,6 +99,7 @@ export interface UserSettings {
   default_end_time: string;
   avatar_url?: string;
   weekly_target_hours?: number; // NEW: For overtime calculation
+  working_days_per_week?: number; // NEW: For flexible working days
 }
 
 export interface UserSettingsFormData {
@@ -104,6 +107,7 @@ export interface UserSettingsFormData {
   default_lunch_minutes: number;
   default_end_time: string;
   weekly_target_hours?: number; // NEW: For overtime calculation
+  working_days_per_week?: number; // NEW: For flexible working days
   avatar_file?: File;
 }
 
@@ -119,6 +123,8 @@ export interface AuthUser {
   default_end_time?: string;
   holiday_allowance?: number;
   weekly_target_hours?: number; // NEW: For overtime calculation
+  working_days_per_week?: number; // NEW: For flexible working days
+  overtime_balance?: number; // NEW: Accumulated overtime balance
 }
 
 export interface LoginCredentials {

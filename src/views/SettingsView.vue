@@ -90,18 +90,38 @@
 
             <div class="px-6 py-6">
               <form @submit.prevent="handleSettingsUpdate" class="space-y-6">
-                <!-- Weekly Target Hours -->
-                <div class="mb-6">
-                  <label for="weekly_target_hours" class="block text-sm font-medium text-gray-700 mb-2">
-                    Weekly Target Hours
-                  </label>
-                  <div class="max-w-xs">
+                <!-- Working Hours Configuration -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                  <!-- Weekly Target Hours -->
+                  <div>
+                    <label for="weekly_target_hours" class="block text-sm font-medium text-gray-700 mb-2">
+                      Weekly Target Hours
+                    </label>
                     <input id="weekly_target_hours" v-model.number="settingsForm.weekly_target_hours" type="number"
                       min="20" max="60" step="0.5" required
                       class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
                       :disabled="settingsLoading" @input="settingsFormInitialized = true"
                       @change="settingsFormInitialized = true" />
                     <p class="text-xs text-gray-500 mt-1">Your contracted weekly working hours (20-60 hours)</p>
+                  </div>
+
+                  <!-- Working Days per Week -->
+                  <div>
+                    <label for="working_days_per_week" class="block text-sm font-medium text-gray-700 mb-2">
+                      Working Days per Week
+                    </label>
+                    <select id="working_days_per_week" v-model.number="settingsForm.working_days_per_week" required
+                      class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+                      :disabled="settingsLoading" @change="settingsFormInitialized = true">
+                      <option value="1">1 day</option>
+                      <option value="2">2 days</option>
+                      <option value="3">3 days</option>
+                      <option value="4">4 days</option>
+                      <option value="5">5 days</option>
+                      <option value="6">6 days</option>
+                      <option value="7">7 days</option>
+                    </select>
+                    <p class="text-xs text-gray-500 mt-1">How many days per week do you work?</p>
                   </div>
                 </div>
 
@@ -146,14 +166,24 @@
                 <div class="bg-gray-50 rounded-lg p-4">
                   <h3 class="text-sm font-medium text-gray-900 mb-2">Preview</h3>
                   <div class="text-sm text-gray-600 space-y-1">
-                    <p><span class="font-medium">Weekly Target:</span> {{ settingsForm.weekly_target_hours || 40 }} hours/week
-                    </p>
-                    <p><span class="font-medium">Daily Target:</span> {{ ((settingsForm.weekly_target_hours || 40) /
-                      5).toFixed(1) }} hours/day (5-day week)</p>
+                    <p><span class="font-medium">Weekly Target:</span> {{ settingsForm.weekly_target_hours || 40 }} hours/week</p>
+                    <p><span class="font-medium">Working Days:</span> {{ settingsForm.working_days_per_week || 5 }} days/week</p>
+                    <p><span class="font-medium">Daily Target:</span> {{ calculateDailyTargetHours() }} hours/day</p>
+                    <div v-if="isDailyTargetValid()" class="flex items-center text-green-600">
+                      <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                      </svg>
+                      <span class="text-xs">Valid daily hours (≤ 12h/day)</span>
+                    </div>
+                    <div v-else class="flex items-center text-red-600">
+                      <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                      </svg>
+                      <span class="text-xs">Daily target exceeds 12 hours - please adjust your settings</span>
+                    </div>
                     <p><span class="font-medium">Working Day:</span> {{ settingsForm.default_start_time }} - {{
                       settingsForm.default_end_time }}</p>
-                    <p><span class="font-medium">Lunch Break:</span> {{ settingsForm.default_lunch_minutes }} minutes
-                    </p>
+                    <p><span class="font-medium">Lunch Break:</span> {{ settingsForm.default_lunch_minutes }} minutes</p>
                     <p><span class="font-medium">Daily Working Hours:</span> {{ calculateWorkingHours() }} hours</p>
                   </div>
                 </div>
@@ -232,11 +262,13 @@ import Layout from '@/components/shared/Layout.vue'
 import AvatarUpload from '@/components/shared/AvatarUpload.vue'
 import { useAuth } from '@/composables/useAuth'
 import { useUserSettings } from '@/composables/useUserSettings'
+import { useOvertimeBalance } from '@/composables/useOvertimeBalance'
 import type { UserSettingsFormData } from '@/types'
 
 // Composables
 const { user, updateProfile } = useAuth()
 const { currentSettings, updateSettings, validateTimeSettings, loading, error, clearError } = useUserSettings()
+const { calculateDailyTarget, validateDailyTarget, validateWorkingDaysSettings } = useOvertimeBalance()
 
 // Form state
 const profileForm = ref({
@@ -247,7 +279,8 @@ const settingsForm = ref<UserSettingsFormData>({
   default_start_time: '09:00',
   default_lunch_minutes: 60,
   default_end_time: '17:00',
-  weekly_target_hours: 40.0
+  weekly_target_hours: 40.0,
+  working_days_per_week: 5
 })
 
 // Loading states
@@ -277,7 +310,13 @@ const validationErrors = computed(() => {
     return []
   }
 
-  return validateTimeSettings(settingsForm.value)
+  const timeErrors = validateTimeSettings(settingsForm.value)
+  const workingDaysErrors = validateWorkingDaysSettings(
+    settingsForm.value.weekly_target_hours || 40,
+    settingsForm.value.working_days_per_week || 5
+  )
+
+  return [...timeErrors, ...workingDaysErrors]
 })
 
 // Methods
@@ -292,6 +331,19 @@ function calculateWorkingHours(): string {
   } catch {
     return '0.0'
   }
+}
+
+function calculateDailyTargetHours(): string {
+  const weeklyHours = settingsForm.value.weekly_target_hours || 40
+  const workingDays = settingsForm.value.working_days_per_week || 5
+  const dailyTarget = calculateDailyTarget(weeklyHours, workingDays)
+  return dailyTarget.toFixed(1)
+}
+
+function isDailyTargetValid(): boolean {
+  const weeklyHours = settingsForm.value.weekly_target_hours || 40
+  const workingDays = settingsForm.value.working_days_per_week || 5
+  return validateDailyTarget(weeklyHours, workingDays)
 }
 
 async function handleProfileUpdate(event: { preventDefault: () => void }) {
@@ -334,7 +386,8 @@ async function handleSettingsUpdate(event: { preventDefault: () => void }) {
       default_start_time: settingsForm.value.default_start_time,
       default_lunch_minutes: settingsForm.value.default_lunch_minutes,
       default_end_time: settingsForm.value.default_end_time,
-      weekly_target_hours: settingsForm.value.weekly_target_hours
+      weekly_target_hours: settingsForm.value.weekly_target_hours,
+      working_days_per_week: settingsForm.value.working_days_per_week
     })
 
     if (result.success) {
@@ -369,7 +422,8 @@ function initializeForms() {
         default_start_time: startTime.slice(0, 5), // Convert HH:MM:SS to HH:MM
         default_lunch_minutes: lunchMinutes,
         default_end_time: endTime.slice(0, 5), // Convert HH:MM:SS to HH:MM
-        weekly_target_hours: currentSettings.value.weekly_target_hours ?? 40.0
+        weekly_target_hours: currentSettings.value.weekly_target_hours ?? 40.0,
+        working_days_per_week: currentSettings.value.working_days_per_week ?? 5
       }
       // Only mark as initialized if we have valid data
       settingsFormInitialized.value = true

@@ -1,11 +1,12 @@
 import { ref, computed } from 'vue'
 import { supabase } from '@/utils/supabase'
 import { useAuth } from './useAuth'
-import type { 
-  TimeEntry, 
-  TimeEntryInput, 
+import { useOvertimeBalance } from './useOvertimeBalance'
+import type {
+  TimeEntry,
+  TimeEntryInput,
   TimeEntryFormData,
-  DetailedApiResponse 
+  DetailedApiResponse
 } from '@/types'
 
 // Global state to prevent concurrent fetches across all instances
@@ -38,6 +39,7 @@ function clearLoadingTimeout() {
 
 export function useTimeEntries() {
   const { user } = useAuth()
+  const { recalculateOvertimeBalance, resetOvertimeBalanceFromEntries } = useOvertimeBalance()
   
   // State
   const loading = globalLoading
@@ -161,7 +163,25 @@ export function useTimeEntries() {
         }
       }
 
-      globalTimeEntries.value = data || []
+      // Merge new entries with existing ones instead of replacing completely
+      if (data && data.length > 0) {
+        const existingEntries = globalTimeEntries.value
+        const newEntries = data.filter(newEntry =>
+          !existingEntries.some(existing => existing.id === newEntry.id)
+        )
+        
+        // Add new entries and sort by date (newest first)
+        globalTimeEntries.value = [...existingEntries, ...newEntries]
+          .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+      }
+
+      // Recalculate overtime balance based on fetched entries to ensure accuracy
+      try {
+        await resetOvertimeBalanceFromEntries(globalTimeEntries.value)
+      } catch (balanceError) {
+        // Log balance error but don't fail the fetch operation
+        console.warn('Failed to recalculate overtime balance after fetch:', balanceError)
+      }
 
       return {
         data: data || [],
@@ -196,8 +216,11 @@ export function useTimeEntries() {
     }
 
     try {
-      loading.value = true
+      globalLoading.value = true
       error.value = null
+
+      // Start safety timeout for create operation
+      resetLoadingIfStuck()
 
       const { data, error: createError } = await supabase
         .from('time_entries')
@@ -206,7 +229,8 @@ export function useTimeEntries() {
           date: entryData.date,
           start_time: entryData.start_time,
           end_time: entryData.end_time,
-          lunch_break_minutes: entryData.lunch_break_minutes
+          lunch_break_minutes: entryData.lunch_break_minutes,
+          overtime_hours: entryData.overtime_hours || 0
         })
         .select()
         .single()
@@ -224,10 +248,18 @@ export function useTimeEntries() {
         }
       }
 
-      // Add to global state
+      // Add to global state first
       if (data) {
         globalTimeEntries.value.unshift(data)
         currentEntry.value = data
+
+        // Recalculate overtime balance based on all entries
+        try {
+          await recalculateOvertimeBalance(globalTimeEntries.value)
+        } catch (balanceError) {
+          // Log balance error but don't fail the time entry creation
+          console.warn('Failed to recalculate overtime balance:', balanceError)
+        }
       }
 
       return {
@@ -247,7 +279,8 @@ export function useTimeEntries() {
         success: false
       }
     } finally {
-      loading.value = false
+      globalLoading.value = false
+      clearLoadingTimeout()
     }
   }
 
@@ -262,15 +295,19 @@ export function useTimeEntries() {
     }
 
     try {
-      loading.value = true
+      globalLoading.value = true
       error.value = null
+
+      // Start safety timeout for update operation
+      resetLoadingIfStuck()
 
       const { data, error: updateError } = await supabase
         .from('time_entries')
         .update({
           start_time: entryData.start_time,
           end_time: entryData.end_time,
-          lunch_break_minutes: entryData.lunch_break_minutes
+          lunch_break_minutes: entryData.lunch_break_minutes,
+          overtime_hours: entryData.overtime_hours || 0
         })
         .eq('id', entryId)
         .eq('user_id', user.value.id) // Ensure user can only update their own entries
@@ -290,7 +327,7 @@ export function useTimeEntries() {
         }
       }
 
-      // Update global state
+      // Update global state first
       if (data) {
         const index = globalTimeEntries.value.findIndex(entry => entry.id === entryId)
         if (index !== -1) {
@@ -298,6 +335,14 @@ export function useTimeEntries() {
         }
         if (currentEntry.value?.id === entryId) {
           currentEntry.value = data
+        }
+
+        // Recalculate overtime balance based on all entries
+        try {
+          await recalculateOvertimeBalance(globalTimeEntries.value)
+        } catch (balanceError) {
+          // Log balance error but don't fail the time entry update
+          console.warn('Failed to recalculate overtime balance:', balanceError)
         }
       }
 
@@ -318,7 +363,8 @@ export function useTimeEntries() {
         success: false
       }
     } finally {
-      loading.value = false
+      globalLoading.value = false
+      clearLoadingTimeout()
     }
   }
 
@@ -333,8 +379,11 @@ export function useTimeEntries() {
     }
 
     try {
-      loading.value = true
+      globalLoading.value = true
       error.value = null
+
+      // Start safety timeout for delete operation
+      resetLoadingIfStuck()
 
       const { error: deleteError } = await supabase
         .from('time_entries')
@@ -355,10 +404,18 @@ export function useTimeEntries() {
         }
       }
 
-      // Remove from global state
+      // Remove from global state first
       globalTimeEntries.value = globalTimeEntries.value.filter(entry => entry.id !== entryId)
       if (currentEntry.value?.id === entryId) {
         currentEntry.value = null
+      }
+
+      // Recalculate overtime balance based on remaining entries
+      try {
+        await recalculateOvertimeBalance(globalTimeEntries.value)
+      } catch (balanceError) {
+        // Log balance error but don't fail the time entry deletion
+        console.warn('Failed to recalculate overtime balance after deletion:', balanceError)
       }
 
       return {
@@ -378,7 +435,8 @@ export function useTimeEntries() {
         success: false
       }
     } finally {
-      loading.value = false
+      globalLoading.value = false
+      clearLoadingTimeout()
     }
   }
 

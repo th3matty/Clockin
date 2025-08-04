@@ -1,13 +1,35 @@
 <template>
-  <div class="bg-white rounded-xl shadow-lg p-8">
+  <div :class="[
+    'rounded-xl shadow-lg p-8 transition-all duration-300',
+    existingEntry ? 'bg-green-50 border-2 border-green-200' : 'bg-white'
+  ]">
     <!-- Header -->
     <div class="mb-6">
-      <h2 class="text-2xl font-semibold text-gray-900 mb-2">Time Entry</h2>
+      <div class="flex items-center gap-3 mb-2">
+        <h2 class="text-2xl font-semibold text-gray-900">Time Entry</h2>
+        <div v-if="existingEntry" class="flex items-center gap-2">
+          <div class="flex items-center justify-center w-6 h-6 bg-green-500 rounded-full">
+            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+          </div>
+          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+          </span>
+        </div>
+      </div>
       <div class="flex items-center justify-between">
-        <p class="text-gray-600">{{ formatDate(selectedDate) }}</p>
-        <input v-model="selectedDate" type="date"
+        <div class="flex items-center gap-2">
+          <p class="text-gray-600">{{ formatDate(selectedDate) }}</p>
+          <div v-if="existingEntry" class="flex items-center text-green-600">
+            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <span class="text-sm font-medium">Saved</span>
+          </div>
+        </div>
+        <input :value="selectedDate" type="date"
           class="px-3 py-1 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-          :max="today" @change="handleDateChange" />
+          @input="handleDateInput" />
       </div>
     </div>
 
@@ -57,19 +79,64 @@
         </div>
       </div>
 
+      <!-- Overtime Hours Field -->
+      <div>
+        <label for="overtime_hours" class="block text-sm font-medium text-gray-700 mb-2">
+          Additional Overtime Hours (Optional)
+        </label>
+        <input
+          id="overtime_hours"
+          v-model.number="formData.overtime_hours"
+          type="number"
+          min="0"
+          max="12"
+          step="0.25"
+          class="w-full px-4 py-3 border border-gray-300 rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
+          placeholder="0.00"
+          :disabled="loading"
+        />
+        <p class="text-xs text-gray-500 mt-1">Enter additional hours worked beyond regular schedule (0-12 hours)</p>
+      </div>
+
       <!-- Total Hours Display -->
-      <div class="bg-gray-50 rounded-lg p-4">
+      <div :class="[
+        'rounded-lg p-4 transition-all duration-300',
+        existingEntry ? 'bg-green-100 border border-green-200' : 'bg-gray-50'
+      ]">
         <div class="flex items-center justify-between">
-          <span class="text-sm font-medium text-gray-700">Total Working Hours:</span>
-          <span class="text-2xl font-bold text-primary-600">
-            {{ calculatedHours.toFixed(1) }}h
-          </span>
+          <div class="flex items-center gap-2">
+            <span class="text-sm font-medium text-gray-700">Total Working Hours:</span>
+            <div v-if="existingEntry" class="flex items-center text-green-600">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+            </div>
+          </div>
+          <div class="text-right">
+            <span :class="[
+              'text-2xl font-bold',
+              existingEntry ? 'text-green-600' : 'text-primary-600'
+            ]">
+              {{ (calculatedHours + (formData.overtime_hours || 0)).toFixed(1) }}h
+            </span>
+            <div class="text-xs text-gray-500">
+              {{ calculatedHours.toFixed(1) }}h regular
+              <span v-if="formData.overtime_hours && formData.overtime_hours > 0" class="text-orange-600">
+                + {{ formData.overtime_hours.toFixed(1) }}h overtime
+              </span>
+            </div>
+          </div>
         </div>
-        <div class="text-xs text-gray-500 mt-1">
-          {{ formData.start_time }} - {{ formData.end_time }}
-          <span v-if="formData.lunch_break_minutes > 0">
-            ({{ formData.lunch_break_minutes }}min lunch)
-          </span>
+        <div class="flex items-center justify-between mt-1">
+          <div class="text-xs text-gray-500">
+            {{ formData.start_time }} - {{ formData.end_time }}
+            <span v-if="formData.lunch_break_minutes > 0">
+              ({{ formData.lunch_break_minutes }}min lunch)
+            </span>
+          </div>
+          <div v-if="existingEntry" class="text-xs text-green-600 font-medium">
+            ✓ Saved to database
+          </div>
         </div>
       </div>
 
@@ -152,7 +219,7 @@
 import { ref, computed, watch, onMounted } from 'vue'
 import { useAuth } from '@/composables/useAuth'
 import { useTimeEntries } from '@/composables/useTimeEntries'
-import type { TimeEntryFormData } from '@/types'
+import type { TimeEntryFormData, TimeEntry } from '@/types'
 
 // Composables
 const { user } = useAuth()
@@ -170,10 +237,11 @@ const {
   fetchTimeEntries
 } = useTimeEntries()
 
-// State
+// State - Use a completely independent date state
 const selectedDate = ref(new Date().toISOString().split('T')[0])
 const showSuccess = ref(false)
-const existingEntry = ref(todayEntry.value)
+const existingEntry = ref<TimeEntry | null>(null)
+const preventDateReset = ref(false)
 
 // Safety mechanism to prevent stuck loading states
 let loadingTimeout: NodeJS.Timeout | null = null
@@ -202,11 +270,12 @@ watch(loading, (isLoading) => {
 const formData = ref<TimeEntryFormData>({
   start_time: '09:00',
   lunch_break_minutes: 60,
-  end_time: '17:00'
+  end_time: '17:00',
+  overtime_hours: 0
 })
 
-// Computed
-const today = computed(() => new Date().toISOString().split('T')[0])
+// Computed - Remove this computed that might be interfering
+// const today = computed(() => new Date().toISOString().split('T')[0])
 
 const calculatedHours = computed(() => {
   return calculateTotalHours(
@@ -237,7 +306,8 @@ function initializeFormData() {
     formData.value = {
       start_time: user.value.default_start_time?.slice(0, 5) || '09:00',
       lunch_break_minutes: user.value.default_lunch_minutes || 60,
-      end_time: user.value.default_end_time?.slice(0, 5) || '17:00'
+      end_time: user.value.default_end_time?.slice(0, 5) || '17:00',
+      overtime_hours: 0
     }
   }
 
@@ -246,17 +316,31 @@ function initializeFormData() {
     formData.value = {
       start_time: existingEntry.value.start_time.slice(0, 5),
       lunch_break_minutes: existingEntry.value.lunch_break_minutes,
-      end_time: existingEntry.value.end_time.slice(0, 5)
+      end_time: existingEntry.value.end_time.slice(0, 5),
+      overtime_hours: existingEntry.value.overtime_hours || 0
     }
   }
 }
 
-async function handleDateChange() {
+function handleDateInput(event: Event) {
+  const target = event.target as HTMLInputElement
+  const newDate = target.value
+  
+  if (!newDate) return
+  
+  // Update the selectedDate FIRST, before any async operations
+  selectedDate.value = newDate
+  
+  // Then handle the data loading asynchronously without affecting the date
+  loadDataForDate(newDate)
+}
+
+async function loadDataForDate(date: string) {
   clearError()
 
   try {
     // Check if we already have entries loaded that include this date
-    const existingEntryForDate = timeEntries.value.find(entry => entry.date === selectedDate.value)
+    const existingEntryForDate = timeEntries.value.find(entry => entry.date === date)
 
     if (existingEntryForDate) {
       existingEntry.value = existingEntryForDate
@@ -265,10 +349,10 @@ async function handleDateChange() {
     }
 
     // Only fetch if we don't have the entry in cache
-    const result = await fetchTimeEntries(selectedDate.value, selectedDate.value)
+    const result = await fetchTimeEntries(date, date)
 
     // Find entry for selected date after fetch
-    const entry = timeEntries.value.find(entry => entry.date === selectedDate.value)
+    const entry = timeEntries.value.find(entry => entry.date === date)
     existingEntry.value = entry || null
 
     initializeFormData()
@@ -280,6 +364,10 @@ async function handleDateChange() {
 async function handleSubmit() {
   if (validationErrors.value.length > 0) return
 
+  // Preserve the current date
+  const currentDate = selectedDate.value
+  preventDateReset.value = true
+
   clearError()
 
   try {
@@ -287,7 +375,8 @@ async function handleSubmit() {
       date: selectedDate.value,
       start_time: formData.value.start_time,
       end_time: formData.value.end_time,
-      lunch_break_minutes: formData.value.lunch_break_minutes
+      lunch_break_minutes: formData.value.lunch_break_minutes,
+      overtime_hours: formData.value.overtime_hours || 0
     }
 
     let result
@@ -301,6 +390,9 @@ async function handleSubmit() {
       showSuccess.value = true
       existingEntry.value = result.data
 
+      // Ensure date stays the same
+      selectedDate.value = currentDate
+
       // Hide success message after 3 seconds
       setTimeout(() => {
         showSuccess.value = false
@@ -308,6 +400,12 @@ async function handleSubmit() {
     }
   } catch (err) {
     // Handle error silently
+  } finally {
+    // Ensure date is preserved and allow changes again
+    selectedDate.value = currentDate
+    setTimeout(() => {
+      preventDateReset.value = false
+    }, 100)
   }
 }
 
@@ -316,32 +414,53 @@ async function handleDelete() {
 
   if (!confirm('Are you sure you want to delete this time entry?')) return
 
+  // Preserve the current date
+  const currentDate = selectedDate.value
+  preventDateReset.value = true
+
   clearError()
+
+  // Add a local timeout as a safety mechanism for delete operations
+  const deleteTimeout = setTimeout(() => {
+    // If loading is still true after 10 seconds, something went wrong
+    if (loading.value) {
+      console.warn('Delete operation timed out - this may indicate a network or server issue')
+    }
+  }, 10000)
 
   try {
     const result = await deleteTimeEntry(existingEntry.value.id)
+
+    // Clear the timeout since the operation completed
+    clearTimeout(deleteTimeout)
 
     if (result.success) {
       existingEntry.value = null
       initializeFormData() // Reset to defaults
       showSuccess.value = true
 
+      // Ensure date stays the same
+      selectedDate.value = currentDate
+
       setTimeout(() => {
         showSuccess.value = false
       }, 3000)
     }
   } catch (err) {
+    // Clear the timeout on error as well
+    clearTimeout(deleteTimeout)
     // Handle error silently
+  } finally {
+    // Ensure date is preserved and allow changes again
+    selectedDate.value = currentDate
+    setTimeout(() => {
+      preventDateReset.value = false
+    }, 100)
   }
 }
 
 // Watchers
-watch(selectedDate, () => {
-  // Only trigger date change if it's not the initial mount
-  if (selectedDate.value !== new Date().toISOString().split('T')[0]) {
-    handleDateChange()
-  }
-})
+// Removed date watcher - using direct input handler instead
 
 watch(error, (newError) => {
   if (newError) {
@@ -360,6 +479,11 @@ watch(user, () => {
 // Lifecycle
 onMounted(async () => {
   try {
+    // Set initial date to today only if no date is selected
+    if (!selectedDate.value) {
+      selectedDate.value = new Date().toISOString().split('T')[0]
+    }
+    
     // Fetch entries for current month to have a good cache
     const today = new Date()
     const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1).toISOString().split('T')[0]
@@ -367,12 +491,19 @@ onMounted(async () => {
 
     const result = await fetchTimeEntries(startOfMonth, endOfMonth)
 
-    // Find today's entry
+    // Find entry for the currently selected date
     existingEntry.value = timeEntries.value.find(entry => entry.date === selectedDate.value) || null
     initializeFormData()
+    
+    // Mark as initialized to enable watchers
+    // Component is now initialized
   } catch (err) {
     // Initialize with defaults even if fetch fails
+    if (!selectedDate.value) {
+      selectedDate.value = new Date().toISOString().split('T')[0]
+    }
     initializeFormData()
+    // Component is now initialized
   }
 })
 </script>

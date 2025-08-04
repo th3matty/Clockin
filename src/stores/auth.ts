@@ -81,7 +81,9 @@ export const useAuthStore = defineStore('auth', () => {
           default_lunch_minutes: data.default_lunch_minutes,
           default_end_time: data.default_end_time,
           holiday_allowance: data.holiday_allowance,
-          weekly_target_hours: data.weekly_target_hours
+          weekly_target_hours: data.weekly_target_hours,
+          working_days_per_week: data.working_days_per_week,
+          overtime_balance: data.overtime_balance
         }
       }
     } catch (err) {
@@ -254,7 +256,9 @@ export const useAuthStore = defineStore('auth', () => {
           default_lunch_minutes: data.default_lunch_minutes,
           default_end_time: data.default_end_time,
           holiday_allowance: data.holiday_allowance,
-          weekly_target_hours: data.weekly_target_hours
+          weekly_target_hours: data.weekly_target_hours,
+          working_days_per_week: data.working_days_per_week,
+          overtime_balance: data.overtime_balance
         }
       }
 

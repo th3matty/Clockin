@@ -25,7 +25,7 @@ export function useOvertimeCalculations() {
   /**
    * Calculate comprehensive overtime statistics for weekly and monthly periods
    */
-  function calculateOvertimeStats(entries: TimeEntry[], weeklyTarget: number = 40): OvertimeStats {
+  function calculateOvertimeStats(entries: TimeEntry[], weeklyTarget: number = 40, workingDaysPerWeek: number = 5): OvertimeStats {
     const today = new Date()
     
     // Calculate week boundaries (Monday to Sunday)
@@ -152,10 +152,10 @@ export function useOvertimeCalculations() {
   }
   
   /**
-   * Get daily target hours based on weekly target
+   * Get daily target hours based on weekly target and working days
    */
-  function getDailyTargetHours(weeklyTarget: number = 40): number {
-    const dailyTarget = weeklyTarget / 5 // Assuming 5-day work week
+  function getDailyTargetHours(weeklyTarget: number = 40, workingDaysPerWeek: number = 5): number {
+    const dailyTarget = weeklyTarget / workingDaysPerWeek
     return Math.round(dailyTarget * 100) / 100
   }
   
@@ -192,7 +192,11 @@ export function useOvertimeCalculations() {
   /**
    * Calculate overtime progress toward weekly target
    */
-  function calculateOvertimeProgress(weeklyOvertimeHours: number, weeklyTarget: number = 40): {
+  function calculateOvertimeProgress(
+    weeklyOvertimeHours: number,
+    weeklyTarget: number = 40,
+    workingDaysPerWeek: number = 5
+  ): {
     percentage: number
     isOverTarget: boolean
     hoursOverTarget: number
