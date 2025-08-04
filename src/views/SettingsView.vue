@@ -283,7 +283,7 @@ async function handleProfileUpdate() {
       }, 3000)
     }
   } catch (err) {
-    console.error('Profile update error:', err)
+    // Handle error silently
   } finally {
     profileLoading.value = false
   }
@@ -316,7 +316,7 @@ async function handleSettingsUpdate() {
       console.log('Update failed:', result.error)
     }
   } catch (err) {
-    console.error('Settings update error:', err)
+    // Handle error silently
   } finally {
     settingsLoading.value = false
   }

@@ -201,7 +201,6 @@ export function useUserSettings() {
       console.log('Upload completed. Data:', uploadData, 'Error:', uploadError)
 
       if (uploadError) {
-        console.error('Upload error:', uploadError)
         throw new Error(`Upload failed: ${uploadError.message}`)
       }
 
@@ -229,7 +228,6 @@ export function useUserSettings() {
       const updateResult = await updateSettings({ avatar_url: avatarUrl })
 
       if (!updateResult.success) {
-        console.error('Profile update failed:', updateResult.error)
         throw new Error(updateResult.error?.message || 'Failed to update profile')
       }
 
@@ -243,7 +241,6 @@ export function useUserSettings() {
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to upload avatar'
-      console.error('Avatar upload error:', err)
       error.value = errorMessage
 
       return {
@@ -281,7 +278,6 @@ export function useUserSettings() {
         .remove([filePath])
 
       if (deleteError) {
-        console.warn('Failed to delete avatar file:', deleteError.message)
         // Continue anyway - we'll still remove the URL from the profile
       }
 

@@ -242,7 +242,7 @@ async function handleSubmit() {
     const { confirmPassword, ...signupData } = formData.value
     await signup(signupData)
   } catch (err) {
-    console.error('Signup error:', err)
+    // Handle error silently
   }
 }
 

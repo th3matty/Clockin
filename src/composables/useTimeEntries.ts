@@ -23,7 +23,6 @@ function resetLoadingIfStuck() {
   
   loadingResetTimeout = setTimeout(() => {
     if (globalLoading.value) {
-      console.warn('⚠️ useTimeEntries: Loading state was stuck, resetting...')
       globalLoading.value = false
       globalFetchPromise = null
     }
@@ -93,12 +92,10 @@ export function useTimeEntries() {
 
     // If there's already a fetch in progress, return that promise
     if (globalFetchPromise) {
-      console.log('⏳ useTimeEntries: Fetch already in progress, returning existing promise')
       try {
         return await globalFetchPromise
       } catch (err) {
         // If the existing promise fails, clear it and allow a new fetch
-        console.log('❌ useTimeEntries: Existing promise failed, clearing for retry')
         globalFetchPromise = null
         throw err
       }
@@ -124,7 +121,6 @@ export function useTimeEntries() {
 
   async function performFetch(startDate?: string, endDate?: string): Promise<DetailedApiResponse<TimeEntry[]>> {
     try {
-      console.log('🔄 useTimeEntries: Starting fetch, setting loading to true')
       globalLoading.value = true
       error.value = null
       
@@ -144,13 +140,9 @@ export function useTimeEntries() {
         query = query.lte('date', endDate)
       }
 
-      console.log('📡 useTimeEntries: Executing query...')
-      
       const { data, error: fetchError } = await query
-      console.log('📥 useTimeEntries: Query completed:', { data: data?.length, error: fetchError })
 
       if (fetchError) {
-        console.error('❌ useTimeEntries: Fetch error:', fetchError)
         error.value = fetchError.message
         return {
           data: null,
@@ -164,7 +156,6 @@ export function useTimeEntries() {
       }
 
       globalTimeEntries.value = data || []
-      console.log('✅ useTimeEntries: Data updated, entries count:', globalTimeEntries.value.length)
 
       return {
         data: data || [],
@@ -174,7 +165,6 @@ export function useTimeEntries() {
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch time entries'
-      console.error('❌ useTimeEntries: Exception in fetchTimeEntries:', err)
       error.value = errorMessage
       
       return {
@@ -184,7 +174,6 @@ export function useTimeEntries() {
         success: false
       }
     } finally {
-      console.log('🏁 useTimeEntries: Finally block - setting loading to false')
       globalLoading.value = false
       clearLoadingTimeout()
     }
@@ -204,8 +193,6 @@ export function useTimeEntries() {
       loading.value = true
       error.value = null
 
-      console.log('Creating time entry:', entryData)
-
       const { data, error: createError } = await supabase
         .from('time_entries')
         .insert({
@@ -219,7 +206,6 @@ export function useTimeEntries() {
         .single()
 
       if (createError) {
-        console.error('Create error:', createError)
         error.value = createError.message
         return {
           data: null,
@@ -231,8 +217,6 @@ export function useTimeEntries() {
           success: false
         }
       }
-
-      console.log('Time entry created:', data)
 
       // Add to global state
       if (data) {
@@ -248,7 +232,6 @@ export function useTimeEntries() {
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to create time entry'
-      console.error('Create time entry error:', err)
       error.value = errorMessage
       
       return {
@@ -276,8 +259,6 @@ export function useTimeEntries() {
       loading.value = true
       error.value = null
 
-      console.log('Updating time entry:', entryId, entryData)
-
       const { data, error: updateError } = await supabase
         .from('time_entries')
         .update({
@@ -291,7 +272,6 @@ export function useTimeEntries() {
         .single()
 
       if (updateError) {
-        console.error('Update error:', updateError)
         error.value = updateError.message
         return {
           data: null,
@@ -303,8 +283,6 @@ export function useTimeEntries() {
           success: false
         }
       }
-
-      console.log('Time entry updated:', data)
 
       // Update global state
       if (data) {
@@ -325,7 +303,6 @@ export function useTimeEntries() {
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to update time entry'
-      console.error('Update time entry error:', err)
       error.value = errorMessage
       
       return {

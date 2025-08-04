@@ -212,19 +212,16 @@ let loadingTimeout: NodeJS.Timeout | null = null
 // Watch loading state and set a timeout to reset it if it gets stuck
 watch(loading, (isLoading) => {
   if (isLoading) {
-    console.log('⏰ TimeEntryForm: Loading started, setting 10s timeout')
     // Clear any existing timeout
     if (loadingTimeout) {
       clearTimeout(loadingTimeout)
     }
     // Set a 10-second timeout to reset loading state if it gets stuck
     loadingTimeout = setTimeout(() => {
-      console.log('⚠️ TimeEntryForm: Loading timeout reached, this might indicate a stuck state')
       // Note: We don't force reset the loading state here as it's managed by the composable
       // But we log it for debugging
     }, 10000)
   } else {
-    console.log('✅ TimeEntryForm: Loading completed')
     // Clear timeout when loading completes normally
     if (loadingTimeout) {
       clearTimeout(loadingTimeout)
@@ -289,33 +286,25 @@ async function handleDateChange() {
   clearError()
   
   try {
-    console.log('🔄 TimeEntryForm: Date changed to:', selectedDate.value)
-    
     // Check if we already have entries loaded that include this date
     const existingEntryForDate = timeEntries.value.find(entry => entry.date === selectedDate.value)
     
     if (existingEntryForDate) {
-      console.log('📝 TimeEntryForm: Found existing entry in cache:', existingEntryForDate)
       existingEntry.value = existingEntryForDate
       initializeFormData()
       return
     }
     
     // Only fetch if we don't have the entry in cache
-    console.log('🔄 TimeEntryForm: Fetching entries for date:', selectedDate.value)
     const result = await fetchTimeEntries(selectedDate.value, selectedDate.value)
-    
-    console.log('📥 TimeEntryForm: Fetch result:', result)
     
     // Find entry for selected date after fetch
     const entry = timeEntries.value.find(entry => entry.date === selectedDate.value)
     existingEntry.value = entry || null
     
-    console.log('📝 TimeEntryForm: Final existing entry:', existingEntry.value)
-    
     initializeFormData()
   } catch (err) {
-    console.error('❌ TimeEntryForm: Error in handleDateChange:', err)
+    // Handle error silently
   }
 }
 
@@ -349,7 +338,7 @@ async function handleSubmit() {
       }, 3000)
     }
   } catch (err) {
-    console.error('Time entry error:', err)
+    // Handle error silently
   }
 }
 
@@ -373,7 +362,7 @@ async function handleDelete() {
       }, 3000)
     }
   } catch (err) {
-    console.error('Delete time entry error:', err)
+    // Handle error silently
   }
 }
 
@@ -393,8 +382,6 @@ watch(error, (newError) => {
 
 // Lifecycle
 onMounted(async () => {
-  console.log('🚀 TimeEntryForm: Component mounted, fetching entries...')
-  
   try {
     // Fetch entries for current month to have a good cache
     const today = new Date()
@@ -402,15 +389,11 @@ onMounted(async () => {
     const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).toISOString().split('T')[0]
     
     const result = await fetchTimeEntries(startOfMonth, endOfMonth)
-    console.log('📥 TimeEntryForm: Mount fetch result:', result)
     
     // Find today's entry
     existingEntry.value = timeEntries.value.find(entry => entry.date === selectedDate.value) || null
     initializeFormData()
-    
-    console.log('✅ TimeEntryForm: Initialization complete')
   } catch (err) {
-    console.error('❌ TimeEntryForm: Error during mount:', err)
     // Initialize with defaults even if fetch fails
     initializeFormData()
   }

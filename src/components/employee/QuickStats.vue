@@ -212,8 +212,6 @@ const totalHolidays = computed(() => user.value?.holiday_allowance || 25)
 const remainingHolidays = computed(() => {
   const remaining = remainingHolidayDays.value
   const used = usedHolidayDays.value
-  console.log('🔍 QuickStats: remainingHolidayDays:', remaining)
-  console.log('🔍 QuickStats: usedHolidayDays:', used)
   return remaining ?? totalHolidays.value
 })
 
@@ -221,7 +219,6 @@ const holidayProgress = computed(() => {
   if (totalHolidays.value === 0) return 0
   const remaining = remainingHolidays.value ?? 0
   const progress = (remaining / totalHolidays.value) * 100
-  console.log('🔍 QuickStats: holidayProgress calculation:', { remaining, total: totalHolidays.value, progress })
   return progress
 })
 

@@ -181,17 +181,11 @@ const totalHolidayDays = computed(() => user.value?.holiday_allowance || 25)
 const usagePercentage = computed(() => {
   if (totalHolidayDays.value === 0) return 0
   const used = usedHolidayDays.value
-  console.log('🔍 HolidayRequestsList: usagePercentage calculation:', {
-    used,
-    total: totalHolidayDays.value,
-    percentage: (used / totalHolidayDays.value) * 100
-  })
   return (used / totalHolidayDays.value) * 100
 })
 
 const recentRequests = computed(() => {
   const requests = holidayRequests.value || []
-  console.log('🔄 recentRequests computed - holidayRequests length:', requests.length)
   return requests.slice(0, 10) // Show last 10 requests
 })
 
@@ -273,20 +267,14 @@ async function handleCancelRequest(requestId: string) {
 
   try {
     cancelLoading.value = true
-    console.log('🗑️ Canceling request:', requestId)
-    console.log('📊 Before cancel - Total requests:', holidayRequests.value?.length)
     
     const result = await cancelHolidayRequest(requestId)
     
     if (result.success) {
-      console.log('✅ Cancel successful')
-      console.log('📊 After cancel - Total requests:', holidayRequests.value?.length)
       // Request will be removed from the list automatically by the store
-    } else {
-      console.log('❌ Cancel failed:', result.error)
     }
   } catch (err) {
-    console.error('Cancel request error:', err)
+    // Handle error silently
   } finally {
     cancelLoading.value = false
   }
@@ -294,10 +282,7 @@ async function handleCancelRequest(requestId: string) {
 
 // Methods for refreshing data
 async function refreshData() {
-  console.log('🔄 Refreshing holiday requests data...')
   const result = await fetchHolidayRequests()
-  console.log('📥 Fetch result:', result)
-  console.log('📊 Holiday requests after fetch:', holidayRequests.value)
 }
 
 // Lifecycle

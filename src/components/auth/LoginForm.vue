@@ -179,7 +179,7 @@ async function handleSubmit() {
   try {
     await login(formData.value)
   } catch (err) {
-    console.error('Login error:', err)
+    // Handle error silently
   }
 }
 

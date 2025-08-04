@@ -34,7 +34,6 @@ export const useAuthStore = defineStore('auth', () => {
       const { data: { session }, error: sessionError } = await supabase.auth.getSession()
       
       if (sessionError) {
-        console.error('Session error:', sessionError)
         return
       }
 
@@ -53,7 +52,6 @@ export const useAuthStore = defineStore('auth', () => {
 
       initialized.value = true
     } catch (err) {
-      console.error('Auth initialization error:', err)
       error.value = 'Failed to initialize authentication'
     } finally {
       loading.value = false
@@ -69,7 +67,6 @@ export const useAuthStore = defineStore('auth', () => {
         .single()
 
       if (profileError) {
-        console.error('Profile loading error:', profileError)
         return
       }
 
@@ -83,7 +80,7 @@ export const useAuthStore = defineStore('auth', () => {
         }
       }
     } catch (err) {
-      console.error('Error loading user profile:', err)
+      // Handle error silently
     }
   }
 
@@ -197,13 +194,11 @@ export const useAuthStore = defineStore('auth', () => {
       
       if (signOutError) {
         error.value = signOutError.message
-        console.error('Logout error:', signOutError)
         return
       }
 
       user.value = null
     } catch (err) {
-      console.error('Logout error:', err)
       error.value = 'Failed to logout'
     } finally {
       loading.value = false

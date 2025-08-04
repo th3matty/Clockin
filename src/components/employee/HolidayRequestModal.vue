@@ -239,10 +239,7 @@ const validationErrors = computed(() => {
 
 // Methods
 async function handleSubmit() {
-  console.log('🚀 Modal: Starting form submission...')
-  
   if (validationErrors.value.length > 0) {
-    console.log('❌ Modal: Validation errors present:', validationErrors.value)
     return
   }
 
@@ -255,13 +252,9 @@ async function handleSubmit() {
       reason: formData.value.reason.trim() || undefined
     }
 
-    console.log('📤 Modal: Calling createHolidayRequest with:', requestData)
     const result = await createHolidayRequest(requestData)
-    console.log('📥 Modal: Received result:', result)
 
     if (result.success) {
-      console.log('✅ Modal: Request successful, resetting form and closing modal')
-      
       // Reset form
       formData.value = {
         start_date: '',
@@ -271,11 +264,9 @@ async function handleSubmit() {
       
       emit('success')
       emit('close')
-    } else {
-      console.log('❌ Modal: Request failed:', result.error)
     }
   } catch (err) {
-    console.error('❌ Modal: Exception during submission:', err)
+    // Handle error silently
   }
 }
 

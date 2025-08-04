@@ -161,7 +161,7 @@ async function handleFileSelect(event: Event) {
       }, 3000)
     }
   } catch (err) {
-    console.error('Avatar upload error:', err)
+    // Handle error silently
   }
 }
 
@@ -180,7 +180,7 @@ async function handleRemoveAvatar() {
       }, 3000)
     }
   } catch (err) {
-    console.error('Avatar removal error:', err)
+    // Handle error silently
   }
 }
 

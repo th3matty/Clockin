@@ -678,7 +678,6 @@
                 dayElement.className = classes;
                 dayElement.textContent = day;
                 dayElement.addEventListener('click', () => {
-                    console.log(`Clicked on ${dateString}`);
                     // Here you could open the holiday request modal for this date
                 });
 
@@ -722,7 +721,6 @@
                 month: 'long',
                 day: 'numeric'
             };
-            console.log(`Selected date for time entry: ${selectedDate.toLocaleDateString('en-US', options)}`);
             // Here you would typically load time entry data for the selected date
         });
     </script>
