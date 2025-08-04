@@ -61,9 +61,12 @@ export function useTimeEntries() {
     const startDate = startOfWeek.toISOString().split('T')[0]
     const endDate = endOfWeek.toISOString().split('T')[0]
 
-    return globalTimeEntries.value
+    const total = globalTimeEntries.value
       .filter(entry => entry.date >= startDate && entry.date <= endDate)
       .reduce((total, entry) => total + entry.total_hours, 0)
+    
+    // Round to 2 decimal places to avoid floating-point precision issues
+    return Math.round(total * 100) / 100
   })
 
   const monthlyHours = computed(() => {
@@ -74,9 +77,12 @@ export function useTimeEntries() {
     const startDate = startOfMonth.toISOString().split('T')[0]
     const endDate = endOfMonth.toISOString().split('T')[0]
 
-    return globalTimeEntries.value
+    const total = globalTimeEntries.value
       .filter(entry => entry.date >= startDate && entry.date <= endDate)
       .reduce((total, entry) => total + entry.total_hours, 0)
+    
+    // Round to 2 decimal places to avoid floating-point precision issues
+    return Math.round(total * 100) / 100
   })
 
   // Methods
@@ -384,8 +390,10 @@ export function useTimeEntries() {
       
       const totalMinutes = (end.getTime() - start.getTime()) / (1000 * 60)
       const workingMinutes = totalMinutes - lunchMinutes
+      const hours = Math.max(0, workingMinutes / 60)
       
-      return Math.max(0, workingMinutes / 60)
+      // Round to 2 decimal places to avoid floating-point precision issues
+      return Math.round(hours * 100) / 100
     } catch {
       return 0
     }

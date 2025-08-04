@@ -80,7 +80,8 @@ export const useAuthStore = defineStore('auth', () => {
           default_start_time: data.default_start_time,
           default_lunch_minutes: data.default_lunch_minutes,
           default_end_time: data.default_end_time,
-          holiday_allowance: data.holiday_allowance
+          holiday_allowance: data.holiday_allowance,
+          weekly_target_hours: data.weekly_target_hours
         }
       }
     } catch (err) {
@@ -252,7 +253,8 @@ export const useAuthStore = defineStore('auth', () => {
           default_start_time: data.default_start_time,
           default_lunch_minutes: data.default_lunch_minutes,
           default_end_time: data.default_end_time,
-          holiday_allowance: data.holiday_allowance
+          holiday_allowance: data.holiday_allowance,
+          weekly_target_hours: data.weekly_target_hours
         }
       }
 

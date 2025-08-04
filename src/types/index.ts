@@ -11,6 +11,7 @@ export interface User {
   default_start_time: string;
   default_lunch_minutes: number;
   default_end_time: string;
+  weekly_target_hours: number; // NEW: For overtime calculation
   created_at: string;
 }
 
@@ -29,6 +30,7 @@ export interface TimeEntry {
   end_time: string;
   lunch_break_minutes: number;
   total_hours: number;
+  overtime_hours: number; // NEW: Additional overtime hours
   created_at: string;
 }
 
@@ -37,12 +39,14 @@ export interface TimeEntryInput {
   start_time: string;
   end_time: string;
   lunch_break_minutes: number;
+  overtime_hours?: number; // NEW: Optional overtime hours
 }
 
 export interface TimeEntryFormData {
   start_time: string;
   lunch_break_minutes: number;
   end_time: string;
+  overtime_hours?: number; // NEW: Optional overtime hours
 }
 
 // Holiday request types
@@ -92,12 +96,14 @@ export interface UserSettings {
   default_lunch_minutes: number;
   default_end_time: string;
   avatar_url?: string;
+  weekly_target_hours?: number; // NEW: For overtime calculation
 }
 
 export interface UserSettingsFormData {
   default_start_time: string;
   default_lunch_minutes: number;
   default_end_time: string;
+  weekly_target_hours?: number; // NEW: For overtime calculation
   avatar_file?: File;
 }
 
@@ -112,6 +118,7 @@ export interface AuthUser {
   default_lunch_minutes?: number;
   default_end_time?: string;
   holiday_allowance?: number;
+  weekly_target_hours?: number; // NEW: For overtime calculation
 }
 
 export interface LoginCredentials {

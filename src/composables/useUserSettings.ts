@@ -71,7 +71,8 @@ export function useUserSettings() {
       default_start_time: user.value.default_start_time || '09:00',
       default_lunch_minutes: user.value.default_lunch_minutes || 60,
       default_end_time: user.value.default_end_time || '17:00',
-      avatar_url: user.value.avatar_url
+      avatar_url: user.value.avatar_url,
+      weekly_target_hours: user.value.weekly_target_hours || 40.00
     }
   })
 
@@ -96,7 +97,8 @@ export function useUserSettings() {
           default_start_time: settings.default_start_time,
           default_lunch_minutes: settings.default_lunch_minutes,
           default_end_time: settings.default_end_time,
-          avatar_url: settings.avatar_url
+          avatar_url: settings.avatar_url,
+          weekly_target_hours: settings.weekly_target_hours
         })
         .eq('id', user.value.id)
         .select()
@@ -121,7 +123,8 @@ export function useUserSettings() {
           default_start_time: data.default_start_time,
           default_lunch_minutes: data.default_lunch_minutes,
           default_end_time: data.default_end_time,
-          avatar_url: data.avatar_url
+          avatar_url: data.avatar_url,
+          weekly_target_hours: data.weekly_target_hours
         })
       }
 

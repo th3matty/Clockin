@@ -54,6 +54,29 @@
                     {{ profileLoading ? 'Updating...' : 'Update Profile' }}
                   </button>
                 </div>
+
+                <!-- Profile Success Message (positioned right after the button) -->
+                <Transition enter-active-class="transition-all duration-300 ease-out"
+                  enter-from-class="opacity-0 transform -translate-y-2"
+                  enter-to-class="opacity-100 transform translate-y-0"
+                  leave-active-class="transition-all duration-200 ease-in"
+                  leave-from-class="opacity-100 transform translate-y-0"
+                  leave-to-class="opacity-0 transform -translate-y-2">
+                  <div v-if="showProfileSuccess" class="mt-4 bg-green-50 border border-green-200 rounded-md p-4">
+                    <div class="flex">
+                      <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+                          <path fill-rule="evenodd"
+                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                            clip-rule="evenodd" />
+                        </svg>
+                      </div>
+                      <div class="ml-3">
+                        <p class="text-sm text-green-800">Profile updated successfully!</p>
+                      </div>
+                    </div>
+                  </div>
+                </Transition>
               </form>
             </div>
           </div>
@@ -143,44 +166,40 @@
                     {{ settingsLoading ? 'Updating...' : 'Update Working Hours' }}
                   </button>
                 </div>
+
+                <!-- Settings Success Message (positioned right after the button) -->
+                <Transition enter-active-class="transition-all duration-300 ease-out"
+                  enter-from-class="opacity-0 transform -translate-y-2"
+                  enter-to-class="opacity-100 transform translate-y-0"
+                  leave-active-class="transition-all duration-200 ease-in"
+                  leave-from-class="opacity-100 transform translate-y-0"
+                  leave-to-class="opacity-0 transform -translate-y-2">
+                  <div v-if="showSettingsSuccess" class="mt-4 bg-green-50 border border-green-200 rounded-md p-4">
+                    <div class="flex">
+                      <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+                          <path fill-rule="evenodd"
+                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                            clip-rule="evenodd" />
+                        </svg>
+                      </div>
+                      <div class="ml-3">
+                        <p class="text-sm text-green-800">Working hours updated successfully!</p>
+                      </div>
+                    </div>
+                  </div>
+                </Transition>
               </form>
             </div>
           </div>
 
 
 
-          <!-- Success Messages -->
-          <div v-if="showProfileSuccess" class="bg-green-50 border border-green-200 rounded-md p-4">
-            <div class="flex">
-              <div class="flex-shrink-0">
-                <svg class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd"
-                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                    clip-rule="evenodd" />
-                </svg>
-              </div>
-              <div class="ml-3">
-                <p class="text-sm text-green-800">Profile updated successfully!</p>
-              </div>
-            </div>
-          </div>
 
 
 
-          <div v-if="showSettingsSuccess" class="bg-green-50 border border-green-200 rounded-md p-4">
-            <div class="flex">
-              <div class="flex-shrink-0">
-                <svg class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd"
-                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                    clip-rule="evenodd" />
-                </svg>
-              </div>
-              <div class="ml-3">
-                <p class="text-sm text-green-800">Working hours updated successfully!</p>
-              </div>
-            </div>
-          </div>
+
+
         </div>
       </div>
     </Layout>
@@ -188,7 +207,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, watch, Transition } from 'vue'
 import ProtectedRoute from '@/components/auth/ProtectedRoute.vue'
 import Layout from '@/components/shared/Layout.vue'
 import AvatarUpload from '@/components/shared/AvatarUpload.vue'
@@ -255,7 +274,8 @@ function calculateWorkingHours(): string {
   }
 }
 
-async function handleProfileUpdate() {
+async function handleProfileUpdate(event: { preventDefault: () => void }) {
+  event?.preventDefault()
   if (!isProfileFormValid.value) return
 
   try {
@@ -279,7 +299,8 @@ async function handleProfileUpdate() {
   }
 }
 
-async function handleSettingsUpdate() {
+async function handleSettingsUpdate(event: { preventDefault: () => void }) {
+  event?.preventDefault()
   // Ensure form is marked as initialized for validation
   settingsFormInitialized.value = true
 
