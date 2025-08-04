@@ -36,6 +36,108 @@ graph TB
 - **Date Handling**: date-fns for date manipulation and formatting
 - **Export Functionality**: jsPDF for PDF generation, csv-writer for CSV exports
 
+### State Management Architecture (Vue 3 + Pinia Best Practices)
+
+Following the official Pinia documentation, the application implements a consistent state management pattern:
+
+#### Store Pattern
+```typescript
+// stores/example.ts
+export const useExampleStore = defineStore('example', () => {
+  // State
+  const data = ref<DataType[]>([])
+  const loading = ref(false)
+  const error = ref<string | null>(null)
+  
+  // Getters (computed)
+  const filteredData = computed(() => 
+    data.value.filter(item => item.active)
+  )
+  
+  // Actions
+  async function fetchData() {
+    loading.value = true
+    try {
+      const result = await api.getData()
+      data.value = result
+    } catch (err) {
+      error.value = err.message
+    } finally {
+      loading.value = false
+    }
+  }
+  
+  return {
+    // State (wrapped in readonly for external access)
+    data: readonly(data),
+    loading: readonly(loading),
+    error: readonly(error),
+    
+    // Getters
+    filteredData,
+    
+    // Actions
+    fetchData
+  }
+})
+```
+
+#### Composable Pattern
+```typescript
+// composables/useExample.ts
+import { storeToRefs } from 'pinia'
+import { useExampleStore } from '@/stores/example'
+
+export function useExample() {
+  const store = useExampleStore()
+  
+  // Use storeToRefs to maintain reactivity for state/getters
+  const { data, loading, error, filteredData } = storeToRefs(store)
+  
+  // Actions don't need storeToRefs
+  const { fetchData } = store
+  
+  return {
+    // Reactive state/getters
+    data,
+    loading,
+    error,
+    filteredData,
+    
+    // Actions
+    fetchData
+  }
+}
+```
+
+#### Component Usage
+```vue
+<script setup lang="ts">
+import { useExample } from '@/composables/useExample'
+
+const { data, loading, fetchData } = useExample()
+
+// Access reactive values with .value
+const processedData = computed(() => {
+  return data.value.map(item => ({ ...item, processed: true }))
+})
+
+onMounted(() => {
+  fetchData()
+})
+</script>
+```
+
+#### Key Principles
+1. **Single Source of Truth**: Each store manages one domain of state
+2. **Reactive by Design**: Use `storeToRefs()` to maintain reactivity when destructuring
+3. **Proper State Access**: Access reactive refs with `.value` in components
+4. **Clear Separation**: State/getters use `storeToRefs()`, actions are accessed directly
+5. **Type Safety**: Full TypeScript support throughout the chain
+6. **Performance**: Minimal re-renders through proper reactivity patterns
+
+This pattern ensures consistent, predictable state management across the entire application and prevents common reactivity issues.
+
 ### Authentication Flow
 
 ```mermaid

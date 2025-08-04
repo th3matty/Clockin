@@ -37,6 +37,12 @@ const routes: RouteRecordRaw[] = [
     meta: { requiresAuth: true, requiresRole: 'employee' }
   },
   {
+    path: '/employee/calendar',
+    name: 'employee-calendar',
+    component: () => import('@/views/EmployeeCalendarView.vue'),
+    meta: { requiresAuth: true, requiresRole: 'employee' }
+  },
+  {
     path: '/admin',
     name: 'admin',
     component: () => import('@/views/AdminView.vue'),

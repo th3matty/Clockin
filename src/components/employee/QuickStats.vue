@@ -130,7 +130,7 @@
           <svg class="w-5 h-5 text-gray-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
           </svg>
-          View Calendar
+          Holiday Calendar
         </router-link>
         
         <router-link
@@ -158,9 +158,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useAuth } from '@/composables/useAuth'
 import { useTimeEntries } from '@/composables/useTimeEntries'
+import { useHolidayRequests } from '@/composables/useHolidayRequests'
 
 // Emits
 defineEmits<{
@@ -170,6 +171,7 @@ defineEmits<{
 // Composables
 const { user } = useAuth()
 const { weeklyHours, monthlyHours, todayEntry } = useTimeEntries()
+const { remainingHolidayDays, usedHolidayDays, fetchHolidayRequests } = useHolidayRequests()
 
 // Computed
 const expectedDailyHours = computed(() => {
@@ -208,14 +210,19 @@ const monthlyProgress = computed(() => {
 const totalHolidays = computed(() => user.value?.holiday_allowance || 25)
 
 const remainingHolidays = computed(() => {
-  // TODO: Calculate actual remaining holidays from holiday requests
-  // For now, return the total allowance
-  return totalHolidays.value
+  const remaining = remainingHolidayDays.value
+  const used = usedHolidayDays.value
+  console.log('🔍 QuickStats: remainingHolidayDays:', remaining)
+  console.log('🔍 QuickStats: usedHolidayDays:', used)
+  return remaining ?? totalHolidays.value
 })
 
 const holidayProgress = computed(() => {
   if (totalHolidays.value === 0) return 0
-  return (remainingHolidays.value / totalHolidays.value) * 100
+  const remaining = remainingHolidays.value ?? 0
+  const progress = (remaining / totalHolidays.value) * 100
+  console.log('🔍 QuickStats: holidayProgress calculation:', { remaining, total: totalHolidays.value, progress })
+  return progress
 })
 
 const todayStatus = computed(() => {
@@ -243,5 +250,10 @@ const todayStatus = computed(() => {
       color: 'bg-blue-100 text-blue-800'
     }
   }
+})
+
+// Lifecycle
+onMounted(async () => {
+  await fetchHolidayRequests()
 })
 </script>
