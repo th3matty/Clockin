@@ -8,19 +8,48 @@ import type {
   DetailedApiResponse 
 } from '@/types'
 
+// Global state to prevent concurrent fetches across all instances
+let globalFetchPromise: Promise<DetailedApiResponse<TimeEntry[]>> | null = null
+let globalLoading = ref(false)
+let globalTimeEntries = ref<TimeEntry[]>([])
+
+// Safety mechanism to reset stuck loading states
+let loadingResetTimeout: NodeJS.Timeout | null = null
+
+function resetLoadingIfStuck() {
+  if (loadingResetTimeout) {
+    clearTimeout(loadingResetTimeout)
+  }
+  
+  loadingResetTimeout = setTimeout(() => {
+    if (globalLoading.value) {
+      console.warn('⚠️ useTimeEntries: Loading state was stuck, resetting...')
+      globalLoading.value = false
+      globalFetchPromise = null
+    }
+  }, 15000) // 15 second safety timeout
+}
+
+function clearLoadingTimeout() {
+  if (loadingResetTimeout) {
+    clearTimeout(loadingResetTimeout)
+    loadingResetTimeout = null
+  }
+}
+
 export function useTimeEntries() {
   const { user } = useAuth()
   
   // State
-  const loading = ref(false)
+  const loading = globalLoading
   const error = ref<string | null>(null)
-  const timeEntries = ref<TimeEntry[]>([])
+  const timeEntries = globalTimeEntries
   const currentEntry = ref<TimeEntry | null>(null)
 
   // Computed
   const todayEntry = computed(() => {
     const today = new Date().toISOString().split('T')[0]
-    return timeEntries.value.find(entry => entry.date === today) || null
+    return globalTimeEntries.value.find(entry => entry.date === today) || null
   })
 
   const weeklyHours = computed(() => {
@@ -33,7 +62,7 @@ export function useTimeEntries() {
     const startDate = startOfWeek.toISOString().split('T')[0]
     const endDate = endOfWeek.toISOString().split('T')[0]
 
-    return timeEntries.value
+    return globalTimeEntries.value
       .filter(entry => entry.date >= startDate && entry.date <= endDate)
       .reduce((total, entry) => total + entry.total_hours, 0)
   })
@@ -46,7 +75,7 @@ export function useTimeEntries() {
     const startDate = startOfMonth.toISOString().split('T')[0]
     const endDate = endOfMonth.toISOString().split('T')[0]
 
-    return timeEntries.value
+    return globalTimeEntries.value
       .filter(entry => entry.date >= startDate && entry.date <= endDate)
       .reduce((total, entry) => total + entry.total_hours, 0)
   })
@@ -62,9 +91,45 @@ export function useTimeEntries() {
       }
     }
 
+    // If there's already a fetch in progress, return that promise
+    if (globalFetchPromise) {
+      console.log('⏳ useTimeEntries: Fetch already in progress, returning existing promise')
+      try {
+        return await globalFetchPromise
+      } catch (err) {
+        // If the existing promise fails, clear it and allow a new fetch
+        console.log('❌ useTimeEntries: Existing promise failed, clearing for retry')
+        globalFetchPromise = null
+        throw err
+      }
+    }
+
+    // Create the fetch promise
+    globalFetchPromise = performFetch(startDate, endDate)
+    
     try {
-      loading.value = true
+      const result = await globalFetchPromise
+      return result
+    } catch (err) {
+      // Clear the promise on error so subsequent calls can retry
+      globalFetchPromise = null
+      throw err
+    } finally {
+      // Clear the promise when done (success case)
+      if (globalFetchPromise) {
+        globalFetchPromise = null
+      }
+    }
+  }
+
+  async function performFetch(startDate?: string, endDate?: string): Promise<DetailedApiResponse<TimeEntry[]>> {
+    try {
+      console.log('🔄 useTimeEntries: Starting fetch, setting loading to true')
+      globalLoading.value = true
       error.value = null
+      
+      // Start safety timeout
+      resetLoadingIfStuck()
 
       let query = supabase
         .from('time_entries')
@@ -79,9 +144,13 @@ export function useTimeEntries() {
         query = query.lte('date', endDate)
       }
 
+      console.log('📡 useTimeEntries: Executing query...')
+      
       const { data, error: fetchError } = await query
+      console.log('📥 useTimeEntries: Query completed:', { data: data?.length, error: fetchError })
 
       if (fetchError) {
+        console.error('❌ useTimeEntries: Fetch error:', fetchError)
         error.value = fetchError.message
         return {
           data: null,
@@ -94,7 +163,8 @@ export function useTimeEntries() {
         }
       }
 
-      timeEntries.value = data || []
+      globalTimeEntries.value = data || []
+      console.log('✅ useTimeEntries: Data updated, entries count:', globalTimeEntries.value.length)
 
       return {
         data: data || [],
@@ -104,6 +174,7 @@ export function useTimeEntries() {
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch time entries'
+      console.error('❌ useTimeEntries: Exception in fetchTimeEntries:', err)
       error.value = errorMessage
       
       return {
@@ -113,7 +184,9 @@ export function useTimeEntries() {
         success: false
       }
     } finally {
-      loading.value = false
+      console.log('🏁 useTimeEntries: Finally block - setting loading to false')
+      globalLoading.value = false
+      clearLoadingTimeout()
     }
   }
 
@@ -161,9 +234,9 @@ export function useTimeEntries() {
 
       console.log('Time entry created:', data)
 
-      // Add to local state
+      // Add to global state
       if (data) {
-        timeEntries.value.unshift(data)
+        globalTimeEntries.value.unshift(data)
         currentEntry.value = data
       }
 
@@ -233,11 +306,11 @@ export function useTimeEntries() {
 
       console.log('Time entry updated:', data)
 
-      // Update local state
+      // Update global state
       if (data) {
-        const index = timeEntries.value.findIndex(entry => entry.id === entryId)
+        const index = globalTimeEntries.value.findIndex(entry => entry.id === entryId)
         if (index !== -1) {
-          timeEntries.value[index] = data
+          globalTimeEntries.value[index] = data
         }
         if (currentEntry.value?.id === entryId) {
           currentEntry.value = data
@@ -299,8 +372,8 @@ export function useTimeEntries() {
         }
       }
 
-      // Remove from local state
-      timeEntries.value = timeEntries.value.filter(entry => entry.id !== entryId)
+      // Remove from global state
+      globalTimeEntries.value = globalTimeEntries.value.filter(entry => entry.id !== entryId)
       if (currentEntry.value?.id === entryId) {
         currentEntry.value = null
       }
@@ -379,9 +452,9 @@ export function useTimeEntries() {
 
   return {
     // State
-    loading: computed(() => loading.value),
+    loading: computed(() => globalLoading.value),
     error: computed(() => error.value),
-    timeEntries: computed(() => timeEntries.value),
+    timeEntries: computed(() => globalTimeEntries.value),
     currentEntry: computed(() => currentEntry.value),
     todayEntry,
     weeklyHours,

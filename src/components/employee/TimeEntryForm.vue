@@ -190,6 +190,7 @@ const { user } = useAuth()
 const { 
   loading, 
   error, 
+  timeEntries,
   todayEntry, 
   createTimeEntry, 
   updateTimeEntry, 
@@ -204,6 +205,33 @@ const {
 const selectedDate = ref(new Date().toISOString().split('T')[0])
 const showSuccess = ref(false)
 const existingEntry = ref(todayEntry.value)
+
+// Safety mechanism to prevent stuck loading states
+let loadingTimeout: NodeJS.Timeout | null = null
+
+// Watch loading state and set a timeout to reset it if it gets stuck
+watch(loading, (isLoading) => {
+  if (isLoading) {
+    console.log('⏰ TimeEntryForm: Loading started, setting 10s timeout')
+    // Clear any existing timeout
+    if (loadingTimeout) {
+      clearTimeout(loadingTimeout)
+    }
+    // Set a 10-second timeout to reset loading state if it gets stuck
+    loadingTimeout = setTimeout(() => {
+      console.log('⚠️ TimeEntryForm: Loading timeout reached, this might indicate a stuck state')
+      // Note: We don't force reset the loading state here as it's managed by the composable
+      // But we log it for debugging
+    }, 10000)
+  } else {
+    console.log('✅ TimeEntryForm: Loading completed')
+    // Clear timeout when loading completes normally
+    if (loadingTimeout) {
+      clearTimeout(loadingTimeout)
+      loadingTimeout = null
+    }
+  }
+})
 
 const formData = ref<TimeEntryFormData>({
   start_time: '09:00',
@@ -260,14 +288,35 @@ function initializeFormData() {
 async function handleDateChange() {
   clearError()
   
-  // Fetch entries to check if there's an existing entry for the selected date
-  await fetchTimeEntries(selectedDate.value, selectedDate.value)
-  
-  // Find entry for selected date
-  const entry = todayEntry.value // This will be updated after fetch
-  existingEntry.value = entry
-  
-  initializeFormData()
+  try {
+    console.log('🔄 TimeEntryForm: Date changed to:', selectedDate.value)
+    
+    // Check if we already have entries loaded that include this date
+    const existingEntryForDate = timeEntries.value.find(entry => entry.date === selectedDate.value)
+    
+    if (existingEntryForDate) {
+      console.log('📝 TimeEntryForm: Found existing entry in cache:', existingEntryForDate)
+      existingEntry.value = existingEntryForDate
+      initializeFormData()
+      return
+    }
+    
+    // Only fetch if we don't have the entry in cache
+    console.log('🔄 TimeEntryForm: Fetching entries for date:', selectedDate.value)
+    const result = await fetchTimeEntries(selectedDate.value, selectedDate.value)
+    
+    console.log('📥 TimeEntryForm: Fetch result:', result)
+    
+    // Find entry for selected date after fetch
+    const entry = timeEntries.value.find(entry => entry.date === selectedDate.value)
+    existingEntry.value = entry || null
+    
+    console.log('📝 TimeEntryForm: Final existing entry:', existingEntry.value)
+    
+    initializeFormData()
+  } catch (err) {
+    console.error('❌ TimeEntryForm: Error in handleDateChange:', err)
+  }
 }
 
 async function handleSubmit() {
@@ -330,7 +379,10 @@ async function handleDelete() {
 
 // Watchers
 watch(selectedDate, () => {
-  handleDateChange()
+  // Only trigger date change if it's not the initial mount
+  if (selectedDate.value !== new Date().toISOString().split('T')[0]) {
+    handleDateChange()
+  }
 })
 
 watch(error, (newError) => {
@@ -341,9 +393,26 @@ watch(error, (newError) => {
 
 // Lifecycle
 onMounted(async () => {
-  // Fetch today's entries on mount
-  await fetchTimeEntries()
-  existingEntry.value = todayEntry.value
-  initializeFormData()
+  console.log('🚀 TimeEntryForm: Component mounted, fetching entries...')
+  
+  try {
+    // Fetch entries for current month to have a good cache
+    const today = new Date()
+    const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1).toISOString().split('T')[0]
+    const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).toISOString().split('T')[0]
+    
+    const result = await fetchTimeEntries(startOfMonth, endOfMonth)
+    console.log('📥 TimeEntryForm: Mount fetch result:', result)
+    
+    // Find today's entry
+    existingEntry.value = timeEntries.value.find(entry => entry.date === selectedDate.value) || null
+    initializeFormData()
+    
+    console.log('✅ TimeEntryForm: Initialization complete')
+  } catch (err) {
+    console.error('❌ TimeEntryForm: Error during mount:', err)
+    // Initialize with defaults even if fetch fails
+    initializeFormData()
+  }
 })
 </script>
