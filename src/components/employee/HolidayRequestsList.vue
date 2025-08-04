@@ -156,6 +156,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
+import { format, parseISO } from 'date-fns'
 import { useAuth } from '@/composables/useAuth'
 import { useHolidayRequests } from '@/composables/useHolidayRequests'
 import type { HolidayRequest } from '@/types'
@@ -233,24 +234,12 @@ function getStatusText(status: string): string {
 }
 
 function formatDateRange(startDate: string, endDate: string): string {
-  // Parse dates as local dates to avoid timezone shifts
-  const parseLocalDate = (dateStr: string) => {
-    const [year, month, day] = dateStr.split('-').map(Number)
-    return new Date(year, month - 1, day) // month is 0-indexed
-  }
+  // Use date-fns to parse and format dates properly
+  const start = parseISO(startDate)
+  const end = parseISO(endDate)
   
-  const start = parseLocalDate(startDate)
-  const end = parseLocalDate(endDate)
-  
-  const startFormatted = start.toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric'
-  })
-  
-  const endFormatted = end.toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric'
-  })
+  const startFormatted = format(start, 'MMM d')
+  const endFormatted = format(end, 'MMM d')
   
   if (startDate === endDate) {
     return startFormatted

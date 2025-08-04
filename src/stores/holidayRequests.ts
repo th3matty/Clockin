@@ -1,12 +1,13 @@
 import { defineStore } from 'pinia'
 import { ref, computed, readonly } from 'vue'
+import { getYear, parseISO, isWithinInterval } from 'date-fns'
 import { supabase } from '@/utils/supabase'
 import { useAuth } from '@/composables/useAuth'
-import type { 
-  HolidayRequest, 
+import type {
+  HolidayRequest,
   HolidayRequestInput,
   HolidayRequestFormData,
-  DetailedApiResponse 
+  DetailedApiResponse
 } from '@/types'
 
 export const useHolidayRequestsStore = defineStore('holidayRequests', () => {
@@ -14,22 +15,22 @@ export const useHolidayRequestsStore = defineStore('holidayRequests', () => {
   const loading = ref(false)
   const error = ref<string | null>(null)
   const holidayRequests = ref<HolidayRequest[]>([])
-  
+
   console.log('🏪 Store: Holiday requests store initialized')
-  
+
   // Get user reactively
   const { user } = useAuth()
 
   // Computed
-  const pendingRequests = computed(() => 
+  const pendingRequests = computed(() =>
     holidayRequests.value.filter(request => request.status === 'pending')
   )
 
-  const approvedRequests = computed(() => 
+  const approvedRequests = computed(() =>
     holidayRequests.value.filter(request => request.status === 'approved')
   )
 
-  const deniedRequests = computed(() => 
+  const deniedRequests = computed(() =>
     holidayRequests.value.filter(request => request.status === 'denied')
   )
 
@@ -37,11 +38,11 @@ export const useHolidayRequestsStore = defineStore('holidayRequests', () => {
     const currentYear = new Date().getFullYear()
     const approved = approvedRequests.value
     const currentYearApproved = approved.filter(request => {
-      const [year] = request.start_date.split('-').map(Number)
-      return year === currentYear
+      const requestYear = getYear(parseISO(request.start_date))
+      return requestYear === currentYear
     })
     const totalUsed = currentYearApproved.reduce((total, request) => total + request.days_requested, 0)
-    
+
     console.log('🔍 Store: usedHolidayDays calculation:', {
       currentYear,
       totalRequests: holidayRequests.value.length,
@@ -49,7 +50,7 @@ export const useHolidayRequestsStore = defineStore('holidayRequests', () => {
       currentYearApproved: currentYearApproved.length,
       totalUsed
     })
-    
+
     return totalUsed
   })
 
@@ -57,13 +58,13 @@ export const useHolidayRequestsStore = defineStore('holidayRequests', () => {
     const totalAllowance = user.value?.holiday_allowance || 25
     const used = usedHolidayDays.value
     const remaining = Math.max(0, totalAllowance - used)
-    
+
     console.log('🔍 Store: remainingHolidayDays calculation:', {
       totalAllowance,
       used,
       remaining
     })
-    
+
     return remaining
   })
 
@@ -71,7 +72,7 @@ export const useHolidayRequestsStore = defineStore('holidayRequests', () => {
   async function fetchHolidayRequests(year?: number): Promise<DetailedApiResponse<HolidayRequest[]>> {
     console.log('🔍 Store: fetchHolidayRequests called with year:', year)
     console.log('👤 Store: Current user:', user.value)
-    
+
     if (!user.value) {
       console.log('❌ Store: No user authenticated')
       return {
@@ -136,7 +137,7 @@ export const useHolidayRequestsStore = defineStore('holidayRequests', () => {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch holiday requests'
       error.value = errorMessage
-      
+
       return {
         data: null,
         error: { message: errorMessage },
@@ -223,7 +224,7 @@ export const useHolidayRequestsStore = defineStore('holidayRequests', () => {
       const errorMessage = err instanceof Error ? err.message : 'Failed to create holiday request'
       console.error('❌ Create holiday request error:', err)
       error.value = errorMessage
-      
+
       return {
         data: null,
         error: { message: errorMessage },
@@ -238,7 +239,7 @@ export const useHolidayRequestsStore = defineStore('holidayRequests', () => {
 
   async function cancelHolidayRequest(requestId: string): Promise<DetailedApiResponse<boolean>> {
     console.log('🗑️ Store: cancelHolidayRequest called for:', requestId)
-    
+
     if (!user.value) {
       console.log('❌ Store: Not authenticated')
       return {
@@ -292,7 +293,7 @@ export const useHolidayRequestsStore = defineStore('holidayRequests', () => {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to cancel holiday request'
       error.value = errorMessage
-      
+
       return {
         data: false,
         error: { message: errorMessage },
@@ -306,22 +307,17 @@ export const useHolidayRequestsStore = defineStore('holidayRequests', () => {
 
   function calculateBusinessDays(startDate: string, endDate: string): number {
     console.log('🧮 calculateBusinessDays called with:', { startDate, endDate })
-    
-    const parseLocalDate = (dateStr: string) => {
-      const [year, month, day] = dateStr.split('-').map(Number)
-      return new Date(year, month - 1, day)
-    }
-    
-    const start = parseLocalDate(startDate)
-    const end = parseLocalDate(endDate)
-    
+
+    const start = parseISO(startDate)
+    const end = parseISO(endDate)
+
     console.log('📅 Parsed dates:', { start, end })
-    
+
     if (isNaN(start.getTime()) || isNaN(end.getTime())) {
       console.error('❌ Invalid dates provided')
       return 0
     }
-    
+
     let days = 0
     const current = new Date(start)
 
@@ -350,17 +346,9 @@ export const useHolidayRequestsStore = defineStore('holidayRequests', () => {
     }
 
     if (data.start_date && data.end_date) {
-      const parseLocalDate = (dateInput: Date | string) => {
-        if (dateInput instanceof Date) {
-          return dateInput
-        }
-        const [year, month, day] = dateInput.split('-').map(Number)
-        return new Date(year, month - 1, day)
-      }
-      
-      const start = parseLocalDate(data.start_date)
-      const end = parseLocalDate(data.end_date)
-      
+      const start = data.start_date instanceof Date ? data.start_date : parseISO(data.start_date)
+      const end = data.end_date instanceof Date ? data.end_date : parseISO(data.end_date)
+
       if (start > end) {
         errors.push('End date must be on or after start date')
       }
@@ -368,18 +356,17 @@ export const useHolidayRequestsStore = defineStore('holidayRequests', () => {
       // Check if start date is in the past
       const today = new Date()
       today.setHours(0, 0, 0, 0)
-      
+
       if (start < today) {
         errors.push('Start date cannot be in the past')
       }
 
       // Calculate days and check against remaining allowance
       if (start <= end) {
-        const daysRequested = calculateBusinessDays(
-          data.start_date.toISOString().split('T')[0],
-          data.end_date.toISOString().split('T')[0]
-        )
-        
+        const startDateStr = data.start_date instanceof Date ? data.start_date.toISOString().split('T')[0] : data.start_date
+        const endDateStr = data.end_date instanceof Date ? data.end_date.toISOString().split('T')[0] : data.end_date
+        const daysRequested = calculateBusinessDays(startDateStr, endDateStr)
+
         if (daysRequested > remainingHolidayDays.value) {
           errors.push(`Not enough holiday days remaining. You have ${remainingHolidayDays.value} days left.`)
         }
@@ -393,23 +380,18 @@ export const useHolidayRequestsStore = defineStore('holidayRequests', () => {
     return errors
   }
 
-  function getHolidayStatusForDate(date: string): 'approved' | 'pending' | null {
-    const parseLocalDate = (dateStr: string) => {
-      const [year, month, day] = dateStr.split('-').map(Number)
-      return new Date(year, month - 1, day)
-    }
-    
-    const dateObj = parseLocalDate(date)
-    
+  function getHolidayStatusForDate(date: string): 'approved' | 'pending' | 'denied' | null {
+    const targetDate = parseISO(date)
+
     for (const request of holidayRequests.value) {
-      const startDate = parseLocalDate(request.start_date)
-      const endDate = parseLocalDate(request.end_date)
-      
-      if (dateObj >= startDate && dateObj <= endDate) {
-        return request.status === 'approved' ? 'approved' : 'pending'
+      const startDate = parseISO(request.start_date)
+      const endDate = parseISO(request.end_date)
+
+      if (isWithinInterval(targetDate, { start: startDate, end: endDate })) {
+        return request.status as 'approved' | 'pending' | 'denied'
       }
     }
-    
+
     return null
   }
 
@@ -422,14 +404,14 @@ export const useHolidayRequestsStore = defineStore('holidayRequests', () => {
     loading: readonly(loading),
     error: readonly(error),
     holidayRequests: readonly(holidayRequests),
-    
+
     // Getters
     pendingRequests,
     approvedRequests,
     deniedRequests,
     usedHolidayDays,
     remainingHolidayDays,
-    
+
     // Actions
     fetchHolidayRequests,
     createHolidayRequest,

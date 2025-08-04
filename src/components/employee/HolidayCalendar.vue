@@ -82,7 +82,7 @@
             :class="[
               'absolute bottom-1 left-1 right-1 h-1 rounded-full',
               day.holidayStatus === 'approved' ? 'bg-green-500' : 
-              day.holidayStatus === 'denied' ? 'bg-red-500' : 'bg-blue-500'
+              day.holidayStatus === 'denied' ? 'bg-red-400' : 'bg-blue-500'
             ]"
           ></div>
         </div>
@@ -122,6 +122,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
+import { format } from 'date-fns'
 import { useAuth } from '@/composables/useAuth'
 import { useHolidayRequests } from '@/composables/useHolidayRequests'
 import HolidayRequestModal from './HolidayRequestModal.vue'
@@ -178,7 +179,8 @@ const calendarDays = computed((): CalendarDay[] => {
   const current = new Date(startDate)
 
   while (current <= endDate) {
-    const dateString = current.toISOString().split('T')[0]
+    // Use date-fns format to avoid timezone issues
+    const dateString = format(current, 'yyyy-MM-dd')
     const holidayStatus = getHolidayStatusForDate(dateString)
     
     days.push({
@@ -210,7 +212,7 @@ function getHolidayClasses(status: 'approved' | 'pending' | 'denied'): string {
     case 'approved':
       return 'bg-green-100 border-green-300 text-green-900'
     case 'denied':
-      return 'bg-red-100 border-red-300 text-red-900'
+      return 'bg-red-50 border-red-200 text-red-800'
     case 'pending':
     default:
       return 'bg-blue-100 border-blue-300 text-blue-900'
