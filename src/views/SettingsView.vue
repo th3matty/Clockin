@@ -84,12 +84,27 @@
           <!-- Working Hours Section -->
           <div class="bg-white rounded-lg shadow">
             <div class="px-6 py-4 border-b border-gray-200">
-              <h2 class="text-lg font-medium text-gray-900">Default Working Hours</h2>
-              <p class="text-sm text-gray-600 mt-1">Set your default start time, lunch break, and end time</p>
+              <h2 class="text-lg font-medium text-gray-900">Working Hours & Overtime Settings</h2>
+              <p class="text-sm text-gray-600 mt-1">Set your weekly target hours and default daily schedule</p>
             </div>
 
             <div class="px-6 py-6">
               <form @submit.prevent="handleSettingsUpdate" class="space-y-6">
+                <!-- Weekly Target Hours -->
+                <div class="mb-6">
+                  <label for="weekly_target_hours" class="block text-sm font-medium text-gray-700 mb-2">
+                    Weekly Target Hours
+                  </label>
+                  <div class="max-w-xs">
+                    <input id="weekly_target_hours" v-model.number="settingsForm.weekly_target_hours" type="number"
+                      min="20" max="60" step="0.5" required
+                      class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+                      :disabled="settingsLoading" @input="settingsFormInitialized = true"
+                      @change="settingsFormInitialized = true" />
+                    <p class="text-xs text-gray-500 mt-1">Your contracted weekly working hours (20-60 hours)</p>
+                  </div>
+                </div>
+
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <!-- Start Time -->
                   <div>
@@ -131,11 +146,15 @@
                 <div class="bg-gray-50 rounded-lg p-4">
                   <h3 class="text-sm font-medium text-gray-900 mb-2">Preview</h3>
                   <div class="text-sm text-gray-600 space-y-1">
+                    <p><span class="font-medium">Weekly Target:</span> {{ settingsForm.weekly_target_hours || 40 }} hours/week
+                    </p>
+                    <p><span class="font-medium">Daily Target:</span> {{ ((settingsForm.weekly_target_hours || 40) /
+                      5).toFixed(1) }} hours/day (5-day week)</p>
                     <p><span class="font-medium">Working Day:</span> {{ settingsForm.default_start_time }} - {{
                       settingsForm.default_end_time }}</p>
                     <p><span class="font-medium">Lunch Break:</span> {{ settingsForm.default_lunch_minutes }} minutes
                     </p>
-                    <p><span class="font-medium">Total Working Hours:</span> {{ calculateWorkingHours() }} hours</p>
+                    <p><span class="font-medium">Daily Working Hours:</span> {{ calculateWorkingHours() }} hours</p>
                   </div>
                 </div>
 
@@ -227,7 +246,8 @@ const profileForm = ref({
 const settingsForm = ref<UserSettingsFormData>({
   default_start_time: '09:00',
   default_lunch_minutes: 60,
-  default_end_time: '17:00'
+  default_end_time: '17:00',
+  weekly_target_hours: 40.0
 })
 
 // Loading states
@@ -313,7 +333,8 @@ async function handleSettingsUpdate(event: { preventDefault: () => void }) {
     const result = await updateSettings({
       default_start_time: settingsForm.value.default_start_time,
       default_lunch_minutes: settingsForm.value.default_lunch_minutes,
-      default_end_time: settingsForm.value.default_end_time
+      default_end_time: settingsForm.value.default_end_time,
+      weekly_target_hours: settingsForm.value.weekly_target_hours
     })
 
     if (result.success) {
@@ -347,7 +368,8 @@ function initializeForms() {
       settingsForm.value = {
         default_start_time: startTime.slice(0, 5), // Convert HH:MM:SS to HH:MM
         default_lunch_minutes: lunchMinutes,
-        default_end_time: endTime.slice(0, 5) // Convert HH:MM:SS to HH:MM
+        default_end_time: endTime.slice(0, 5), // Convert HH:MM:SS to HH:MM
+        weekly_target_hours: currentSettings.value.weekly_target_hours ?? 40.0
       }
       // Only mark as initialized if we have valid data
       settingsFormInitialized.value = true

@@ -13,15 +13,19 @@ This implementation plan focuses on the simplified overtime tracking approach wi
   - Update TypeScript interfaces to include new fields
   - _Requirements: 1.4, 2.3, 5.1, 5.2_
 
-- [ ] 2. Enhanced User Settings for Weekly Target Hours
+- [x] 2. Enhanced User Settings for Weekly Target Hours
+
+
+
   - Add "Weekly Target Hours" input field to SettingsView.vue
-  - Implement validation for reasonable hour ranges (20-60 hours)
   - Add preview calculation showing daily target hours
   - Update useUserSettings composable to handle weekly_target_hours
   - Update AuthUser interface to include weekly_target_hours field
   - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5_
 
 - [ ] 3. Overtime Calculation Service
+
+
   - Create useOvertimeCalculations composable with core calculation logic
   - Implement calculateOvertimeStats function for weekly/monthly summaries
   - Add getOvertimeStatus function for color-coding (normal/moderate/excessive)

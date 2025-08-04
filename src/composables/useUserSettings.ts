@@ -307,6 +307,13 @@ export function useUserSettings() {
       errors.push('Lunch break must be between 0 and 480 minutes')
     }
 
+    // Validate weekly target hours
+    if (settings.weekly_target_hours !== undefined) {
+      if (settings.weekly_target_hours < 20 || settings.weekly_target_hours > 60) {
+        errors.push('Weekly target hours must be between 20 and 60 hours')
+      }
+    }
+
     // Validate time range
     if (timeRegex.test(settings.default_start_time) && timeRegex.test(settings.default_end_time)) {
       const start = new Date(`2000-01-01T${settings.default_start_time}:00`)
