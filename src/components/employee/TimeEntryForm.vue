@@ -5,13 +5,9 @@
       <h2 class="text-2xl font-semibold text-gray-900 mb-2">Time Entry</h2>
       <div class="flex items-center justify-between">
         <p class="text-gray-600">{{ formatDate(selectedDate) }}</p>
-        <input
-          v-model="selectedDate"
-          type="date"
+        <input v-model="selectedDate" type="date"
           class="px-3 py-1 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-          :max="today"
-          @change="handleDateChange"
-        />
+          :max="today" @change="handleDateChange" />
       </div>
     </div>
 
@@ -24,19 +20,12 @@
           <label for="start_time" class="block text-sm font-medium text-gray-700 mb-2">
             Start Time
           </label>
-          <input
-            id="start_time"
-            v-model="formData.start_time"
-            type="time"
-            required
-            :class="[
-              'w-full px-4 py-3 border rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors',
-              validationErrors.includes('Start time must be in HH:MM format') || validationErrors.includes('End time must be after start time')
-                ? 'border-red-300 bg-red-50' 
-                : 'border-gray-300'
-            ]"
-            :disabled="loading"
-          />
+          <input id="start_time" v-model="formData.start_time" type="time" required :class="[
+            'w-full px-4 py-3 border rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors',
+            validationErrors.includes('Start time must be in HH:MM format') || validationErrors.includes('End time must be after start time')
+              ? 'border-red-300 bg-red-50'
+              : 'border-gray-300'
+          ]" :disabled="loading" />
         </div>
 
         <!-- Lunch Break -->
@@ -44,21 +33,13 @@
           <label for="lunch_minutes" class="block text-sm font-medium text-gray-700 mb-2">
             Lunch Break (minutes)
           </label>
-          <input
-            id="lunch_minutes"
-            v-model.number="formData.lunch_break_minutes"
-            type="number"
-            min="0"
-            max="480"
-            required
-            :class="[
+          <input id="lunch_minutes" v-model.number="formData.lunch_break_minutes" type="number" min="0" max="480"
+            required :class="[
               'w-full px-4 py-3 border rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors',
               validationErrors.includes('Lunch break must be between 0 and 480 minutes')
-                ? 'border-red-300 bg-red-50' 
+                ? 'border-red-300 bg-red-50'
                 : 'border-gray-300'
-            ]"
-            :disabled="loading"
-          />
+            ]" :disabled="loading" />
           <p class="text-xs text-gray-500 mt-1">0-480 minutes (0-8 hours)</p>
         </div>
 
@@ -67,19 +48,12 @@
           <label for="end_time" class="block text-sm font-medium text-gray-700 mb-2">
             End Time
           </label>
-          <input
-            id="end_time"
-            v-model="formData.end_time"
-            type="time"
-            required
-            :class="[
-              'w-full px-4 py-3 border rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors',
-              validationErrors.includes('End time must be in HH:MM format') || validationErrors.includes('End time must be after start time')
-                ? 'border-red-300 bg-red-50' 
-                : 'border-gray-300'
-            ]"
-            :disabled="loading"
-          />
+          <input id="end_time" v-model="formData.end_time" type="time" required :class="[
+            'w-full px-4 py-3 border rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors',
+            validationErrors.includes('End time must be in HH:MM format') || validationErrors.includes('End time must be after start time')
+              ? 'border-red-300 bg-red-50'
+              : 'border-gray-300'
+          ]" :disabled="loading" />
         </div>
       </div>
 
@@ -92,7 +66,7 @@
           </span>
         </div>
         <div class="text-xs text-gray-500 mt-1">
-          {{ formData.start_time }} - {{ formData.end_time }} 
+          {{ formData.start_time }} - {{ formData.end_time }}
           <span v-if="formData.lunch_break_minutes > 0">
             ({{ formData.lunch_break_minutes }}min lunch)
           </span>
@@ -104,7 +78,9 @@
         <div class="flex">
           <div class="flex-shrink-0">
             <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+              <path fill-rule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                clip-rule="evenodd" />
             </svg>
           </div>
           <div class="ml-3">
@@ -121,7 +97,9 @@
         <div class="flex">
           <div class="flex-shrink-0">
             <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+              <path fill-rule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                clip-rule="evenodd" />
             </svg>
           </div>
           <div class="ml-3">
@@ -132,29 +110,18 @@
 
       <!-- Submit Button -->
       <div class="flex justify-end space-x-3">
-        <button
-          v-if="existingEntry"
-          @click="handleDelete"
-          type="button"
-          :disabled="loading"
-          class="px-6 py-3 border border-red-300 text-red-700 rounded-lg hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-        >
+        <button v-if="existingEntry" @click="handleDelete" type="button" :disabled="loading"
+          class="px-6 py-3 border border-red-300 text-red-700 rounded-lg hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
           Delete Entry
         </button>
-        
-        <button
-          type="submit"
-          :disabled="loading || validationErrors.length > 0"
-          class="px-8 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center"
-        >
-          <svg
-            v-if="loading"
-            class="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-            fill="none"
-            viewBox="0 0 24 24"
-          >
+
+        <button type="submit" :disabled="loading || validationErrors.length > 0"
+          class="px-8 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center">
+          <svg v-if="loading" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            <path class="opacity-75" fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+            </path>
           </svg>
           {{ loading ? 'Saving...' : (existingEntry ? 'Update Entry' : 'Save Entry') }}
         </button>
@@ -166,7 +133,9 @@
       <div class="flex">
         <div class="flex-shrink-0">
           <svg class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+            <path fill-rule="evenodd"
+              d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+              clip-rule="evenodd" />
           </svg>
         </div>
         <div class="ml-3">
@@ -187,13 +156,13 @@ import type { TimeEntryFormData } from '@/types'
 
 // Composables
 const { user } = useAuth()
-const { 
-  loading, 
-  error, 
+const {
+  loading,
+  error,
   timeEntries,
-  todayEntry, 
-  createTimeEntry, 
-  updateTimeEntry, 
+  todayEntry,
+  createTimeEntry,
+  updateTimeEntry,
   deleteTimeEntry,
   calculateTotalHours,
   validateTimeEntry,
@@ -284,24 +253,24 @@ function initializeFormData() {
 
 async function handleDateChange() {
   clearError()
-  
+
   try {
     // Check if we already have entries loaded that include this date
     const existingEntryForDate = timeEntries.value.find(entry => entry.date === selectedDate.value)
-    
+
     if (existingEntryForDate) {
       existingEntry.value = existingEntryForDate
       initializeFormData()
       return
     }
-    
+
     // Only fetch if we don't have the entry in cache
     const result = await fetchTimeEntries(selectedDate.value, selectedDate.value)
-    
+
     // Find entry for selected date after fetch
     const entry = timeEntries.value.find(entry => entry.date === selectedDate.value)
     existingEntry.value = entry || null
-    
+
     initializeFormData()
   } catch (err) {
     // Handle error silently
@@ -312,7 +281,7 @@ async function handleSubmit() {
   if (validationErrors.value.length > 0) return
 
   clearError()
-  
+
   try {
     const entryData = {
       date: selectedDate.value,
@@ -331,7 +300,7 @@ async function handleSubmit() {
     if (result.success) {
       showSuccess.value = true
       existingEntry.value = result.data
-      
+
       // Hide success message after 3 seconds
       setTimeout(() => {
         showSuccess.value = false
@@ -356,7 +325,7 @@ async function handleDelete() {
       existingEntry.value = null
       initializeFormData() // Reset to defaults
       showSuccess.value = true
-      
+
       setTimeout(() => {
         showSuccess.value = false
       }, 3000)
@@ -380,6 +349,14 @@ watch(error, (newError) => {
   }
 })
 
+// Watch for user changes to update form defaults
+watch(user, () => {
+  // Only reinitialize if there's no existing entry for the current date
+  if (!existingEntry.value) {
+    initializeFormData()
+  }
+}, { deep: true })
+
 // Lifecycle
 onMounted(async () => {
   try {
@@ -387,9 +364,9 @@ onMounted(async () => {
     const today = new Date()
     const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1).toISOString().split('T')[0]
     const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).toISOString().split('T')[0]
-    
+
     const result = await fetchTimeEntries(startOfMonth, endOfMonth)
-    
+
     // Find today's entry
     existingEntry.value = timeEntries.value.find(entry => entry.date === selectedDate.value) || null
     initializeFormData()

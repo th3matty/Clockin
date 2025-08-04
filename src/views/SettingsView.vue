@@ -187,10 +187,7 @@
             </div>
           </div>
 
-          <!-- Debug: Show current state -->
-          <div class="text-xs text-gray-500 mb-2">
-            Debug: showSettingsSuccess = {{ showSettingsSuccess }}
-          </div>
+
 
           <div v-if="showSettingsSuccess" class="bg-green-50 border border-green-200 rounded-md p-4">
             <div class="flex">
@@ -302,18 +299,11 @@ async function handleSettingsUpdate() {
       default_end_time: settingsForm.value.default_end_time
     })
 
-    console.log('Settings update result:', result)
-
     if (result.success) {
-      console.log('Showing success message')
       showSettingsSuccess.value = true
-      console.log('showSettingsSuccess set to:', showSettingsSuccess.value)
       setTimeout(() => {
-        console.log('Hiding success message after 3 seconds')
         showSettingsSuccess.value = false
       }, 3000)
-    } else {
-      console.log('Update failed:', result.error)
     }
   } catch (err) {
     // Handle error silently
@@ -324,14 +314,11 @@ async function handleSettingsUpdate() {
 
 // Initialize form data
 function initializeForms() {
-  console.log('Initializing forms, loading states:', { settingsLoading: settingsLoading.value, profileLoading: profileLoading.value })
-  
   if (user.value) {
     profileForm.value.full_name = user.value.full_name
   }
 
   if (currentSettings.value && !settingsLoading.value) {
-    console.log('Setting form values from currentSettings:', currentSettings.value)
     settingsForm.value = {
       default_start_time: currentSettings.value.default_start_time,
       default_lunch_minutes: currentSettings.value.default_lunch_minutes,

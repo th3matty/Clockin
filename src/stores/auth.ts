@@ -76,7 +76,11 @@ export const useAuthStore = defineStore('auth', () => {
           email: data.email,
           full_name: data.full_name,
           role: data.role,
-          avatar_url: data.avatar_url
+          avatar_url: data.avatar_url,
+          default_start_time: data.default_start_time,
+          default_lunch_minutes: data.default_lunch_minutes,
+          default_end_time: data.default_end_time,
+          holiday_allowance: data.holiday_allowance
         }
       }
     } catch (err) {
@@ -244,7 +248,11 @@ export const useAuthStore = defineStore('auth', () => {
         user.value = {
           ...user.value,
           full_name: data.full_name,
-          avatar_url: data.avatar_url
+          avatar_url: data.avatar_url,
+          default_start_time: data.default_start_time,
+          default_lunch_minutes: data.default_lunch_minutes,
+          default_end_time: data.default_end_time,
+          holiday_allowance: data.holiday_allowance
         }
       }
 

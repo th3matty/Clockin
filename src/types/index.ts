@@ -108,6 +108,10 @@ export interface AuthUser {
   role: UserRole;
   full_name: string;
   avatar_url?: string;
+  default_start_time?: string;
+  default_lunch_minutes?: number;
+  default_end_time?: string;
+  holiday_allowance?: number;
 }
 
 export interface LoginCredentials {

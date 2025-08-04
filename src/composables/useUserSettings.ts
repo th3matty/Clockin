@@ -90,9 +90,6 @@ export function useUserSettings() {
       loading.value = true
       error.value = null
 
-      console.log('Updating user settings for user:', user.value.id)
-      console.log('Settings to update:', settings)
-
       const { data, error: updateError } = await supabase
         .from('users')
         .update({
@@ -104,8 +101,6 @@ export function useUserSettings() {
         .eq('id', user.value.id)
         .select()
         .single()
-
-      console.log('Update result:', { data, updateError })
 
       if (updateError) {
         error.value = updateError.message
@@ -165,9 +160,6 @@ export function useUserSettings() {
       uploading.value = true
       error.value = null
 
-      console.log('Starting avatar upload for user:', user.value.id)
-      console.log('File details:', { name: file.name, size: file.size, type: file.type })
-
       // Validate file
       if (!file.type.startsWith('image/')) {
         throw new Error('Please select an image file')
@@ -178,27 +170,17 @@ export function useUserSettings() {
         throw new Error('Image size must be less than 2MB')
       }
 
-      console.log('File validation passed. Size:', (file.size / 1024).toFixed(1), 'KB')
-
       // For now, skip compression to isolate the issue
       const fileToUpload = file
-      console.log('Using original file without compression for debugging')
 
       // Generate unique filename
       const fileExt = fileToUpload.name.split('.').pop() || 'jpg'
       const fileName = `${user.value.id}/${Date.now()}.${fileExt}`
 
-      console.log('Generated filename:', fileName)
-
-      // Upload to Supabase Storage with simpler approach
-      console.log('Uploading file to storage...')
-      console.log('About to call supabase.storage.from("avatars").upload()')
-
+      // Upload to Supabase Storage
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('avatars')
         .upload(fileName, fileToUpload)
-
-      console.log('Upload completed. Data:', uploadData, 'Error:', uploadError)
 
       if (uploadError) {
         throw new Error(`Upload failed: ${uploadError.message}`)
@@ -209,29 +191,22 @@ export function useUserSettings() {
       }
 
       // Get public URL
-      console.log('Getting public URL for:', uploadData.path)
       const { data: urlData } = supabase.storage
         .from('avatars')
         .getPublicUrl(uploadData.path)
-
-      console.log('Public URL data:', urlData)
 
       if (!urlData?.publicUrl) {
         throw new Error('Failed to generate public URL')
       }
 
       const avatarUrl = urlData.publicUrl
-      console.log('Generated avatar URL:', avatarUrl)
 
       // Update user profile with new avatar URL
-      console.log('Updating user profile with avatar URL...')
       const updateResult = await updateSettings({ avatar_url: avatarUrl })
 
       if (!updateResult.success) {
         throw new Error(updateResult.error?.message || 'Failed to update profile')
       }
-
-      console.log('Avatar upload completed successfully')
 
       return {
         data: avatarUrl,
