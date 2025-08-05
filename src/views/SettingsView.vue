@@ -13,7 +13,8 @@
           <div class="bg-white dark:bg-gray-800 rounded-lg shadow">
             <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
               <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">Profile Information</h2>
-              <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Update your profile photo and basic information</p>
+              <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Update your profile photo and basic information
+              </p>
             </div>
 
             <div class="px-6 py-6">
@@ -85,7 +86,8 @@
           <div class="bg-white dark:bg-gray-800 rounded-lg shadow">
             <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
               <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">Working Hours & Overtime Settings</h2>
-              <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Set your weekly target hours and default daily schedule</p>
+              <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Set your weekly target hours and default daily
+                schedule</p>
             </div>
 
             <div class="px-6 py-6">
@@ -94,7 +96,8 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                   <!-- Weekly Target Hours -->
                   <div>
-                    <label for="weekly_target_hours" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label for="weekly_target_hours"
+                      class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Weekly Target Hours
                     </label>
                     <input id="weekly_target_hours" v-model.number="settingsForm.weekly_target_hours" type="number"
@@ -102,12 +105,14 @@
                       class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
                       :disabled="settingsLoading" @input="settingsFormInitialized = true"
                       @change="settingsFormInitialized = true" />
-                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Your contracted weekly working hours (20-60 hours)</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Your contracted weekly working hours (20-60
+                      hours)</p>
                   </div>
 
                   <!-- Working Days per Week -->
                   <div>
-                    <label for="working_days_per_week" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label for="working_days_per_week"
+                      class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Working Days per Week
                     </label>
                     <select id="working_days_per_week" v-model.number="settingsForm.working_days_per_week" required
@@ -166,8 +171,10 @@
                 <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
                   <h3 class="text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">Preview</h3>
                   <div class="text-sm text-gray-600 dark:text-gray-300 space-y-1">
-                    <p><span class="font-medium">Weekly Target:</span> {{ settingsForm.weekly_target_hours || 40 }} hours/week</p>
-                    <p><span class="font-medium">Working Days:</span> {{ settingsForm.working_days_per_week || 5 }} days/week</p>
+                    <p><span class="font-medium">Weekly Target:</span> {{ settingsForm.weekly_target_hours || 40 }}
+                      hours/week</p>
+                    <p><span class="font-medium">Working Days:</span> {{ settingsForm.working_days_per_week || 5 }}
+                      days/week</p>
                     <p><span class="font-medium">Daily Target:</span> {{ calculateDailyTargetHours() }} hours/day</p>
                     <div v-if="isDailyTargetValid()" class="flex items-center text-green-600">
                       <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -177,13 +184,15 @@
                     </div>
                     <div v-else class="flex items-center text-red-600">
                       <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                        </path>
                       </svg>
                       <span class="text-xs">Daily target exceeds 10 hours - please adjust your settings</span>
                     </div>
                     <p><span class="font-medium">Working Day:</span> {{ settingsForm.default_start_time }} - {{
                       settingsForm.default_end_time }}</p>
-                    <p><span class="font-medium">Lunch Break:</span> {{ settingsForm.default_lunch_minutes }} minutes</p>
+                    <p><span class="font-medium">Lunch Break:</span> {{ settingsForm.default_lunch_minutes }} minutes
+                    </p>
                     <p><span class="font-medium">Daily Working Hours:</span> {{ calculateWorkingHours() }} hours</p>
                   </div>
                 </div>
@@ -200,7 +209,8 @@
                       </svg>
                     </div>
                     <div class="ml-3">
-                      <h3 class="text-sm font-medium text-red-800 dark:text-red-300">Please fix the following errors:</h3>
+                      <h3 class="text-sm font-medium text-red-800 dark:text-red-300">Please fix the following errors:
+                      </h3>
                       <ul class="mt-2 text-sm text-red-700 dark:text-red-400 list-disc list-inside">
                         <li v-for="error in validationErrors" :key="error">{{ error }}</li>
                       </ul>
