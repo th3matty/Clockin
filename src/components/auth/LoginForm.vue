@@ -177,9 +177,15 @@ async function handleSubmit() {
   clearError()
   
   try {
-    await login(formData.value)
+    const result = await login(formData.value)
+    
+    if (!result.success) {
+      console.error('Login failed:', result.error)
+      // Error will be displayed via the error computed property
+    }
   } catch (err) {
-    // Handle error silently
+    console.error('Login exception:', err)
+    // Error will be displayed via the error computed property
   }
 }
 

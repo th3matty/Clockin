@@ -34,31 +34,43 @@ export const useAuthStore = defineStore('auth', () => {
       const { data: { session }, error: sessionError } = await supabase.auth.getSession()
       
       if (sessionError) {
+        console.error('Session error:', sessionError)
+        initialized.value = true
         return
       }
 
-      if (session?.user) {
+      if (session?.user && !user.value) {
+        // Only load profile if we don't already have user data
         await loadUserProfile(session.user.id)
       }
 
-      // Listen for auth changes
-      supabase.auth.onAuthStateChange(async (event, session) => {
-        if (event === 'SIGNED_IN' && session?.user) {
-          await loadUserProfile(session.user.id)
-        } else if (event === 'SIGNED_OUT') {
-          user.value = null
-        }
-      })
+      // Listen for auth changes (only set up once)
+      if (!initialized.value) {
+        supabase.auth.onAuthStateChange(async (event, session) => {
+          console.log('Auth state change:', event, session?.user?.id)
+          
+          if (event === 'SIGNED_IN' && session?.user) {
+            // Only load profile if we don't already have it or it's different user
+            if (!user.value || user.value.id !== session.user.id) {
+              await loadUserProfile(session.user.id)
+            }
+          } else if (event === 'SIGNED_OUT') {
+            user.value = null
+          }
+        })
+      }
 
       initialized.value = true
     } catch (err) {
+      console.error('Auth initialization error:', err)
       error.value = 'Failed to initialize authentication'
+      initialized.value = true // Mark as initialized even on error to prevent infinite loops
     } finally {
       loading.value = false
     }
   }
 
-  async function loadUserProfile(userId: string) {
+  async function loadUserProfile(userId: string): Promise<boolean> {
     try {
       const { data, error: profileError } = await supabase
         .from('users')
@@ -67,7 +79,8 @@ export const useAuthStore = defineStore('auth', () => {
         .single()
 
       if (profileError) {
-        return
+        console.error('Profile loading error:', profileError)
+        return false
       }
 
       if (data) {
@@ -85,9 +98,12 @@ export const useAuthStore = defineStore('auth', () => {
           working_days_per_week: data.working_days_per_week,
           overtime_balance: data.overtime_balance
         }
+        return true
       }
+      return false
     } catch (err) {
-      // Handle error silently
+      console.error('Profile loading exception:', err)
+      return false
     }
   }
 
@@ -96,10 +112,17 @@ export const useAuthStore = defineStore('auth', () => {
       loading.value = true
       error.value = null
 
-      const { data, error: authError } = await supabase.auth.signInWithPassword({
+      // Add timeout to prevent hanging
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('Login timeout')), 10000) // 10 second timeout
+      })
+
+      const loginPromise = supabase.auth.signInWithPassword({
         email: credentials.email,
         password: credentials.password
       })
+
+      const { data, error: authError } = await Promise.race([loginPromise, timeoutPromise]) as any
 
       if (authError) {
         error.value = authError.message
@@ -115,7 +138,29 @@ export const useAuthStore = defineStore('auth', () => {
       }
 
       if (data.user) {
-        await loadUserProfile(data.user.id)
+        // Load user profile with timeout
+        const profilePromise = loadUserProfile(data.user.id)
+        const profileTimeoutPromise = new Promise((_, reject) => {
+          setTimeout(() => reject(new Error('Profile loading timeout')), 5000)
+        })
+
+        try {
+          await Promise.race([profilePromise, profileTimeoutPromise])
+        } catch (profileError) {
+          console.error('Profile loading failed:', profileError)
+          // Continue anyway - the auth state change handler will retry
+        }
+
+        // Ensure user is set before returning
+        if (!user.value) {
+          // Fallback: create minimal user object from auth data
+          user.value = {
+            id: data.user.id,
+            email: data.user.email || '',
+            full_name: data.user.user_metadata?.full_name || '',
+            role: data.user.user_metadata?.role || 'employee'
+          } as AuthUser
+        }
       }
 
       return {

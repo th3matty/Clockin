@@ -21,9 +21,14 @@ export function useAuth() {
     const result = await authStore.login(credentials)
 
     if (result.success && result.data) {
-      // Redirect based on user role
-      const redirectPath = result.data.role === 'admin' ? '/admin' : '/employee'
-      await router.push(redirectPath)
+      // Wait a bit for the auth state to settle
+      await new Promise(resolve => setTimeout(resolve, 100))
+      
+      // Ensure user is properly set before navigation
+      if (authStore.user) {
+        const redirectPath = authStore.user.role === 'admin' ? '/admin' : '/employee'
+        await router.push(redirectPath)
+      }
     }
 
     return result

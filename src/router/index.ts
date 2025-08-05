@@ -62,12 +62,17 @@ const router = createRouter({
 })
 
 // Navigation guards
-router.beforeEach(async (to, _from, next) => {
+router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore()
 
   // Initialize auth if not already done
   if (!authStore.initialized) {
-    await authStore.initialize()
+    try {
+      await authStore.initialize()
+    } catch (error) {
+      console.error('Router guard initialization failed:', error)
+      // Continue anyway to prevent blocking navigation
+    }
   }
 
   const isAuthenticated = authStore.isAuthenticated
@@ -75,8 +80,11 @@ router.beforeEach(async (to, _from, next) => {
 
   // Handle routes that require guest access (login, signup)
   if (to.meta.requiresGuest && isAuthenticated) {
-    const redirectPath = userRole === 'admin' ? '/admin' : '/employee'
-    return next(redirectPath)
+    // Only redirect if not coming from a login attempt
+    if (from.name !== 'login') {
+      const redirectPath = userRole === 'admin' ? '/admin' : '/employee'
+      return next(redirectPath)
+    }
   }
 
   // Handle routes that require authentication
@@ -90,9 +98,11 @@ router.beforeEach(async (to, _from, next) => {
       return next('/login')
     }
 
-    // Redirect to appropriate dashboard
+    // Only redirect if not already on the correct path
     const redirectPath = userRole === 'admin' ? '/admin' : '/employee'
-    return next(redirectPath)
+    if (to.path !== redirectPath) {
+      return next(redirectPath)
+    }
   }
 
   next()
