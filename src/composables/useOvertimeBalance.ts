@@ -29,7 +29,7 @@ export function useOvertimeBalance() {
   const overtimeBalance = computed(() => user.value?.overtime_balance || 0)
   const workingDaysPerWeek = computed(() => user.value?.working_days_per_week || 5)
   const weeklyTarget = computed(() => user.value?.weekly_target_hours || 40)
-  
+
   const dailyTarget = computed(() => {
     return calculateDailyTarget(weeklyTarget.value, workingDaysPerWeek.value)
   })
@@ -70,17 +70,23 @@ export function useOvertimeBalance() {
   // Display formatting functions
   function formatOvertimeBalance(hours: number): string {
     const absHours = Math.abs(hours)
-    
-    // If less than 0.5 hours, show in minutes
-    if (absHours < 0.5 && absHours > 0) {
+    const sign = hours >= 0 ? '+' : '-'
+
+    // If less than 1 hour, show in minutes only
+    if (absHours < 1) {
       const minutes = Math.round(absHours * 60)
-      const sign = hours >= 0 ? '+' : '-'
       return `${sign}${minutes}min`
     }
-    
-    // Otherwise show in hours with 1 decimal place
-    const sign = hours >= 0 ? '+' : ''
-    return `${sign}${hours.toFixed(1)}h`
+
+    // If 1 hour or more, show hours and minutes format
+    const wholeHours = Math.floor(absHours)
+    const remainingMinutes = Math.round((absHours - wholeHours) * 60)
+
+    if (remainingMinutes === 0) {
+      return `${sign}${wholeHours}h`
+    } else {
+      return `${sign}${wholeHours}h ${remainingMinutes}min`
+    }
   }
 
   // Core calculation functions
@@ -115,20 +121,20 @@ export function useOvertimeBalance() {
   // Validation functions
   function validateWorkingDaysSettings(weeklyHours: number, workingDays: number): string[] {
     const errors: string[] = []
-    
+
     if (workingDays < 1 || workingDays > 7) {
       errors.push('Working days must be between 1 and 7 days per week')
     }
-    
+
     if (weeklyHours < 20 || weeklyHours > 60) {
       errors.push('Weekly target hours must be between 20 and 60 hours')
     }
-    
+
     const dailyTarget = calculateDailyTarget(weeklyHours, workingDays)
     if (dailyTarget > 12) {
       errors.push(`Daily target of ${dailyTarget.toFixed(1)} hours exceeds 12-hour limit. Please increase working days or reduce weekly hours.`)
     }
-    
+
     return errors
   }
 
@@ -169,7 +175,7 @@ export function useOvertimeBalance() {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to update overtime balance'
       error.value = errorMessage
-      
+
       return {
         data: false,
         error: { message: errorMessage },
@@ -195,7 +201,7 @@ export function useOvertimeBalance() {
 
     try {
       const targetHours = dailyTarget.value
-      
+
       // Only calculate balance if we have valid target hours
       if (targetHours <= 0) {
         return {
@@ -208,7 +214,7 @@ export function useOvertimeBalance() {
 
       // Calculate total balance based on ALL time entries
       let totalBalance = 0
-      
+
       for (const entry of timeEntries) {
         const actualHours = entry.total_hours || 0
         const overtimeHours = entry.overtime_hours || 0
@@ -233,7 +239,7 @@ export function useOvertimeBalance() {
 
       // Update the balance in the database
       const updateResult = await updateOvertimeBalance(totalBalance)
-      
+
       if (!updateResult.success) {
         return {
           data: null,
@@ -252,7 +258,7 @@ export function useOvertimeBalance() {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to recalculate overtime balance'
       error.value = errorMessage
-      
+
       return {
         data: null,
         error: { message: errorMessage },
@@ -304,16 +310,16 @@ export function useOvertimeBalance() {
     try {
       // Force recalculation by setting balance to 0 first, then recalculating
       const result = await recalculateOvertimeBalance(timeEntries)
-      
+
       if (result.success && result.data !== null) {
         console.log(`Overtime balance reset to: ${result.data}h based on ${timeEntries.length} time entries`)
       }
-      
+
       return result
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to reset overtime balance'
       error.value = errorMessage
-      
+
       return {
         data: null,
         error: { message: errorMessage },
@@ -327,7 +333,7 @@ export function useOvertimeBalance() {
     // State
     loading: computed(() => loading.value),
     error: computed(() => error.value),
-    
+
     // Computed properties
     overtimeBalance,
     workingDaysPerWeek,
@@ -336,17 +342,17 @@ export function useOvertimeBalance() {
     balanceStatus,
     balanceStatusColor,
     balanceStatusText,
-    
+
     // Calculation functions
     calculateDailyTarget,
     validateDailyTarget,
     calculateBalanceChange,
     calculateNewBalance,
     validateWorkingDaysSettings,
-    
+
     // Display functions
     formatOvertimeBalance,
-    
+
     // Database operations
     updateOvertimeBalance,
     recalculateOvertimeBalance,

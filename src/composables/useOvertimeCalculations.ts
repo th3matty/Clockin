@@ -214,6 +214,30 @@ export function useOvertimeCalculations() {
     }
   }
   
+  /**
+   * Format hours for display - shows minutes for < 1h, "1h 18min" format for >= 1h
+   */
+  function formatHoursDisplay(hours: number, showSign: boolean = false): string {
+    const absHours = Math.abs(hours)
+    const sign = showSign ? (hours >= 0 ? '+' : '-') : ''
+    
+    // If less than 1 hour, show in minutes only
+    if (absHours < 1) {
+      const minutes = Math.round(absHours * 60)
+      return `${sign}${minutes}min`
+    }
+    
+    // If 1 hour or more, show hours and minutes format
+    const wholeHours = Math.floor(absHours)
+    const remainingMinutes = Math.round((absHours - wholeHours) * 60)
+    
+    if (remainingMinutes === 0) {
+      return `${sign}${wholeHours}h`
+    } else {
+      return `${sign}${wholeHours}h ${remainingMinutes}min`
+    }
+  }
+
   return {
     // Core calculation functions
     calculateOvertimeStats,
@@ -225,6 +249,7 @@ export function useOvertimeCalculations() {
     getDailyTargetHours,
     hasOvertimeHours,
     validateOvertimeHours,
-    calculateOvertimeProgress
+    calculateOvertimeProgress,
+    formatHoursDisplay
   }
 }

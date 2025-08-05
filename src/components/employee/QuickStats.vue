@@ -106,15 +106,6 @@
             ]">
               {{ formatOvertimeBalance(overtimeBalanceValue) }}
             </p>
-            <p class="ml-2 text-sm text-gray-500">this week</p>
-          </div>
-          <div class="mt-2">
-            <div class="flex items-center">
-              <span :class="overtimeStatusColor" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium">
-                {{ overtimeStatusText }}
-              </span>
-              <span class="ml-2 text-sm text-gray-500">{{ monthlyOvertimeHours.toFixed(1) }}h this month</span>
-            </div>
           </div>
         </div>
       </div>

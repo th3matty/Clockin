@@ -23,7 +23,9 @@ This implementation plan focuses on the simplified overtime tracking approach wi
   - Update AuthUser interface to include weekly_target_hours field
   - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5_
 
-- [ ] 3. Overtime Calculation Service
+- [x] 3. Overtime Calculation Service
+
+
 
 
   - Create useOvertimeCalculations composable with core calculation logic
