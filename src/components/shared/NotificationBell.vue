@@ -5,9 +5,15 @@
       @click="toggleNotifications"
       class="relative p-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
     >
-      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5zM11 19H6.334c-.706 0-1.334-.895-1.334-2V9c0-3.866 3.582-7 8-7s8 3.134 8 7v8c0 1.105-.628 2-1.334 2H15M9 9l3 3 3-3" />
-      </svg>
+      <Vue3Lottie 
+        :animationData="notificationAnimation" 
+        :height="24" 
+        :width="24" 
+        :loop="true" 
+        :autoPlay="unreadCount > 0"
+        ref="notificationLottieRef"
+        class="text-gray-600 dark:text-gray-300"
+      />
       
       <!-- Notification Badge -->
       <span
@@ -88,6 +94,8 @@ import { ref, onMounted, onUnmounted, watch } from 'vue'
 import { useAuth } from '@/composables/useAuth'
 import { useNotifications } from '@/composables/useNotifications'
 import NotificationItem from './NotificationItem.vue'
+import { Vue3Lottie } from 'vue3-lottie'
+import notificationAnimationData from '@/assets/notification-V3.json'
 
 // Composables
 const { user } = useAuth()
@@ -108,6 +116,8 @@ const {
 
 // State
 const showNotifications = ref(false)
+const notificationLottieRef = ref()
+const notificationAnimation = notificationAnimationData
 
 // Methods
 async function toggleNotifications() {
@@ -174,6 +184,19 @@ watch(user, async (newUser, oldUser) => {
     clearRealtimeSubscription()
   }
 }, { immediate: true })
+
+// Watch for unread count changes to control animation
+watch(unreadCount, (newCount, oldCount) => {
+  if (notificationLottieRef.value) {
+    if (newCount > 0 && oldCount === 0) {
+      // Start animation when we get new notifications
+      notificationLottieRef.value.play()
+    } else if (newCount === 0 && oldCount > 0) {
+      // Stop animation when all notifications are read
+      notificationLottieRef.value.stop()
+    }
+  }
+})
 
 // Lifecycle
 onMounted(() => {

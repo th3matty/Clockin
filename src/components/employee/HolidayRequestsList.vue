@@ -4,13 +4,10 @@
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
       <div class="flex items-center justify-between mb-4">
         <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">Holiday Summary</h3>
-        <button @click="refreshData" :disabled="loading"
+        <button @click="handleRefreshClick" :disabled="loading"
           class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 transition-colors">
-          <svg :class="['w-3 h-3 mr-1', loading ? 'animate-spin' : '']" fill="none" stroke="currentColor"
-            viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-          </svg>
+          <Vue3Lottie :animationData="refreshAnimation" :height="16" :width="16" :loop="false" :autoPlay="false"
+            ref="refreshLottieRef" class="mr-2" />
           Refresh
         </button>
       </div>
@@ -20,7 +17,37 @@
           <span class="font-semibold text-gray-900 dark:text-gray-100">{{ totalHolidayDays }} days</span>
         </div>
         <div class="flex items-center justify-between">
-          <span class="text-sm text-gray-600 dark:text-gray-400">Used This Year</span>
+          <div class="flex items-center gap-2">
+            <span class="text-sm text-gray-600 dark:text-gray-400">Used This Year</span>
+            <div class="relative group">
+              <Vue3Lottie :animationData="helpAnimation" :height="16" :width="16" :loop="true" :autoPlay="false"
+                ref="helpLottieRef" class="cursor-help opacity-60 hover:opacity-100 transition-opacity"
+                @mouseenter="playHelpAnimation" />
+
+              <!-- Tooltip -->
+              <div
+                class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 dark:bg-gray-700 text-white text-xs rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10">
+                <div class="space-y-1">
+                  <div class="font-medium mb-2">Approved Holidays This Year:</div>
+                  <div v-if="approvedHolidaysThisYear.length === 0" class="text-gray-300">
+                    No approved holidays yet
+                  </div>
+                  <div v-else class="space-y-1">
+                    <div v-for="holiday in approvedHolidaysThisYear" :key="holiday.id"
+                      class="flex justify-between gap-4">
+                      <span>{{ formatDateRange(holiday.start_date, holiday.end_date) }}</span>
+                      <span class="text-gray-300">{{ holiday.days_requested }} {{ holiday.days_requested === 1 ? 'day' :
+                        'days' }}</span>
+                    </div>
+                  </div>
+                </div>
+                <!-- Tooltip arrow -->
+                <div
+                  class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900 dark:border-t-gray-700">
+                </div>
+              </div>
+            </div>
+          </div>
           <span class="font-semibold text-gray-900 dark:text-gray-100">{{ usedHolidayDays }} days</span>
         </div>
         <div class="flex items-center justify-between border-t border-gray-200 dark:border-gray-700 pt-4">
@@ -155,6 +182,9 @@ import { format, parseISO } from 'date-fns'
 import { useAuth } from '@/composables/useAuth'
 import { useHolidayRequests } from '@/composables/useHolidayRequests'
 import type { HolidayRequest } from '@/types'
+import { Vue3Lottie } from 'vue3-lottie'
+import helpAnimationData from '@/assets/help.json'
+import refreshAnimationData from '@/assets/refresh.json'
 
 // Composables
 const { user } = useAuth()
@@ -169,6 +199,10 @@ const {
 
 // State
 const cancelLoading = ref(false)
+const helpLottieRef = ref()
+const refreshLottieRef = ref()
+const helpAnimation = helpAnimationData
+const refreshAnimation = refreshAnimationData
 
 // Computed
 const totalHolidayDays = computed(() => user.value?.holiday_allowance || 25)
@@ -193,6 +227,17 @@ const approvedRequestsCount = computed(() => {
     new Date(request.start_date).getFullYear() === currentYear.value
   )
   return approved.length
+})
+
+// Approved holidays for tooltip
+const approvedHolidaysThisYear = computed(() => {
+  const requests = holidayRequests.value || []
+  return requests
+    .filter((request: HolidayRequest) =>
+      request.status === 'approved' &&
+      new Date(request.start_date).getFullYear() === currentYear.value
+    )
+    .sort((a, b) => new Date(a.start_date).getTime() - new Date(b.start_date).getTime())
 })
 
 // Methods
@@ -278,6 +323,23 @@ async function handleCancelRequest(requestId: string) {
 // Methods for refreshing data
 async function refreshData() {
   const result = await fetchHolidayRequests()
+}
+
+async function handleRefreshClick() {
+  // Play the refresh animation once
+  if (refreshLottieRef.value) {
+    refreshLottieRef.value.play()
+  }
+  
+  // Execute the refresh
+  await refreshData()
+}
+
+// Animation methods
+function playHelpAnimation() {
+  if (helpLottieRef.value) {
+    helpLottieRef.value.play()
+  }
 }
 
 // Lifecycle

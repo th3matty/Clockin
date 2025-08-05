@@ -70,7 +70,6 @@
                 ? 'border-red-300 bg-red-50 dark:border-red-600 dark:bg-red-900/20'
                 : 'border-gray-300 dark:border-gray-600'
             ]" :disabled="loading" />
-          <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">0-480 minutes (0-8 hours)</p>
         </div>
 
         <!-- End Time -->
@@ -96,7 +95,7 @@
           class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
           placeholder="0.00" :disabled="loading" />
         <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Enter additional hours worked beyond regular schedule
-          (0-10 hours)</p>
+          (0-2 hours)</p>
       </div>
 
       <!-- Total Hours Display -->

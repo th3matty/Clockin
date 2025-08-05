@@ -23,7 +23,8 @@
     "shadcn-vue": "^0.10.0",
     "tailwind-merge": "^2.2.0",
     "vue": "^3.4.0",
-    "vue-router": "^4.2.5"
+    "vue-router": "^4.2.5",
+    "vue3-lottie": "^3.3.1"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
