@@ -2,21 +2,13 @@
   <div class="flex items-center space-x-6">
     <!-- Current Avatar Display -->
     <div class="relative">
-      <div class="w-24 h-24 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden border-4 border-white shadow-lg">
-        <img
-          v-if="currentAvatarUrl"
-          :src="currentAvatarUrl"
+      <div class="border-4 border-white shadow-lg">
+        <SecureAvatar 
+          :avatar-path="user?.avatar_url"
+          :name="user?.full_name || ''"
+          size="xl"
           :alt="user?.full_name || 'User avatar'"
-          class="w-full h-full object-cover"
         />
-        <div
-          v-else
-          class="w-full h-full bg-primary-100 flex items-center justify-center"
-        >
-          <span class="text-2xl font-semibold text-primary-700">
-            {{ getInitials(user?.full_name || '') }}
-          </span>
-        </div>
       </div>
       
       <!-- Upload Progress Overlay -->
@@ -111,6 +103,7 @@
 import { ref, computed, watch } from 'vue'
 import { useAuth } from '@/composables/useAuth'
 import { useUserSettings } from '@/composables/useUserSettings'
+import SecureAvatar from './SecureAvatar.vue'
 
 // Composables
 const { user } = useAuth()
@@ -124,14 +117,6 @@ const showSuccess = ref(false)
 const currentAvatarUrl = computed(() => user.value?.avatar_url)
 
 // Methods
-function getInitials(name: string): string {
-  return name
-    .split(' ')
-    .map(word => word.charAt(0))
-    .join('')
-    .toUpperCase()
-    .slice(0, 2)
-}
 
 function triggerFileSelect() {
   fileInput.value?.click()

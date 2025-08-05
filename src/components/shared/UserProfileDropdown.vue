@@ -6,20 +6,12 @@
       class="flex items-center space-x-2 p-1 rounded-full hover:bg-gray-100 transition-colors"
     >
       <!-- User Avatar -->
-      <div class="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center overflow-hidden">
-        <img
-          v-if="user?.avatar_url"
-          :src="user.avatar_url"
-          :alt="user.full_name"
-          class="w-full h-full object-cover"
-        />
-        <span
-          v-else
-          class="text-sm font-medium text-primary-700"
-        >
-          {{ getInitials(user?.full_name || '') }}
-        </span>
-      </div>
+      <SecureAvatar 
+        :avatar-path="user?.avatar_url"
+        :name="user?.full_name || ''"
+        size="sm"
+        :alt="user?.full_name || 'User avatar'"
+      />
       
       <!-- User Name (hidden on mobile) -->
       <span class="hidden sm:block text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -48,20 +40,12 @@
       <!-- User Info Header -->
       <div class="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
         <div class="flex items-center space-x-3">
-          <div class="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center overflow-hidden">
-            <img
-              v-if="user?.avatar_url"
-              :src="user.avatar_url"
-              :alt="user.full_name"
-              class="w-full h-full object-cover"
-            />
-            <span
-              v-else
-              class="text-sm font-medium text-primary-700"
-            >
-              {{ getInitials(user?.full_name || '') }}
-            </span>
-          </div>
+          <SecureAvatar 
+            :avatar-path="user?.avatar_url"
+            :name="user?.full_name || ''"
+            size="md"
+            :alt="user?.full_name || 'User avatar'"
+          />
           <div class="flex-1 min-w-0">
             <p class="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">{{ user?.full_name }}</p>
             <p class="text-xs text-gray-500 dark:text-gray-400 truncate">{{ user?.email }}</p>
@@ -135,6 +119,7 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useAuth } from '@/composables/useAuth'
 import { useTheme } from '@/composables/useTheme'
+import SecureAvatar from './SecureAvatar.vue'
 
 // Composables
 const { user, logout } = useAuth()
@@ -152,14 +137,7 @@ function closeDropdown() {
   showDropdown.value = false
 }
 
-function getInitials(name: string): string {
-  return name
-    .split(' ')
-    .map(word => word.charAt(0))
-    .join('')
-    .toUpperCase()
-    .slice(0, 2)
-}
+// getInitials function removed - now handled by SecureAvatar component
 
 async function handleToggleTheme() {
   toggleTheme()

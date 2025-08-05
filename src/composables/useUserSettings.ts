@@ -196,26 +196,19 @@ export function useUserSettings() {
         throw new Error('Upload failed: No data returned')
       }
 
-      // Get public URL
-      const { data: urlData } = supabase.storage
-        .from('avatars')
-        .getPublicUrl(uploadData.path)
+      // Store the file path instead of a public URL since bucket is now private
+      // We'll generate signed URLs on demand when displaying avatars
+      const avatarPath = uploadData.path
 
-      if (!urlData?.publicUrl) {
-        throw new Error('Failed to generate public URL')
-      }
-
-      const avatarUrl = urlData.publicUrl
-
-      // Update user profile with new avatar URL
-      const updateResult = await updateSettings({ avatar_url: avatarUrl })
+      // Update user profile with new avatar path (not URL)
+      const updateResult = await updateSettings({ avatar_url: avatarPath })
 
       if (!updateResult.success) {
         throw new Error(updateResult.error?.message || 'Failed to update profile')
       }
 
       return {
-        data: avatarUrl,
+        data: avatarPath,
         error: null,
         loading: false,
         success: true
@@ -249,9 +242,8 @@ export function useUserSettings() {
       loading.value = true
       error.value = null
 
-      // Extract file path from URL
-      const url = new URL(user.value.avatar_url)
-      const filePath = url.pathname.split('/').slice(-2).join('/') // Get last two segments
+      // The avatar_url now contains the file path directly (not a URL)
+      const filePath = user.value.avatar_url
 
       // Remove from storage
       const { error: deleteError } = await supabase.storage
