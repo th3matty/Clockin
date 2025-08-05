@@ -176,8 +176,8 @@ export function useOvertimeCalculations() {
       errors.push('Overtime hours cannot be negative')
     }
     
-    if (overtimeHours > 12) {
-      errors.push('Overtime hours cannot exceed 12 hours per day')
+    if (overtimeHours > 10) {
+      errors.push('Overtime hours cannot exceed 10 hours per day')
     }
     
     // Check for reasonable decimal precision (max 2 decimal places)

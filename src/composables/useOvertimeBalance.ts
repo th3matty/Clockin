@@ -97,7 +97,7 @@ export function useOvertimeBalance() {
 
   function validateDailyTarget(weeklyHours: number, workingDays: number): boolean {
     const dailyTarget = calculateDailyTarget(weeklyHours, workingDays)
-    return dailyTarget <= 12
+    return dailyTarget <= 10
   }
 
   function calculateBalanceChange(
@@ -131,8 +131,8 @@ export function useOvertimeBalance() {
     }
 
     const dailyTarget = calculateDailyTarget(weeklyHours, workingDays)
-    if (dailyTarget > 12) {
-      errors.push(`Daily target of ${dailyTarget.toFixed(1)} hours exceeds 12-hour limit. Please increase working days or reduce weekly hours.`)
+    if (dailyTarget > 10) {
+      errors.push(`Daily target of ${dailyTarget.toFixed(1)} hours exceeds 10-hour limit. Please increase working days or reduce weekly hours.`)
     }
 
     return errors

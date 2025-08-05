@@ -173,13 +173,13 @@
                       <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                       </svg>
-                      <span class="text-xs">Valid daily hours (≤ 12h/day)</span>
+                      <span class="text-xs">Valid daily hours (≤ 10h/day)</span>
                     </div>
                     <div v-else class="flex items-center text-red-600">
                       <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                       </svg>
-                      <span class="text-xs">Daily target exceeds 12 hours - please adjust your settings</span>
+                      <span class="text-xs">Daily target exceeds 10 hours - please adjust your settings</span>
                     </div>
                     <p><span class="font-medium">Working Day:</span> {{ settingsForm.default_start_time }} - {{
                       settingsForm.default_end_time }}</p>
