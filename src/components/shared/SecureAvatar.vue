@@ -8,7 +8,15 @@
     <!-- Loading State -->
     <div v-if="loading" class="animate-pulse bg-gray-200 dark:bg-gray-600 w-full h-full"></div>
     
-    <!-- Avatar Image -->
+    <!-- BeanHead Avatar -->
+    <div v-else-if="beanHeadConfig" class="w-full h-full flex items-center justify-center">
+      <Beanhead
+        v-bind="beanHeadConfig"
+        :width="beanHeadSize"
+      />
+    </div>
+    
+    <!-- Regular Avatar Image -->
     <img
       v-else-if="signedUrl"
       :src="signedUrl"
@@ -34,7 +42,9 @@
 
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue'
+import { Beanhead } from 'beanheads-vue'
 import { useSecureAvatars } from '@/composables/useSecureAvatars'
+import type { BeanHeadConfig } from '@/composables/useAvatarGenerator'
 
 interface Props {
   avatarPath?: string | null
@@ -69,6 +79,35 @@ const initials = computed(() => {
     .slice(0, 2)
 })
 
+const beanHeadConfig = computed((): BeanHeadConfig | null => {
+  if (!props.avatarPath) return null
+  
+  try {
+    // Check if the avatarPath is a JSON string (BeanHead config)
+    const parsed = JSON.parse(props.avatarPath)
+    
+    // Validate that it looks like a BeanHead config
+    if (typeof parsed === 'object' && parsed !== null) {
+      return parsed as BeanHeadConfig
+    }
+  } catch {
+    // Not JSON, probably a regular image URL
+  }
+  
+  return null
+})
+
+const beanHeadSize = computed(() => {
+  switch (props.size) {
+    case 'xs': return 24
+    case 'sm': return 32
+    case 'md': return 48
+    case 'lg': return 64
+    case 'xl': return 96
+    default: return 48
+  }
+})
+
 const sizeClasses = computed(() => {
   switch (props.size) {
     case 'xs': return 'w-6 h-6'
@@ -93,6 +132,12 @@ const textSizeClasses = computed(() => {
 
 // Methods
 async function loadAvatar() {
+  // If it's a BeanHead config, don't try to load as image
+  if (beanHeadConfig.value) {
+    signedUrl.value = null
+    return
+  }
+  
   if (!props.avatarPath || imageError.value) {
     signedUrl.value = null
     return

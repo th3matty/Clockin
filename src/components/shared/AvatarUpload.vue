@@ -26,25 +26,42 @@
     <!-- Upload Controls -->
     <div class="flex-1">
       <div class="space-y-3">
-        <!-- Upload Button -->
-        <div>
-          <input
-            ref="fileInput"
-            type="file"
-            accept="image/*"
-            @change="handleFileSelect"
-            class="hidden"
-          />
-          <button
-            @click="triggerFileSelect"
-            :disabled="uploading"
-            class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          >
-            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-            </svg>
-            {{ uploading ? 'Uploading...' : 'Upload new photo' }}
-          </button>
+        <!-- Upload Options -->
+        <div class="flex flex-col sm:flex-row gap-3">
+          <!-- Upload Photo Button -->
+          <div>
+            <input
+              ref="fileInput"
+              type="file"
+              accept="image/*"
+              @change="handleFileSelect"
+              class="hidden"
+            />
+            <button
+              @click="triggerFileSelect"
+              :disabled="uploading"
+              class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+              </svg>
+              {{ uploading ? 'Uploading...' : 'Upload Photo' }}
+            </button>
+          </div>
+
+          <!-- Generate Avatar Button -->
+          <div>
+            <button
+              @click="showAvatarGenerator = true"
+              :disabled="uploading"
+              class="inline-flex items-center px-4 py-2 border border-primary-300 dark:border-primary-600 rounded-md shadow-sm text-sm font-medium text-primary-700 dark:text-primary-300 bg-primary-50 dark:bg-primary-900/20 hover:bg-primary-100 dark:hover:bg-primary-900/30 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4" />
+              </svg>
+              Generate Avatar
+            </button>
+          </div>
         </div>
 
         <!-- Remove Button -->
@@ -69,6 +86,13 @@
       </div>
     </div>
   </div>
+
+  <!-- Avatar Generator Modal -->
+  <AvatarGenerator
+    v-if="showAvatarGenerator"
+    @close="showAvatarGenerator = false"
+    @select="handleAvatarGenerated"
+  />
 
   <!-- Error Message -->
   <div v-if="error" class="mt-4 bg-red-50 border border-red-200 rounded-md p-4">
@@ -104,6 +128,7 @@ import { ref, computed, watch } from 'vue'
 import { useAuth } from '@/composables/useAuth'
 import { useUserSettings } from '@/composables/useUserSettings'
 import SecureAvatar from './SecureAvatar.vue'
+import AvatarGenerator from './AvatarGenerator.vue'
 
 // Composables
 const { user } = useAuth()
@@ -112,6 +137,7 @@ const { uploadAvatar, removeAvatar, uploading, loading, error, clearError } = us
 // Refs
 const fileInput = ref<HTMLInputElement>()
 const showSuccess = ref(false)
+const showAvatarGenerator = ref(false)
 
 // Computed
 const currentAvatarUrl = computed(() => user.value?.avatar_url)
@@ -167,6 +193,16 @@ async function handleRemoveAvatar() {
   } catch (err) {
     // Handle error silently
   }
+}
+
+function handleAvatarGenerated(avatar: any) {
+  showAvatarGenerator.value = false
+  showSuccess.value = true
+  
+  // Hide success message after 3 seconds
+  setTimeout(() => {
+    showSuccess.value = false
+  }, 3000)
 }
 
 // Watch for error changes to auto-hide success message
