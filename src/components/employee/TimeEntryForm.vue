@@ -13,22 +13,29 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
             </svg>
           </div>
-          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300">
+          <span
+            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300">
             Saved
           </span>
         </div>
       </div>
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-2">
-          <p class="text-gray-600 dark:text-gray-400">{{ formatDate(selectedDate) }}</p>
+          <div>
+            <p class="text-gray-600 dark:text-gray-400">{{ formatDate(selectedDate) }}</p>
+            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              You can adjust working hours for the last 7 days only
+            </p>
+          </div>
           <div v-if="existingEntry" class="flex items-center text-green-600 dark:text-green-400">
             <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
             </svg>
             <span class="text-sm font-medium">Saved</span>
           </div>
         </div>
-        <input :value="selectedDate" type="date"
+        <input :value="selectedDate" type="date" :min="minSelectableDate" :max="maxSelectableDate"
           class="px-3 py-1 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
           @input="handleDateInput" />
       </div>
@@ -85,25 +92,18 @@
         <label for="overtime_hours" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
           Additional Overtime Hours (Optional)
         </label>
-        <input
-          id="overtime_hours"
-          v-model.number="formData.overtime_hours"
-          type="number"
-          min="0"
-          max="12"
-          step="0.25"
+        <input id="overtime_hours" v-model.number="formData.overtime_hours" type="number" min="0" max="12" step="0.25"
           class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
-          placeholder="0.00"
-          :disabled="loading"
-        />
-        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Enter additional hours worked beyond regular schedule (0-12 hours)</p>
+          placeholder="0.00" :disabled="loading" />
+        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Enter additional hours worked beyond regular schedule
+          (0-12 hours)</p>
       </div>
 
       <!-- Total Hours Display -->
       <div :class="[
         'rounded-lg p-4 transition-all duration-300',
-        existingEntry 
-          ? 'bg-gray-50 dark:bg-gray-700 border-2 border-green-500 dark:border-green-400' 
+        existingEntry
+          ? 'bg-gray-50 dark:bg-gray-700 border-2 border-green-500 dark:border-green-400'
           : 'bg-gray-50 dark:bg-gray-700'
       ]">
         <div class="flex items-center justify-between">
@@ -124,7 +124,8 @@
             </span>
             <div class="text-xs text-gray-500 dark:text-gray-400">
               {{ calculatedHours.toFixed(1) }}h regular
-              <span v-if="formData.overtime_hours && formData.overtime_hours > 0" class="text-orange-600 dark:text-orange-400">
+              <span v-if="formData.overtime_hours && formData.overtime_hours > 0"
+                class="text-orange-600 dark:text-orange-400">
                 + {{ formData.overtime_hours.toFixed(1) }}h overtime
               </span>
             </div>
@@ -292,6 +293,19 @@ const validationErrors = computed(() => {
   return validateTimeEntry(formData.value)
 })
 
+// Date restrictions - allow only last 7 days including today
+const minSelectableDate = computed(() => {
+  const today = new Date()
+  const sevenDaysAgo = new Date(today)
+  sevenDaysAgo.setDate(today.getDate() - 6) // 6 days ago + today = 7 days total
+  return sevenDaysAgo.toISOString().split('T')[0]
+})
+
+const maxSelectableDate = computed(() => {
+  const today = new Date()
+  return today.toISOString().split('T')[0]
+})
+
 // Methods
 function formatDate(dateString: string): string {
   const date = new Date(dateString)
@@ -328,12 +342,26 @@ function initializeFormData() {
 function handleDateInput(event: Event) {
   const target = event.target as HTMLInputElement
   const newDate = target.value
-  
+
   if (!newDate) return
-  
+
+  // Validate that the selected date is within the allowed range
+  const selectedDateObj = new Date(newDate)
+  const minDate = new Date(minSelectableDate.value)
+  const maxDate = new Date(maxSelectableDate.value)
+
+  if (selectedDateObj < minDate || selectedDateObj > maxDate) {
+    // Reset to today if date is outside allowed range
+    const today = new Date().toISOString().split('T')[0]
+    selectedDate.value = today
+    target.value = today
+    loadDataForDate(today)
+    return
+  }
+
   // Update the selectedDate FIRST, before any async operations
   selectedDate.value = newDate
-  
+
   // Then handle the data loading asynchronously without affecting the date
   loadDataForDate(newDate)
 }
@@ -486,7 +514,17 @@ onMounted(async () => {
     if (!selectedDate.value) {
       selectedDate.value = new Date().toISOString().split('T')[0]
     }
-    
+
+    // Validate that the current selected date is within the allowed range
+    const selectedDateObj = new Date(selectedDate.value)
+    const minDate = new Date(minSelectableDate.value)
+    const maxDate = new Date(maxSelectableDate.value)
+
+    if (selectedDateObj < minDate || selectedDateObj > maxDate) {
+      // Reset to today if date is outside allowed range
+      selectedDate.value = new Date().toISOString().split('T')[0]
+    }
+
     // Fetch entries for current month to have a good cache
     const today = new Date()
     const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1).toISOString().split('T')[0]
@@ -497,7 +535,7 @@ onMounted(async () => {
     // Find entry for the currently selected date
     existingEntry.value = timeEntries.value.find(entry => entry.date === selectedDate.value) || null
     initializeFormData()
-    
+
     // Mark as initialized to enable watchers
     // Component is now initialized
   } catch (err) {
