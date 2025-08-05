@@ -25,15 +25,32 @@ export const useNotificationsStore = defineStore('notifications', () => {
 
   // Actions
   async function fetchNotifications(userId: string): Promise<DetailedApiResponse<Notification[]>> {
+    // Prevent multiple concurrent fetches
+    if (loading.value) {
+      return {
+        data: notifications.value,
+        error: null,
+        loading: true,
+        success: false
+      }
+    }
+
     try {
       loading.value = true
       error.value = null
 
-      const { data, error: fetchError } = await supabase
+      // Add timeout to prevent hanging
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('Request timeout')), 10000) // 10 second timeout
+      })
+
+      const fetchPromise = supabase
         .from('notifications')
         .select('*')
         .eq('user_id', userId)
         .order('created_at', { ascending: false })
+
+      const { data, error: fetchError } = await Promise.race([fetchPromise, timeoutPromise]) as any
 
       if (fetchError) {
         error.value = fetchError.message
@@ -342,6 +359,11 @@ export const useNotificationsStore = defineStore('notifications', () => {
     notifications.value = []
   }
 
+  function resetLoadingState() {
+    loading.value = false
+    error.value = null
+  }
+
   return {
     // State (readonly for external access)
     notifications: readonly(notifications),
@@ -362,6 +384,7 @@ export const useNotificationsStore = defineStore('notifications', () => {
     setupRealtimeSubscription,
     clearRealtimeSubscription,
     clearError,
-    clearNotifications
+    clearNotifications,
+    resetLoadingState
   }
 })

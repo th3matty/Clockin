@@ -25,7 +25,8 @@ export function useNotifications() {
     setupRealtimeSubscription,
     clearRealtimeSubscription,
     clearError,
-    clearNotifications
+    clearNotifications,
+    resetLoadingState
   } = store
 
   // Utility functions
@@ -127,6 +128,7 @@ export function useNotifications() {
     clearRealtimeSubscription,
     clearError,
     clearNotifications,
+    resetLoadingState,
     
     // Utility functions
     getNotificationColor,

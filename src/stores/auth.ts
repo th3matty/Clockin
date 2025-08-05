@@ -197,16 +197,27 @@ export const useAuthStore = defineStore('auth', () => {
       loading.value = true
       error.value = null
 
-      const { error: signOutError } = await supabase.auth.signOut()
+      // Add timeout to prevent hanging logout
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('Logout timeout')), 5000) // 5 second timeout
+      })
+
+      const logoutPromise = supabase.auth.signOut()
+
+      const { error: signOutError } = await Promise.race([logoutPromise, timeoutPromise]) as any
       
       if (signOutError) {
         error.value = signOutError.message
+        // Still clear user even if logout fails
+        user.value = null
         return
       }
 
       user.value = null
     } catch (err) {
       error.value = 'Failed to logout'
+      // Force clear user state even if logout fails
+      user.value = null
     } finally {
       loading.value = false
     }

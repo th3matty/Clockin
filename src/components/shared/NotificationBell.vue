@@ -100,6 +100,7 @@ const {
   markAllAsRead,
   setupRealtimeSubscription,
   clearRealtimeSubscription,
+  resetLoadingState,
   getNotificationColor,
   getNotificationIcon,
   formatTime
@@ -109,8 +110,23 @@ const {
 const showNotifications = ref(false)
 
 // Methods
-function toggleNotifications() {
-  showNotifications.value = !showNotifications.value
+async function toggleNotifications() {
+  if (!showNotifications.value) {
+    // Opening dropdown - ensure notifications are loaded
+    showNotifications.value = true
+    if (user.value && notifications.value.length === 0 && !loading.value) {
+      try {
+        await fetchNotifications(user.value.id)
+      } catch (error) {
+        console.error('Failed to fetch notifications:', error)
+        // Reset loading state if fetch fails
+        resetLoadingState()
+      }
+    }
+  } else {
+    // Closing dropdown
+    showNotifications.value = false
+  }
 }
 
 async function handleMarkAsRead(notificationId: string) {
@@ -137,14 +153,23 @@ function handleClickOutside(event: MouseEvent) {
 }
 
 // Watch for user changes to set up notifications
-watch(user, async (newUser) => {
-  if (newUser) {
-    // Fetch initial notifications
-    await fetchNotifications(newUser.id)
+watch(user, async (newUser, oldUser) => {
+  if (newUser && newUser.id !== oldUser?.id) {
+    // Clear previous subscription if exists
+    clearRealtimeSubscription()
     
-    // Set up real-time subscription
+    // Set up real-time subscription first
     setupRealtimeSubscription(newUser.id)
-  } else {
+    
+    // Fetch initial notifications only if we don't have any
+    if (notifications.value.length === 0) {
+      try {
+        await fetchNotifications(newUser.id)
+      } catch (error) {
+        console.error('Failed to fetch notifications:', error)
+      }
+    }
+  } else if (!newUser) {
     // Clear subscription when user logs out
     clearRealtimeSubscription()
   }
@@ -153,6 +178,14 @@ watch(user, async (newUser) => {
 // Lifecycle
 onMounted(() => {
   document.addEventListener('click', handleClickOutside)
+  
+  // Safety mechanism: reset loading state if it gets stuck
+  setTimeout(() => {
+    if (loading.value) {
+      console.warn('Notifications loading state was stuck, resetting...')
+      resetLoadingState()
+    }
+  }, 15000) // 15 second safety timeout
 })
 
 onUnmounted(() => {
