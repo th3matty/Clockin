@@ -1,26 +1,27 @@
 <template>
   <div :class="[
     'rounded-xl shadow-lg p-8 transition-all duration-300',
-    existingEntry ? 'bg-green-50 border-2 border-green-200' : 'bg-white'
+    existingEntry ? 'bg-white dark:bg-gray-800 border-2 border-green-500 dark:border-green-400' : 'bg-white dark:bg-gray-800'
   ]">
     <!-- Header -->
     <div class="mb-6">
       <div class="flex items-center gap-3 mb-2">
-        <h2 class="text-2xl font-semibold text-gray-900">Time Entry</h2>
+        <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-100">Time Entry</h2>
         <div v-if="existingEntry" class="flex items-center gap-2">
           <div class="flex items-center justify-center w-6 h-6 bg-green-500 rounded-full">
             <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
             </svg>
           </div>
-          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300">
+            Saved
           </span>
         </div>
       </div>
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-2">
-          <p class="text-gray-600">{{ formatDate(selectedDate) }}</p>
-          <div v-if="existingEntry" class="flex items-center text-green-600">
+          <p class="text-gray-600 dark:text-gray-400">{{ formatDate(selectedDate) }}</p>
+          <div v-if="existingEntry" class="flex items-center text-green-600 dark:text-green-400">
             <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
             </svg>
@@ -28,7 +29,7 @@
           </div>
         </div>
         <input :value="selectedDate" type="date"
-          class="px-3 py-1 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+          class="px-3 py-1 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
           @input="handleDateInput" />
       </div>
     </div>
@@ -39,49 +40,49 @@
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <!-- Start Time -->
         <div>
-          <label for="start_time" class="block text-sm font-medium text-gray-700 mb-2">
+          <label for="start_time" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             Start Time
           </label>
           <input id="start_time" v-model="formData.start_time" type="time" required :class="[
-            'w-full px-4 py-3 border rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors',
+            'w-full px-4 py-3 border rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors dark:bg-gray-700 dark:text-gray-100',
             validationErrors.includes('Start time must be in HH:MM format') || validationErrors.includes('End time must be after start time')
-              ? 'border-red-300 bg-red-50'
-              : 'border-gray-300'
+              ? 'border-red-300 bg-red-50 dark:border-red-600 dark:bg-red-900/20'
+              : 'border-gray-300 dark:border-gray-600'
           ]" :disabled="loading" />
         </div>
 
         <!-- Lunch Break -->
         <div>
-          <label for="lunch_minutes" class="block text-sm font-medium text-gray-700 mb-2">
+          <label for="lunch_minutes" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             Lunch Break (minutes)
           </label>
           <input id="lunch_minutes" v-model.number="formData.lunch_break_minutes" type="number" min="0" max="480"
             required :class="[
-              'w-full px-4 py-3 border rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors',
+              'w-full px-4 py-3 border rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors dark:bg-gray-700 dark:text-gray-100',
               validationErrors.includes('Lunch break must be between 0 and 480 minutes')
-                ? 'border-red-300 bg-red-50'
-                : 'border-gray-300'
+                ? 'border-red-300 bg-red-50 dark:border-red-600 dark:bg-red-900/20'
+                : 'border-gray-300 dark:border-gray-600'
             ]" :disabled="loading" />
-          <p class="text-xs text-gray-500 mt-1">0-480 minutes (0-8 hours)</p>
+          <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">0-480 minutes (0-8 hours)</p>
         </div>
 
         <!-- End Time -->
         <div>
-          <label for="end_time" class="block text-sm font-medium text-gray-700 mb-2">
+          <label for="end_time" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             End Time
           </label>
           <input id="end_time" v-model="formData.end_time" type="time" required :class="[
-            'w-full px-4 py-3 border rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors',
+            'w-full px-4 py-3 border rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors dark:bg-gray-700 dark:text-gray-100',
             validationErrors.includes('End time must be in HH:MM format') || validationErrors.includes('End time must be after start time')
-              ? 'border-red-300 bg-red-50'
-              : 'border-gray-300'
+              ? 'border-red-300 bg-red-50 dark:border-red-600 dark:bg-red-900/20'
+              : 'border-gray-300 dark:border-gray-600'
           ]" :disabled="loading" />
         </div>
       </div>
 
       <!-- Overtime Hours Field -->
       <div>
-        <label for="overtime_hours" class="block text-sm font-medium text-gray-700 mb-2">
+        <label for="overtime_hours" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
           Additional Overtime Hours (Optional)
         </label>
         <input
@@ -91,22 +92,24 @@
           min="0"
           max="12"
           step="0.25"
-          class="w-full px-4 py-3 border border-gray-300 rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
+          class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
           placeholder="0.00"
           :disabled="loading"
         />
-        <p class="text-xs text-gray-500 mt-1">Enter additional hours worked beyond regular schedule (0-12 hours)</p>
+        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Enter additional hours worked beyond regular schedule (0-12 hours)</p>
       </div>
 
       <!-- Total Hours Display -->
       <div :class="[
         'rounded-lg p-4 transition-all duration-300',
-        existingEntry ? 'bg-green-100 border border-green-200' : 'bg-gray-50'
+        existingEntry 
+          ? 'bg-gray-50 dark:bg-gray-700 border-2 border-green-500 dark:border-green-400' 
+          : 'bg-gray-50 dark:bg-gray-700'
       ]">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2">
-            <span class="text-sm font-medium text-gray-700">Total Working Hours:</span>
-            <div v-if="existingEntry" class="flex items-center text-green-600">
+            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Total Working Hours:</span>
+            <div v-if="existingEntry" class="flex items-center text-green-600 dark:text-green-400">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
               </svg>
@@ -115,26 +118,26 @@
           <div class="text-right">
             <span :class="[
               'text-2xl font-bold',
-              existingEntry ? 'text-green-600' : 'text-primary-600'
+              existingEntry ? 'text-green-600 dark:text-green-400' : 'text-primary-600 dark:text-primary-400'
             ]">
               {{ (calculatedHours + (formData.overtime_hours || 0)).toFixed(1) }}h
             </span>
-            <div class="text-xs text-gray-500">
+            <div class="text-xs text-gray-500 dark:text-gray-400">
               {{ calculatedHours.toFixed(1) }}h regular
-              <span v-if="formData.overtime_hours && formData.overtime_hours > 0" class="text-orange-600">
+              <span v-if="formData.overtime_hours && formData.overtime_hours > 0" class="text-orange-600 dark:text-orange-400">
                 + {{ formData.overtime_hours.toFixed(1) }}h overtime
               </span>
             </div>
           </div>
         </div>
         <div class="flex items-center justify-between mt-1">
-          <div class="text-xs text-gray-500">
+          <div class="text-xs text-gray-500 dark:text-gray-400">
             {{ formData.start_time }} - {{ formData.end_time }}
             <span v-if="formData.lunch_break_minutes > 0">
               ({{ formData.lunch_break_minutes }}min lunch)
             </span>
           </div>
-          <div v-if="existingEntry" class="text-xs text-green-600 font-medium">
+          <div v-if="existingEntry" class="text-xs text-green-600 dark:text-green-400 font-medium">
             ✓ Saved to database
           </div>
         </div>
@@ -178,7 +181,7 @@
       <!-- Submit Button -->
       <div class="flex justify-end space-x-3">
         <button v-if="existingEntry" @click="handleDelete" type="button" :disabled="loading"
-          class="px-6 py-3 border border-red-300 text-red-700 rounded-lg hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+          class="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
           Delete Entry
         </button>
 

@@ -4,8 +4,8 @@
       <div class="max-w-7xl mx-auto py-6 px-4">
         <!-- Welcome Header -->
         <div class="mb-8">
-          <h1 class="text-3xl font-bold text-gray-900">Welcome back, {{ user?.full_name }}!</h1>
-          <p class="text-gray-600 mt-2">Track your time and manage your schedule</p>
+          <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Welcome back, {{ user?.full_name }}!</h1>
+          <p class="text-gray-600 dark:text-gray-400 mt-2">Track your time and manage your schedule</p>
         </div>
 
         <!-- Main Content Grid -->
@@ -23,9 +23,9 @@
 
         <!-- Recent Entries Section -->
         <div class="mt-8">
-          <div class="bg-white rounded-lg shadow">
-            <div class="px-6 py-4 border-b border-gray-200">
-              <h2 class="text-lg font-medium text-gray-900">Recent Time Entries</h2>
+          <div class="bg-white dark:bg-gray-800 rounded-lg shadow">
+            <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+              <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">Recent Time Entries</h2>
             </div>
             <div class="px-6 py-4">
               <div v-if="loading" class="text-center py-8">
@@ -35,7 +35,7 @@
                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
                   </path>
                 </svg>
-                <p class="text-gray-500 mt-2">Loading entries...</p>
+                <p class="text-gray-500 dark:text-gray-400 mt-2">Loading entries...</p>
               </div>
 
               <div v-else-if="recentEntries.length === 0" class="text-center py-8">
@@ -43,13 +43,13 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <p class="text-gray-500">No time entries yet</p>
-                <p class="text-sm text-gray-400 mt-1">Start by adding your first time entry above</p>
+                <p class="text-gray-500 dark:text-gray-400">No time entries yet</p>
+                <p class="text-sm text-gray-400 dark:text-gray-500 mt-1">Start by adding your first time entry above</p>
               </div>
 
               <div v-else class="space-y-4">
                 <div v-for="entry in recentEntries" :key="entry.id"
-                  class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                  class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
                   <div class="flex items-center space-x-4">
                     <div class="flex-shrink-0">
                       <div class="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center">
@@ -60,8 +60,8 @@
                       </div>
                     </div>
                     <div>
-                      <p class="text-sm font-medium text-gray-900">{{ formatDate(entry.date) }}</p>
-                      <p class="text-sm text-gray-500">
+                      <p class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ formatDate(entry.date) }}</p>
+                      <p class="text-sm text-gray-500 dark:text-gray-400">
                         {{ entry.start_time.slice(0, 5) }} - {{ entry.end_time.slice(0, 5) }}
                         <span v-if="entry.lunch_break_minutes > 0">
                           ({{ entry.lunch_break_minutes }}min lunch)
@@ -70,8 +70,8 @@
                     </div>
                   </div>
                   <div class="text-right">
-                    <p class="text-lg font-semibold text-gray-900">{{ entry.total_hours.toFixed(1) }}h</p>
-                    <p class="text-xs text-gray-500">Total hours</p>
+                    <p class="text-lg font-semibold text-gray-900 dark:text-gray-100">{{ entry.total_hours.toFixed(1) }}h</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Total hours</p>
                   </div>
                 </div>
               </div>

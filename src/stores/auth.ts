@@ -41,7 +41,14 @@ export const useAuthStore = defineStore('auth', () => {
 
       if (session?.user && !user.value) {
         // Only load profile if we don't already have user data
-        await loadUserProfile(session.user.id)
+        const success = await loadUserProfile(session.user.id)
+        
+        // Load theme preference after successful profile load
+        if (success && user.value?.theme_preference) {
+          const { useThemeStore } = await import('./theme')
+          const themeStore = useThemeStore()
+          themeStore.setTheme(user.value.theme_preference)
+        }
       }
 
       // Listen for auth changes (only set up once)
@@ -52,7 +59,14 @@ export const useAuthStore = defineStore('auth', () => {
           if (event === 'SIGNED_IN' && session?.user) {
             // Only load profile if we don't already have it or it's different user
             if (!user.value || user.value.id !== session.user.id) {
-              await loadUserProfile(session.user.id)
+              const success = await loadUserProfile(session.user.id)
+              
+              // Load theme preference after successful profile load
+              if (success && user.value?.theme_preference) {
+                const { useThemeStore } = await import('./theme')
+                const themeStore = useThemeStore()
+                themeStore.setTheme(user.value.theme_preference)
+              }
             }
           } else if (event === 'SIGNED_OUT') {
             user.value = null
@@ -96,7 +110,8 @@ export const useAuthStore = defineStore('auth', () => {
           holiday_allowance: data.holiday_allowance,
           weekly_target_hours: data.weekly_target_hours,
           working_days_per_week: data.working_days_per_week,
-          overtime_balance: data.overtime_balance
+          overtime_balance: data.overtime_balance,
+          theme_preference: data.theme_preference
         }
         return true
       }
@@ -314,7 +329,8 @@ export const useAuthStore = defineStore('auth', () => {
           holiday_allowance: data.holiday_allowance,
           weekly_target_hours: data.weekly_target_hours,
           working_days_per_week: data.working_days_per_week,
-          overtime_balance: data.overtime_balance
+          overtime_balance: data.overtime_balance,
+          theme_preference: data.theme_preference
         }
       }
 

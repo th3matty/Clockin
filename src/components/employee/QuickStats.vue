@@ -1,7 +1,7 @@
 <template>
   <div class="space-y-6">
     <!-- Weekly Hours Card -->
-    <div class="bg-white rounded-lg shadow p-6">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
       <div class="flex items-center">
         <div class="flex-shrink-0">
           <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
@@ -11,98 +11,98 @@
           </div>
         </div>
         <div class="ml-4 flex-1">
-          <h3 class="text-sm font-medium text-gray-900">This Week</h3>
+          <h3 class="text-sm font-medium text-gray-900 dark:text-gray-100">This Week</h3>
           <div class="flex items-baseline">
-            <p class="text-2xl font-semibold text-gray-900">{{ weeklyHours.toFixed(1) }}h</p>
-            <p class="ml-2 text-sm text-gray-500">/ {{ expectedWeeklyHours }}h</p>
+            <p class="text-2xl font-semibold text-gray-900 dark:text-gray-100">{{ weeklyHours.toFixed(1) }}h</p>
+            <p class="ml-2 text-sm text-gray-500 dark:text-gray-400">/ {{ expectedWeeklyHours }}h</p>
           </div>
           <div class="mt-2">
-            <div class="bg-gray-200 rounded-full h-2">
+            <div class="bg-gray-200 dark:bg-gray-700 rounded-full h-2">
               <div 
                 class="bg-blue-600 h-2 rounded-full transition-all duration-300"
                 :style="{ width: `${Math.min(weeklyProgress, 100)}%` }"
               ></div>
             </div>
-            <p class="text-xs text-gray-500 mt-1">{{ weeklyProgress.toFixed(0) }}% of expected hours</p>
+            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ weeklyProgress.toFixed(0) }}% of expected hours</p>
           </div>
         </div>
       </div>
     </div>
 
     <!-- Monthly Hours Card -->
-    <div class="bg-white rounded-lg shadow p-6">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
       <div class="flex items-center">
         <div class="flex-shrink-0">
-          <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div class="w-10 h-10 bg-purple-100 dark:bg-purple-900/20 rounded-lg flex items-center justify-center">
+            <svg class="w-6 h-6 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
             </svg>
           </div>
         </div>
         <div class="ml-4 flex-1">
-          <h3 class="text-sm font-medium text-gray-900">This Month</h3>
+          <h3 class="text-sm font-medium text-gray-900 dark:text-gray-100">This Month</h3>
           <div class="flex items-baseline">
-            <p class="text-2xl font-semibold text-gray-900">{{ monthlyHours.toFixed(1) }}h</p>
-            <p class="ml-2 text-sm text-gray-500">/ {{ expectedMonthlyHours }}h</p>
+            <p class="text-2xl font-semibold text-gray-900 dark:text-gray-100">{{ monthlyHours.toFixed(1) }}h</p>
+            <p class="ml-2 text-sm text-gray-500 dark:text-gray-400">/ {{ expectedMonthlyHours }}h</p>
           </div>
           <div class="mt-2">
-            <div class="bg-gray-200 rounded-full h-2">
+            <div class="bg-gray-200 dark:bg-gray-700 rounded-full h-2">
               <div 
-                class="bg-green-600 h-2 rounded-full transition-all duration-300"
+                class="bg-purple-600 h-2 rounded-full transition-all duration-300"
                 :style="{ width: `${Math.min(monthlyProgress, 100)}%` }"
               ></div>
             </div>
-            <p class="text-xs text-gray-500 mt-1">{{ monthlyProgress.toFixed(0) }}% of expected hours</p>
+            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ monthlyProgress.toFixed(0) }}% of expected hours</p>
           </div>
         </div>
       </div>
     </div>
 
     <!-- Holiday Days Left Card -->
-    <div class="bg-white rounded-lg shadow p-6">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
       <div class="flex items-center">
         <div class="flex-shrink-0">
-          <div class="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center">
-            <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div class="w-10 h-10 bg-yellow-100 dark:bg-yellow-900/20 rounded-lg flex items-center justify-center">
+            <svg class="w-6 h-6 text-yellow-600 dark:text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
             </svg>
           </div>
         </div>
         <div class="ml-4 flex-1">
-          <h3 class="text-sm font-medium text-gray-900">Holiday Days Left</h3>
+          <h3 class="text-sm font-medium text-gray-900 dark:text-gray-100">Holiday Days Left</h3>
           <div class="flex items-baseline">
-            <p class="text-2xl font-semibold text-gray-900">{{ remainingHolidays }}</p>
-            <p class="ml-2 text-sm text-gray-500">/ {{ totalHolidays }} days</p>
+            <p class="text-2xl font-semibold text-gray-900 dark:text-gray-100">{{ remainingHolidays }}</p>
+            <p class="ml-2 text-sm text-gray-500 dark:text-gray-400">/ {{ totalHolidays }} days</p>
           </div>
           <div class="mt-2">
-            <div class="bg-gray-200 rounded-full h-2">
+            <div class="bg-gray-200 dark:bg-gray-700 rounded-full h-2">
               <div 
                 class="bg-yellow-600 h-2 rounded-full transition-all duration-300"
                 :style="{ width: `${holidayProgress}%` }"
               ></div>
             </div>
-            <p class="text-xs text-gray-500 mt-1">{{ holidayProgress.toFixed(0) }}% remaining</p>
+            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ holidayProgress.toFixed(0) }}% remaining</p>
           </div>
         </div>
       </div>
     </div>
 
     <!-- Overtime Balance Card -->
-    <div class="bg-white rounded-lg shadow p-6">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
       <div class="flex items-center">
         <div class="flex-shrink-0">
-          <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
-            <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div class="w-10 h-10 bg-orange-100 dark:bg-orange-900/20 rounded-lg flex items-center justify-center">
+            <svg class="w-6 h-6 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
         </div>
         <div class="ml-4 flex-1">
-          <h3 class="text-sm font-medium text-gray-900">Overtime Balance</h3>
+          <h3 class="text-sm font-medium text-gray-900 dark:text-gray-100">Overtime Balance</h3>
           <div class="flex items-baseline">
             <p :class="[
               'text-2xl font-semibold',
-              overtimeBalanceValue >= 0 ? 'text-green-600' : 'text-red-600'
+              overtimeBalanceValue >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
             ]">
               {{ formatOvertimeBalance(overtimeBalanceValue) }}
             </p>
@@ -112,22 +112,22 @@
     </div>
 
     <!-- Today's Status Card -->
-    <div class="bg-white rounded-lg shadow p-6">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
       <div class="flex items-center">
         <div class="flex-shrink-0">
-          <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-            <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div class="w-10 h-10 bg-purple-100 dark:bg-purple-900/20 rounded-lg flex items-center justify-center">
+            <svg class="w-6 h-6 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
         </div>
         <div class="ml-4 flex-1">
-          <h3 class="text-sm font-medium text-gray-900">Today's Hours</h3>
+          <h3 class="text-sm font-medium text-gray-900 dark:text-gray-100">Today's Hours</h3>
           <div class="flex items-baseline">
-            <p class="text-2xl font-semibold text-gray-900">
+            <p class="text-2xl font-semibold text-gray-900 dark:text-gray-100">
               {{ todayEntry ? todayEntry.total_hours.toFixed(1) : '0.0' }}h
             </p>
-            <p class="ml-2 text-sm text-gray-500">/ {{ expectedDailyHours }}h</p>
+            <p class="ml-2 text-sm text-gray-500 dark:text-gray-400">/ {{ expectedDailyHours }}h</p>
           </div>
           <div class="mt-2">
             <div 
@@ -144,14 +144,14 @@
     </div>
 
     <!-- Quick Actions -->
-    <div class="bg-white rounded-lg shadow p-6">
-      <h3 class="text-sm font-medium text-gray-900 mb-4">Quick Actions</h3>
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+      <h3 class="text-sm font-medium text-gray-900 dark:text-gray-100 mb-4">Quick Actions</h3>
       <div class="space-y-3">
         <router-link
           to="/employee/calendar"
-          class="flex items-center p-3 text-sm text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+          class="flex items-center p-3 text-sm text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
         >
-          <svg class="w-5 h-5 text-gray-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="w-5 h-5 text-gray-400 dark:text-gray-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
           </svg>
           Holiday Calendar
@@ -159,9 +159,9 @@
         
         <router-link
           to="/employee/history"
-          class="flex items-center p-3 text-sm text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+          class="flex items-center p-3 text-sm text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
         >
-          <svg class="w-5 h-5 text-gray-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="w-5 h-5 text-gray-400 dark:text-gray-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
           </svg>
           Time History
@@ -169,9 +169,9 @@
         
         <button
           @click="$emit('requestHoliday')"
-          class="flex items-center w-full p-3 text-sm text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+          class="flex items-center w-full p-3 text-sm text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
         >
-          <svg class="w-5 h-5 text-gray-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="w-5 h-5 text-gray-400 dark:text-gray-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
           </svg>
           Request Holiday

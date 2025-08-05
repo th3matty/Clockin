@@ -1,11 +1,11 @@
 <template>
-  <div class="bg-white rounded-xl shadow-lg">
+  <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg">
     <!-- Calendar Header -->
-    <div class="px-6 py-4 border-b border-gray-200">
+    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
       <div class="flex items-center justify-between">
         <div>
-          <h2 class="text-xl font-semibold text-gray-900">Holiday Calendar</h2>
-          <p class="text-sm text-gray-600 mt-1">
+          <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100">Holiday Calendar</h2>
+          <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
             {{ remainingHolidayDays }} of {{ totalHolidayDays }} days remaining
           </p>
         </div>
@@ -22,24 +22,24 @@
     </div>
 
     <!-- Calendar Navigation -->
-    <div class="px-6 py-4 border-b border-gray-200">
+    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
       <div class="flex items-center justify-between">
         <button
           @click="previousMonth"
-          class="p-2 text-gray-400 hover:text-gray-600 transition-colors"
+          class="p-2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
         >
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
           </svg>
         </button>
         
-        <h3 class="text-lg font-medium text-gray-900">
+        <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">
           {{ currentMonthName }} {{ currentYear }}
         </h3>
         
         <button
           @click="nextMonth"
-          class="p-2 text-gray-400 hover:text-gray-600 transition-colors"
+          class="p-2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
         >
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
@@ -55,7 +55,7 @@
         <div
           v-for="day in dayHeaders"
           :key="day"
-          class="p-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wide"
+          class="p-2 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide"
         >
           {{ day }}
         </div>
@@ -67,10 +67,10 @@
           v-for="day in calendarDays"
           :key="`${day.date.getTime()}`"
           :class="[
-            'relative p-2 h-12 text-sm border border-gray-100 transition-colors',
-            day.isCurrentMonth ? 'text-gray-900' : 'text-gray-300',
-            day.isToday ? 'bg-primary-50 border-primary-200' : 'hover:bg-gray-50',
-            day.isWeekend ? 'bg-gray-50' : '',
+            'relative p-2 h-12 text-sm border border-gray-100 dark:border-gray-700 transition-colors',
+            day.isCurrentMonth ? 'text-gray-900 dark:text-gray-100' : 'text-gray-300 dark:text-gray-600',
+            day.isToday ? 'bg-primary-50 dark:bg-primary-900/20 border-primary-200 dark:border-primary-700' : 'hover:bg-gray-50 dark:hover:bg-gray-700',
+            day.isWeekend ? 'bg-gray-50 dark:bg-gray-700/50' : '',
             day.hasHoliday ? getHolidayClasses(day.holidayStatus!) : ''
           ]"
         >
@@ -81,8 +81,8 @@
             v-if="day.hasHoliday"
             :class="[
               'absolute bottom-1 left-1 right-1 h-1 rounded-full',
-              day.holidayStatus === 'approved' ? 'bg-green-500' : 
-              day.holidayStatus === 'denied' ? 'bg-red-400' : 'bg-blue-500'
+              day.holidayStatus === 'approved' ? 'bg-green-500 dark:bg-green-400' : 
+              day.holidayStatus === 'denied' ? 'bg-red-500 dark:bg-red-400' : 'bg-blue-500 dark:bg-blue-400'
             ]"
           ></div>
         </div>
@@ -90,23 +90,23 @@
     </div>
 
     <!-- Calendar Legend -->
-    <div class="px-6 py-4 border-t border-gray-200 bg-gray-50">
+    <div class="px-6 py-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700">
       <div class="flex items-center justify-center space-x-6 text-sm">
         <div class="flex items-center">
-          <div class="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
-          <span class="text-gray-600">Approved Holiday</span>
+          <div class="w-3 h-3 bg-green-500 dark:bg-green-400 rounded-full mr-2"></div>
+          <span class="text-gray-600 dark:text-gray-300">Approved Holiday</span>
         </div>
         <div class="flex items-center">
-          <div class="w-3 h-3 bg-blue-500 rounded-full mr-2"></div>
-          <span class="text-gray-600">Pending Request</span>
+          <div class="w-3 h-3 bg-blue-500 dark:bg-blue-400 rounded-full mr-2"></div>
+          <span class="text-gray-600 dark:text-gray-300">Pending Request</span>
         </div>
         <div class="flex items-center">
-          <div class="w-3 h-3 bg-red-500 rounded-full mr-2"></div>
-          <span class="text-gray-600">Denied Request</span>
+          <div class="w-3 h-3 bg-red-500 dark:bg-red-400 rounded-full mr-2"></div>
+          <span class="text-gray-600 dark:text-gray-300">Denied Request</span>
         </div>
         <div class="flex items-center">
-          <div class="w-3 h-3 bg-primary-200 rounded-full mr-2"></div>
-          <span class="text-gray-600">Today</span>
+          <div class="w-3 h-3 bg-primary-200 dark:bg-primary-400 rounded-full mr-2"></div>
+          <span class="text-gray-600 dark:text-gray-300">Today</span>
         </div>
       </div>
     </div>
@@ -210,12 +210,12 @@ function nextMonth() {
 function getHolidayClasses(status: 'approved' | 'pending' | 'denied'): string {
   switch (status) {
     case 'approved':
-      return 'bg-green-100 border-green-300 text-green-900'
+      return 'bg-green-100 dark:bg-green-900/30 border-green-300 dark:border-green-700 text-green-900 dark:text-green-100'
     case 'denied':
-      return 'bg-red-50 border-red-200 text-red-800'
+      return 'bg-red-50 dark:bg-red-900/30 border-red-200 dark:border-red-700 text-red-800 dark:text-red-100'
     case 'pending':
     default:
-      return 'bg-blue-100 border-blue-300 text-blue-900'
+      return 'bg-blue-100 dark:bg-blue-900/30 border-blue-300 dark:border-blue-700 text-blue-900 dark:text-blue-100'
   }
 }
 

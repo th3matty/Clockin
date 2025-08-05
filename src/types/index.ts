@@ -14,6 +14,7 @@ export interface User {
   weekly_target_hours: number; // NEW: For overtime calculation
   working_days_per_week: number; // NEW: For flexible working days (1-7)
   overtime_balance: number; // NEW: Accumulated overtime balance
+  theme_preference?: 'light' | 'dark' | 'system'; // NEW: Theme preference
   created_at: string;
 }
 
@@ -125,6 +126,7 @@ export interface AuthUser {
   weekly_target_hours?: number; // NEW: For overtime calculation
   working_days_per_week?: number; // NEW: For flexible working days
   overtime_balance?: number; // NEW: Accumulated overtime balance
+  theme_preference?: 'light' | 'dark' | 'system'; // NEW: Theme preference
 }
 
 export interface LoginCredentials {

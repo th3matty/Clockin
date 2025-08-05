@@ -3,7 +3,7 @@
     <!-- Notification Bell Button -->
     <button
       @click="toggleNotifications"
-      class="relative p-2 text-gray-600 hover:text-gray-900 transition-colors"
+      class="relative p-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
     >
       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5zM11 19H6.334c-.706 0-1.334-.895-1.334-2V9c0-3.866 3.582-7 8-7s8 3.134 8 7v8c0 1.105-.628 2-1.334 2H15M9 9l3 3 3-3" />
@@ -21,11 +21,11 @@
     <!-- Notification Dropdown Panel -->
     <div
       v-if="showNotifications"
-      class="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 z-50 max-h-96 overflow-hidden"
+      class="absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50 max-h-96 overflow-hidden"
     >
       <!-- Header -->
-      <div class="px-4 py-3 border-b border-gray-200 flex items-center justify-between">
-        <h3 class="text-sm font-semibold text-gray-900">Notifications</h3>
+      <div class="px-4 py-3 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+        <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Notifications</h3>
         <button
           v-if="unreadCount > 0"
           @click="handleMarkAllAsRead"
@@ -41,7 +41,7 @@
         <!-- Loading State -->
         <div v-if="loading" class="px-4 py-8 text-center">
           <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600 mx-auto mb-3"></div>
-          <p class="text-sm text-gray-500">Loading notifications...</p>
+          <p class="text-sm text-gray-500 dark:text-gray-400">Loading notifications...</p>
         </div>
         
         <!-- Empty State -->
@@ -49,7 +49,7 @@
           <svg class="w-12 h-12 text-gray-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5zM11 19H6.334c-.706 0-1.334-.895-1.334-2V9c0-3.866 3.582-7 8-7s8 3.134 8 7v8c0 1.105-.628 2-1.334 2H15" />
           </svg>
-          <p class="text-sm text-gray-500">No notifications yet</p>
+          <p class="text-sm text-gray-500 dark:text-gray-400">No notifications yet</p>
         </div>
 
         <!-- Notifications List -->
@@ -64,10 +64,10 @@
       </div>
 
       <!-- Footer -->
-      <div v-if="notifications.length > 0" class="px-4 py-3 border-t border-gray-200 bg-gray-50">
+      <div v-if="notifications.length > 0" class="px-4 py-3 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700">
         <button
           @click="viewAllNotifications"
-          class="text-sm text-primary-600 hover:text-primary-700 font-medium"
+          class="text-sm text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium"
         >
           View all notifications
         </button>

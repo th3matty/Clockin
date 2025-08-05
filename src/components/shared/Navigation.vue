@@ -1,5 +1,5 @@
 <template>
-  <nav class="bg-white shadow-sm border-b border-gray-200 fixed top-0 left-0 right-0 z-50">
+  <nav class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 fixed top-0 left-0 right-0 z-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between items-center h-16">
         <!-- Logo and Brand -->
@@ -10,7 +10,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <span class="text-xl font-bold text-gray-900">ClockIn</span>
+            <span class="text-xl font-bold text-gray-900 dark:text-gray-100">ClockIn</span>
           </router-link>
         </div>
 
@@ -27,8 +27,8 @@
               :class="[
                 'text-sm font-medium transition-colors',
                 $route.path === '/employee' 
-                  ? 'text-primary-600' 
-                  : 'text-gray-700 hover:text-primary-600'
+                  ? 'text-primary-600 dark:text-primary-400' 
+                  : 'text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400'
               ]"
             >
               Dashboard
@@ -40,8 +40,8 @@
               :class="[
                 'text-sm font-medium transition-colors',
                 $route.path === '/admin' 
-                  ? 'text-primary-600' 
-                  : 'text-gray-700 hover:text-primary-600'
+                  ? 'text-primary-600 dark:text-primary-400' 
+                  : 'text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400'
               ]"
             >
               Team Overview
@@ -52,8 +52,8 @@
               :class="[
                 'text-sm font-medium transition-colors',
                 $route.path === '/settings' 
-                  ? 'text-primary-600' 
-                  : 'text-gray-700 hover:text-primary-600'
+                  ? 'text-primary-600 dark:text-primary-400' 
+                  : 'text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400'
               ]"
             >
               Settings
@@ -83,12 +83,12 @@
     </div>
 
     <!-- Mobile Navigation Menu -->
-    <div v-if="isAuthenticated && showMobileMenu" class="md:hidden border-t border-gray-200 bg-white">
+    <div v-if="isAuthenticated && showMobileMenu" class="md:hidden border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
       <div class="px-4 py-3 space-y-3">
         <router-link
           v-if="currentView === 'employee' || !isAdmin"
           to="/employee"
-          class="block text-sm font-medium text-gray-700 hover:text-primary-600 transition-colors"
+          class="block text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
           @click="showMobileMenu = false"
         >
           Dashboard
