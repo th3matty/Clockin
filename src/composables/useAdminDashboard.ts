@@ -36,7 +36,7 @@ export function useAdminDashboard() {
         throw usersError
       }
 
-      console.log('Admin dashboard - fetched users:', users)
+
 
 
 
@@ -162,7 +162,14 @@ export function useAdminDashboard() {
         message: `Requested ${request.days_requested} day${request.days_requested > 1 ? 's' : ''} holiday - ${request.reason || 'No reason provided'}`,
         timestamp: request.created_at,
         actionable: request.status === 'pending',
-        holiday_request_id: request.id
+        holiday_request_id: request.id,
+        metadata: {
+          start_date: request.start_date,
+          end_date: request.end_date,
+          days_requested: request.days_requested,
+          reason: request.reason,
+          status: request.status
+        }
       })) || []
 
       activities.value = processedActivities

@@ -75,6 +75,34 @@
                                     <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
                                         {{ activity.message }}
                                     </p>
+
+                                    <!-- Enhanced Details for Holiday Requests -->
+                                    <div v-if="activity.type === 'holiday_request' && activity.metadata"
+                                        class="mt-2 space-y-1">
+                                        <div class="flex items-center text-xs text-gray-500 dark:text-gray-400">
+                                            <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                            </svg>
+                                            <span class="font-medium">{{ formatDateRange(activity.metadata.start_date!,
+                                                activity.metadata.end_date!) }}</span>
+                                        </div>
+                                        <div v-if="activity.metadata.reason"
+                                            class="flex items-start text-xs text-gray-500 dark:text-gray-400">
+                                            <svg class="w-3 h-3 mr-1 mt-0.5 flex-shrink-0" fill="none"
+                                                stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+                                            </svg>
+                                            <span class="italic">"{{ activity.metadata.reason }}"</span>
+                                        </div>
+                                        <div class="flex items-center text-xs">
+                                            <span :class="getStatusBadgeClasses(activity.metadata.status!)">
+                                                {{ (activity.metadata?.status?.[0]?.toUpperCase() ?? '') + (activity.metadata?.status?.slice(1) ?? '') }}
+                                            </span>
+                                        </div>
+                                    </div>
                                 </div>
                                 <time class="text-xs text-gray-500 dark:text-gray-400 ml-2">
                                     {{ formatRelativeTime(activity.timestamp) }}
@@ -119,7 +147,7 @@
                 <div class="px-6 py-4">
                     <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
                         Are you sure you want to deny this holiday request from <strong>{{ selectedActivity?.user_name
-                            }}</strong>?
+                        }}</strong>?
                     </p>
                     <div>
                         <label for="deny-reason"
@@ -148,7 +176,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { formatDistanceToNow } from 'date-fns'
+import { formatDistanceToNow, format, parseISO, isSameDay } from 'date-fns'
 import { useAdminDashboard } from '@/composables/useAdminDashboard'
 import type { ActivityFeedItem } from '@/types'
 
@@ -217,6 +245,30 @@ function getActivityTypeClasses(type: string): string {
 
 function formatRelativeTime(date: string): string {
     return formatDistanceToNow(new Date(date), { addSuffix: true })
+}
+
+function formatDateRange(startDate: string, endDate: string): string {
+    const start = parseISO(startDate)
+    const end = parseISO(endDate)
+
+    if (isSameDay(start, end)) {
+        return format(start, 'MMM d, yyyy')
+    } else {
+        return `${format(start, 'MMM d')} - ${format(end, 'MMM d, yyyy')}`
+    }
+}
+
+function getStatusBadgeClasses(status: string): string {
+    switch (status) {
+        case 'approved':
+            return 'inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200'
+        case 'denied':
+            return 'inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200'
+        case 'pending':
+            return 'inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200'
+        default:
+            return 'inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200'
+    }
 }
 
 // Lifecycle

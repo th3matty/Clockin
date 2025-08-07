@@ -188,6 +188,13 @@ export interface ActivityFeedItem {
   timestamp: string;
   actionable?: boolean;
   holiday_request_id?: string;
+  metadata?: {
+    start_date?: string;
+    end_date?: string;
+    days_requested?: number;
+    reason?: string;
+    status?: string;
+  };
 }
 
 // Export types
