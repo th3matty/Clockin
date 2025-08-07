@@ -1,4 +1,4 @@
-<template>
+e<template>
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow">
         <!-- Header -->
         <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
@@ -99,7 +99,8 @@
                                         </div>
                                         <div class="flex items-center text-xs">
                                             <span :class="getStatusBadgeClasses(activity.metadata.status!)">
-                                                {{ (activity.metadata?.status?.[0]?.toUpperCase() ?? '') + (activity.metadata?.status?.slice(1) ?? '') }}
+                                                {{ (activity.metadata?.status?.[0]?.toUpperCase() ?? '') +
+                                                    (activity.metadata?.status?.slice(1) ?? '') }}
                                             </span>
                                         </div>
                                     </div>
@@ -147,7 +148,7 @@
                 <div class="px-6 py-4">
                     <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
                         Are you sure you want to deny this holiday request from <strong>{{ selectedActivity?.user_name
-                        }}</strong>?
+                            }}</strong>?
                     </p>
                     <div>
                         <label for="deny-reason"
@@ -189,15 +190,22 @@ const showDenyModalFlag = ref(false)
 const selectedActivity = ref<ActivityFeedItem | null>(null)
 const denyReason = ref('')
 
+// Emits
+const emit = defineEmits<{
+    'activities-updated': []
+}>()
+
 // Methods
 async function refreshActivities() {
     await fetchActivities()
+    emit('activities-updated')
 }
 
 async function approveRequest(requestId: string) {
     processingRequest.value = requestId
     try {
         await approveHolidayRequest(requestId)
+        emit('activities-updated')
     } catch (error) {
         console.error('Failed to approve request:', error)
     } finally {
@@ -224,6 +232,7 @@ async function confirmDenyRequest() {
     try {
         await denyHolidayRequest(selectedActivity.value.holiday_request_id, denyReason.value)
         closeDenyModal()
+        emit('activities-updated')
     } catch (error) {
         console.error('Failed to deny request:', error)
     } finally {
@@ -252,9 +261,9 @@ function formatDateRange(startDate: string, endDate: string): string {
     const end = parseISO(endDate)
 
     if (isSameDay(start, end)) {
-        return format(start, 'MMM d, yyyy')
+        return format(start, 'dd.MM.yyyy')
     } else {
-        return `${format(start, 'MMM d')} - ${format(end, 'MMM d, yyyy')}`
+        return `${format(start, 'dd.MM')} - ${format(end, 'dd.MM.yyyy')}`
     }
 }
 

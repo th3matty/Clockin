@@ -4,19 +4,19 @@ import type { NotificationType } from '@/types'
 
 export function useNotifications() {
   const store = useNotificationsStore()
-  
+
   // Use storeToRefs to maintain reactivity for state/getters
-  const { 
-    notifications, 
-    loading, 
-    error, 
-    unreadNotifications, 
-    unreadCount, 
-    sortedNotifications 
+  const {
+    notifications,
+    loading,
+    error,
+    unreadNotifications,
+    unreadCount,
+    sortedNotifications
   } = storeToRefs(store)
-  
+
   // Actions don't need storeToRefs
-  const { 
+  const {
     fetchNotifications,
     createNotification,
     markAsRead,
@@ -60,7 +60,7 @@ export function useNotifications() {
     const date = new Date(timestamp)
     const now = new Date()
     const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60))
-    
+
     if (diffInHours < 1) {
       const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60))
       return diffInMinutes < 1 ? 'Just now' : `${diffInMinutes}m ago`
@@ -72,18 +72,29 @@ export function useNotifications() {
     }
   }
 
+  function formatDateGerman(dateString: string): string {
+    const date = new Date(dateString)
+    const day = date.getDate().toString().padStart(2, '0')
+    const month = (date.getMonth() + 1).toString().padStart(2, '0')
+    const year = date.getFullYear()
+    return `${day}.${month}.${year}`
+  }
+
   // Helper functions for creating specific notification types
   async function createHolidayRequestNotification(
     adminUserId: string,
     employeeName: string,
     startDate: string,
     endDate: string,
-    daysRequested: number
+    daysRequested: number,
+    holidayRequestId?: string
   ) {
     const title = 'New Holiday Request'
-    const message = `${employeeName} has requested ${daysRequested} day${daysRequested > 1 ? 's' : ''} of holiday (${startDate} - ${endDate}).`
-    
-    return await createNotification(adminUserId, 'holiday_request', title, message)
+    const formattedStartDate = formatDateGerman(startDate)
+    const formattedEndDate = formatDateGerman(endDate)
+    const message = `${employeeName} has requested ${daysRequested} day${daysRequested > 1 ? 's' : ''} of holiday from ${formattedStartDate} to ${formattedEndDate}.`
+
+    return await createNotification(adminUserId, 'holiday_request', title, message, holidayRequestId)
   }
 
   async function createHolidayApprovedNotification(
@@ -92,8 +103,10 @@ export function useNotifications() {
     endDate: string
   ) {
     const title = 'Holiday Request Approved'
-    const message = `Your holiday request for ${startDate} - ${endDate} has been approved.`
-    
+    const formattedStartDate = formatDateGerman(startDate)
+    const formattedEndDate = formatDateGerman(endDate)
+    const message = `Your holiday request for ${formattedStartDate} - ${formattedEndDate} has been approved.`
+
     return await createNotification(employeeUserId, 'holiday_approved', title, message)
   }
 
@@ -104,8 +117,10 @@ export function useNotifications() {
     reason?: string
   ) {
     const title = 'Holiday Request Denied'
-    const message = `Your holiday request for ${startDate} - ${endDate} has been denied.${reason ? ` Reason: ${reason}` : ''}`
-    
+    const formattedStartDate = formatDateGerman(startDate)
+    const formattedEndDate = formatDateGerman(endDate)
+    const message = `Your holiday request for ${formattedStartDate} - ${formattedEndDate} has been denied.${reason ? ` Reason: ${reason}` : ''}`
+
     return await createNotification(employeeUserId, 'holiday_denied', title, message)
   }
 
@@ -117,7 +132,7 @@ export function useNotifications() {
     unreadNotifications,
     unreadCount,
     sortedNotifications,
-    
+
     // Actions
     fetchNotifications,
     createNotification,
@@ -129,12 +144,13 @@ export function useNotifications() {
     clearError,
     clearNotifications,
     resetLoadingState,
-    
+
     // Utility functions
     getNotificationColor,
     getNotificationIcon,
     formatTime,
-    
+    formatDateGerman,
+
     // Helper functions for specific notification types
     createHolidayRequestNotification,
     createHolidayApprovedNotification,

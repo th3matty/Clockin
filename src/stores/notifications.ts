@@ -92,7 +92,8 @@ export const useNotificationsStore = defineStore('notifications', () => {
     userId: string,
     type: NotificationType,
     title: string,
-    message: string
+    message: string,
+    referenceId?: string
   ): Promise<DetailedApiResponse<Notification>> {
     try {
       loading.value = true
@@ -105,7 +106,8 @@ export const useNotificationsStore = defineStore('notifications', () => {
           type,
           title,
           message,
-          read: false
+          read: false,
+          reference_id: referenceId
         })
         .select()
         .single()

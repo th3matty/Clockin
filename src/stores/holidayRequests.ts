@@ -279,6 +279,21 @@ export const useHolidayRequestsStore = defineStore('holidayRequests', () => {
         }
       }
 
+      // Clean up related admin notifications for this holiday request
+      const { error: notificationError } = await supabase
+        .from('notifications')
+        .delete()
+        .eq('reference_id', requestId)
+        .eq('type', 'holiday_request')
+        .eq('read', false) // Only delete unread notifications to avoid confusion
+
+      if (notificationError) {
+        console.warn('Failed to clean up related notifications:', notificationError)
+        // Don't fail the whole operation if notification cleanup fails
+      } else {
+        console.log('✅ Successfully cleaned up related notifications for request:', requestId)
+      }
+
       // Remove from local state
       console.log('🗑️ Store: Removing request from local state. Before:', holidayRequests.value.length)
       holidayRequests.value = holidayRequests.value.filter(r => r.id !== requestId)

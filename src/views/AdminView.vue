@@ -10,35 +10,16 @@
               <p class="text-gray-600 dark:text-gray-400 mt-2">Manage your team and monitor activity</p>
             </div>
             
-            <!-- Quick Stats & Actions -->
-            <div class="flex items-center space-x-6">
-              <!-- Quick Stats -->
-              <div class="hidden md:flex items-center space-x-4 text-sm">
-                <div class="text-center">
-                  <div class="text-2xl font-bold text-gray-900 dark:text-gray-100">{{ totalTeamMembers }}</div>
-                  <div class="text-gray-500 dark:text-gray-400">Total Members</div>
-                </div>
-                <div class="text-center">
-                  <div class="text-2xl font-bold text-green-600 dark:text-green-400">{{ activeMembers }}</div>
-                  <div class="text-gray-500 dark:text-gray-400">Active Today</div>
-                </div>
-                <div class="text-center">
-                  <div class="text-2xl font-bold text-orange-600 dark:text-orange-400">{{ pendingRequests }}</div>
-                  <div class="text-gray-500 dark:text-gray-400">Pending Requests</div>
-                </div>
+            <!-- Quick Stats -->
+            <div class="hidden md:flex items-center space-x-8 text-sm">
+              <div class="text-center">
+                <div class="text-2xl font-bold text-gray-900 dark:text-gray-100">{{ totalTeamMembers }}</div>
+                <div class="text-gray-500 dark:text-gray-400">Total Members</div>
               </div>
-              
-              <!-- Refresh Button -->
-              <button
-                @click="refreshData"
-                :disabled="loading"
-                class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 transition-colors"
-              >
-                <svg :class="['w-4 h-4 mr-2', loading ? 'animate-spin' : '']" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                </svg>
-                Refresh
-              </button>
+              <div class="text-center">
+                <div class="text-2xl font-bold text-orange-600 dark:text-orange-400">{{ pendingRequests }}</div>
+                <div class="text-gray-500 dark:text-gray-400">Pending Requests</div>
+              </div>
             </div>
           </div>
         </div>
@@ -86,7 +67,7 @@
 
           <!-- Activity Feed Sidebar (1/3 width) -->
           <div class="lg:col-span-1">
-            <ActivityFeed />
+            <ActivityFeed @activities-updated="fetchTeamMembers" />
           </div>
         </div>
       </div>
@@ -106,13 +87,7 @@ import type { AdminUser } from '@/types'
 
 // Composables
 const router = useRouter()
-const { teamMembers, loading, fetchTeamMembers, clearError, totalTeamMembers, activeMembers, pendingRequests } = useAdminDashboard()
-
-// Methods
-async function refreshData() {
-  clearError()
-  await fetchTeamMembers()
-}
+const { teamMembers, loading, fetchTeamMembers, fetchActivities, totalTeamMembers, pendingRequests } = useAdminDashboard()
 
 function viewUserDetail(user: AdminUser) {
   router.push(`/admin/users/${user.id}`)
@@ -120,6 +95,9 @@ function viewUserDetail(user: AdminUser) {
 
 // Lifecycle
 onMounted(async () => {
-  await fetchTeamMembers()
+  await Promise.all([
+    fetchTeamMembers(),
+    fetchActivities()
+  ])
 })
 </script>

@@ -1,43 +1,27 @@
 <template>
   <div class="relative">
     <!-- Notification Bell Button -->
-    <button
-      @click="toggleNotifications"
-      class="relative p-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
-    >
-      <Vue3Lottie 
-        :animationData="notificationAnimation" 
-        :height="24" 
-        :width="24" 
-        :loop="true" 
-        :autoPlay="unreadCount > 0"
-        ref="notificationLottieRef"
-        class="text-gray-600 dark:text-gray-300"
-      />
-      
+    <button @click="toggleNotifications"
+      class="relative p-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">
+      <Vue3Lottie :animationData="notificationAnimation" :height="24" :width="24" :loop="true"
+        :autoPlay="unreadCount > 0" ref="notificationLottieRef"
+        :style="{ filter: isDarkMode ? 'invert(1) brightness(0.8)' : 'none' }" />
+
       <!-- Notification Badge -->
-      <span
-        v-if="unreadCount > 0"
-        class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium"
-      >
+      <span v-if="unreadCount > 0"
+        class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium">
         {{ unreadCount > 99 ? '99+' : unreadCount }}
       </span>
     </button>
 
     <!-- Notification Dropdown Panel -->
-    <div
-      v-if="showNotifications"
-      class="absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50 max-h-96 overflow-hidden"
-    >
+    <div v-if="showNotifications"
+      class="absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50 max-h-96 overflow-hidden">
       <!-- Header -->
       <div class="px-4 py-3 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
         <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Notifications</h3>
-        <button
-          v-if="unreadCount > 0"
-          @click="handleMarkAllAsRead"
-          :disabled="loading"
-          class="text-xs text-primary-600 hover:text-primary-700 font-medium disabled:opacity-50"
-        >
+        <button v-if="unreadCount > 0" @click="handleMarkAllAsRead" :disabled="loading"
+          class="text-xs text-primary-600 hover:text-primary-700 font-medium disabled:opacity-50">
           Mark all read
         </button>
       </div>
@@ -49,48 +33,40 @@
           <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600 mx-auto mb-3"></div>
           <p class="text-sm text-gray-500 dark:text-gray-400">Loading notifications...</p>
         </div>
-        
+
         <!-- Empty State -->
         <div v-else-if="notifications.length === 0" class="px-4 py-8 text-center">
           <svg class="w-12 h-12 text-gray-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5zM11 19H6.334c-.706 0-1.334-.895-1.334-2V9c0-3.866 3.582-7 8-7s8 3.134 8 7v8c0 1.105-.628 2-1.334 2H15" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M15 17h5l-5 5v-5zM11 19H6.334c-.706 0-1.334-.895-1.334-2V9c0-3.866 3.582-7 8-7s8 3.134 8 7v8c0 1.105-.628 2-1.334 2H15" />
           </svg>
           <p class="text-sm text-gray-500 dark:text-gray-400">No notifications yet</p>
         </div>
 
         <!-- Notifications List -->
         <div v-else class="divide-y divide-gray-100">
-          <NotificationItem
-            v-for="notification in notifications"
-            :key="notification.id"
-            :notification="notification"
-            @mark-as-read="handleMarkAsRead"
-          />
+          <NotificationItem v-for="notification in notifications" :key="notification.id" :notification="notification"
+            @mark-as-read="handleMarkAsRead" />
         </div>
       </div>
 
       <!-- Footer -->
-      <div v-if="notifications.length > 0" class="px-4 py-3 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700">
-        <button
-          @click="viewAllNotifications"
-          class="text-sm text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium"
-        >
+      <div v-if="notifications.length > 0"
+        class="px-4 py-3 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700">
+        <button @click="viewAllNotifications"
+          class="text-sm text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium">
           View all notifications
         </button>
       </div>
     </div>
 
     <!-- Backdrop to close dropdown -->
-    <div
-      v-if="showNotifications"
-      @click="showNotifications = false"
-      class="fixed inset-0 z-40"
-    ></div>
+    <div v-if="showNotifications" @click="showNotifications = false" class="fixed inset-0 z-40"></div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, watch } from 'vue'
+import { ref, onMounted, onUnmounted, watch, computed } from 'vue'
 import { useAuth } from '@/composables/useAuth'
 import { useNotifications } from '@/composables/useNotifications'
 import NotificationItem from './NotificationItem.vue'
@@ -108,16 +84,24 @@ const {
   markAllAsRead,
   setupRealtimeSubscription,
   clearRealtimeSubscription,
-  resetLoadingState,
-  getNotificationColor,
-  getNotificationIcon,
-  formatTime
+  resetLoadingState
 } = useNotifications()
 
 // State
 const showNotifications = ref(false)
 const notificationLottieRef = ref()
 const notificationAnimation = notificationAnimationData
+
+// Dark mode detection
+const isDarkMode = ref(false)
+
+// Function to update dark mode state
+function updateDarkMode() {
+  if (typeof window !== 'undefined') {
+    isDarkMode.value = document.documentElement.classList.contains('dark') ||
+      window.matchMedia('(prefers-color-scheme: dark)').matches
+  }
+}
 
 // Methods
 async function toggleNotifications() {
@@ -167,10 +151,10 @@ watch(user, async (newUser, oldUser) => {
   if (newUser && newUser.id !== oldUser?.id) {
     // Clear previous subscription if exists
     clearRealtimeSubscription()
-    
+
     // Set up real-time subscription first
     setupRealtimeSubscription(newUser.id)
-    
+
     // Fetch initial notifications only if we don't have any
     if (notifications.value.length === 0) {
       try {
@@ -198,10 +182,45 @@ watch(unreadCount, (newCount, oldCount) => {
   }
 })
 
+
+
 // Lifecycle
-onMounted(() => {
+onMounted(async () => {
   document.addEventListener('click', handleClickOutside)
-  
+
+  // Initialize dark mode detection
+  updateDarkMode()
+
+  // Watch for dark mode changes using MutationObserver
+  const observer = new MutationObserver(() => {
+    updateDarkMode()
+  })
+
+  observer.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ['class']
+  })
+
+  // Also listen for system theme changes
+  const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+  mediaQuery.addEventListener('change', updateDarkMode)
+
+    // Store observer for cleanup
+    ; (document as any)._themeObserver = observer
+    ; (document as any)._mediaQuery = mediaQuery
+
+  // Fetch notifications immediately if user is already authenticated
+  if (user.value && notifications.value.length === 0) {
+    console.log('NotificationBell: Fetching notifications on mount for user:', user.value.id)
+    try {
+      await fetchNotifications(user.value.id)
+      // Also set up real-time subscription
+      setupRealtimeSubscription(user.value.id)
+    } catch (error) {
+      console.error('Failed to fetch notifications on mount:', error)
+    }
+  }
+
   // Safety mechanism: reset loading state if it gets stuck
   setTimeout(() => {
     if (loading.value) {
@@ -214,5 +233,16 @@ onMounted(() => {
 onUnmounted(() => {
   document.removeEventListener('click', handleClickOutside)
   clearRealtimeSubscription()
+
+  // Clean up theme observers
+  if ((document as any)._themeObserver) {
+    ; (document as any)._themeObserver.disconnect()
+    delete (document as any)._themeObserver
+  }
+
+  if ((document as any)._mediaQuery) {
+    ; (document as any)._mediaQuery.removeEventListener('change', updateDarkMode)
+    delete (document as any)._mediaQuery
+  }
 })
 </script>

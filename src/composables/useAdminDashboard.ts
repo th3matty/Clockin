@@ -193,8 +193,11 @@ export function useAdminDashboard() {
 
       if (error) throw error
 
-      // Refresh activities
-      await fetchActivities()
+      // Refresh activities and team data
+      await Promise.all([
+        fetchActivities(),
+        fetchTeamMembers()
+      ])
     } catch (err) {
       console.error('Error approving holiday request:', err)
       throw err
@@ -217,8 +220,11 @@ export function useAdminDashboard() {
 
       if (error) throw error
 
-      // Refresh activities
-      await fetchActivities()
+      // Refresh activities and team data
+      await Promise.all([
+        fetchActivities(),
+        fetchTeamMembers()
+      ])
     } catch (err) {
       console.error('Error denying holiday request:', err)
       throw err
