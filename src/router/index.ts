@@ -15,8 +15,7 @@ declare module 'vue-router' {
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
-    name: 'home',
-    component: () => import('@/views/HomeView.vue')
+    redirect: '/login'
   },
   {
     path: '/login',

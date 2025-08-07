@@ -5,7 +5,7 @@
       <div class="flex justify-between items-center h-16">
         <!-- Logo and Brand -->
         <div class="flex items-center">
-          <router-link to="/" class="flex items-center space-x-2">
+          <div class="flex items-center space-x-2">
             <div class="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
               <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -13,7 +13,7 @@
               </svg>
             </div>
             <span class="text-xl font-bold text-gray-900 dark:text-gray-100">ClockIn</span>
-          </router-link>
+          </div>
         </div>
 
         <!-- Navigation Items (only show when authenticated) -->
@@ -106,7 +106,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAuth } from '@/composables/useAuth'
 import RoleSelector from './RoleSelector.vue'
@@ -121,8 +121,6 @@ const route = useRoute()
 const showMobileMenu = ref(false)
 const currentView = ref<'employee' | 'admin'>('employee')
 
-// Computed
-const isCurrentRoute = computed(() => (path: string) => route.path === path)
 /**
  * Mark link active when current path equals the target path OR when on a child route.
  * - Dashboard (employee): active for /employee and /employee/*
@@ -140,9 +138,7 @@ async function handleLogout() {
   await logout()
 }
 
-function toggleMobileMenu() {
-  showMobileMenu.value = !showMobileMenu.value
-}
+
 
 // Handle role switching
 function handleRoleSwitch(role: 'employee' | 'admin') {
