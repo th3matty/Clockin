@@ -65,7 +65,6 @@ const formattedTime = computed(() => formatTime(props.notification.created_at))
 
 // Methods
 function handleNotificationClick() {
-  console.log('🔔 Notification clicked:', props.notification.type, props.notification.message)
   
   // Mark as read first
   emit('mark-as-read', props.notification.id)
@@ -73,16 +72,13 @@ function handleNotificationClick() {
   // Handle special navigation for holiday notifications
   if (props.notification.type === 'holiday_approved' || props.notification.type === 'holiday_denied' || props.notification.type === 'holiday_request') {
     const dates = extractDatesFromMessage(props.notification.message)
-    console.log('📅 Extracted dates:', dates)
     if (dates) {
-      console.log('🚀 Emitting navigate-to-calendar event')
       emit('navigate-to-calendar', dates.startDate, dates.endDate)
     }
   }
 }
 
 function extractDatesFromMessage(message: string): { startDate: string; endDate: string } | null {
-  console.log('🔍 Extracting dates from message:', message)
   
   // Try ISO format first (YYYY-MM-DD)
   // Example: "Your holiday request for 2025-08-11 to 2025-08-15 has been approved."
@@ -91,7 +87,6 @@ function extractDatesFromMessage(message: string): { startDate: string; endDate:
   
   let rangeMatch = message.match(isoRangeRegex)
   if (rangeMatch) {
-    console.log('✅ Found ISO date range:', rangeMatch[1], 'to', rangeMatch[2])
     return {
       startDate: rangeMatch[1],
       endDate: rangeMatch[2]
@@ -105,7 +100,6 @@ function extractDatesFromMessage(message: string): { startDate: string; endDate:
   
   rangeMatch = message.match(germanRangeRegex)
   if (rangeMatch) {
-    console.log('✅ Found German date range:', rangeMatch[1], 'to', rangeMatch[2])
     return {
       startDate: convertGermanDateToISO(rangeMatch[1]),
       endDate: convertGermanDateToISO(rangeMatch[2])
@@ -115,7 +109,6 @@ function extractDatesFromMessage(message: string): { startDate: string; endDate:
   // Try single ISO date
   const isoSingleMatch = message.match(isoSingleRegex)
   if (isoSingleMatch) {
-    console.log('✅ Found single ISO date:', isoSingleMatch[1])
     return {
       startDate: isoSingleMatch[1],
       endDate: isoSingleMatch[1]
@@ -125,7 +118,6 @@ function extractDatesFromMessage(message: string): { startDate: string; endDate:
   // Try single German date
   const germanSingleMatch = message.match(germanSingleRegex)
   if (germanSingleMatch) {
-    console.log('✅ Found single German date:', germanSingleMatch[1])
     const date = convertGermanDateToISO(germanSingleMatch[1])
     return {
       startDate: date,
@@ -133,7 +125,6 @@ function extractDatesFromMessage(message: string): { startDate: string; endDate:
     }
   }
   
-  console.log('❌ No dates found in message')
   return null
 }
 

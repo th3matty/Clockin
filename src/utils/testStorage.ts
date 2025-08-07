@@ -2,11 +2,9 @@
 import { supabase } from './supabase'
 
 export async function testStorageConnection() {
-  console.log('🔍 Testing Supabase Storage Connection...')
   
   try {
     // Test 1: List buckets
-    console.log('1. Testing bucket listing...')
     const { data: buckets, error: bucketsError } = await supabase.storage.listBuckets()
     
     if (bucketsError) {
@@ -14,7 +12,6 @@ export async function testStorageConnection() {
       return false
     }
     
-    console.log('✅ Buckets found:', buckets?.map(b => b.name))
     
     // Test 2: Check if avatars bucket exists
     const avatarsBucket = buckets?.find(b => b.name === 'avatars')
@@ -23,10 +20,7 @@ export async function testStorageConnection() {
       return false
     }
     
-    console.log('✅ Avatars bucket exists:', avatarsBucket)
-    
     // Test 3: Try to list files in avatars bucket
-    console.log('2. Testing file listing in avatars bucket...')
     const { data: files, error: filesError } = await supabase.storage
       .from('avatars')
       .list('', { limit: 1 })
@@ -36,10 +30,8 @@ export async function testStorageConnection() {
       return false
     }
     
-    console.log('✅ Can access avatars bucket, files:', files?.length || 0)
     
     // Test 4: Test authentication
-    console.log('3. Testing authentication...')
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     
     if (authError || !user) {
@@ -47,9 +39,6 @@ export async function testStorageConnection() {
       return false
     }
     
-    console.log('✅ User authenticated:', user.id)
-    
-    console.log('🎉 All storage tests passed!')
     return true
     
   } catch (error) {
@@ -60,8 +49,6 @@ export async function testStorageConnection() {
 
 // Function to create a test upload
 export async function testAvatarUpload() {
-  console.log('🔍 Testing avatar upload...')
-  
   try {
     // Create a small test image (1x1 pixel PNG)
     const canvas = document.createElement('canvas')
@@ -81,8 +68,6 @@ export async function testAvatarUpload() {
     })
     
     const testFile = new File([blob], 'test.png', { type: 'image/png' })
-    console.log('Created test file:', testFile)
-    
     // Get current user
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) {
@@ -92,7 +77,6 @@ export async function testAvatarUpload() {
     
     // Try upload
     const fileName = `${user.id}/test-${Date.now()}.png`
-    console.log('Uploading test file as:', fileName)
     
     const { data, error } = await supabase.storage
       .from('avatars')
@@ -106,19 +90,13 @@ export async function testAvatarUpload() {
       return false
     }
     
-    console.log('✅ Test upload successful:', data)
-    
     // Get public URL
     const { data: urlData } = supabase.storage
       .from('avatars')
       .getPublicUrl(data.path)
     
-    console.log('✅ Public URL generated:', urlData.publicUrl)
-    
     // Clean up test file
     await supabase.storage.from('avatars').remove([data.path])
-    console.log('✅ Test file cleaned up')
-    
     return true
     
   } catch (error) {

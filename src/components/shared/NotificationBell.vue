@@ -117,7 +117,6 @@ async function refreshNotificationsDebounced() {
   // Set new timeout to debounce rapid navigation
   refreshTimeout.value = setTimeout(async () => {
     if (user.value && !loading.value) {
-      console.log('🔔 Refreshing notifications due to route change:', route.path)
       try {
         await fetchNotifications(user.value.id)
       } catch (error) {
@@ -152,8 +151,6 @@ async function handleMarkAsRead(notificationId: string) {
 }
 
 async function handleNavigateToCalendar(startDate: string, endDate: string) {
-  console.log('🎯 NotificationBell: Navigating to calendar with dates:', startDate, endDate)
-  
   // Close the notification dropdown
   showNotifications.value = false
   
@@ -166,7 +163,6 @@ async function handleNavigateToCalendar(startDate: string, endDate: string) {
     }
   })
   
-  console.log('✅ Navigation completed')
 }
 
 async function handleMarkAllAsRead() {
@@ -178,13 +174,11 @@ async function handleMarkAllAsRead() {
 function viewAllNotifications() {
   showNotifications.value = false
   // TODO: Navigate to notifications page when implemented
-  console.log('Navigate to notifications page')
 }
 
 // Manual refresh function that can be called externally
 async function refreshNotifications() {
   if (user.value && !loading.value) {
-    console.log('🔔 Manual notification refresh requested')
     try {
       await fetchNotifications(user.value.id)
     } catch (error) {
@@ -275,7 +269,6 @@ onMounted(async () => {
   // Listen for window focus to refresh notifications when user returns to tab
   const handleWindowFocus = () => {
     if (user.value && !loading.value) {
-      console.log('🔔 Refreshing notifications due to window focus')
       refreshNotificationsDebounced()
     }
   }
@@ -289,7 +282,6 @@ onMounted(async () => {
 
   // Fetch notifications immediately if user is already authenticated
   if (user.value && notifications.value.length === 0) {
-    console.log('NotificationBell: Fetching notifications on mount for user:', user.value.id)
     try {
       await fetchNotifications(user.value.id)
       // Also set up real-time subscription

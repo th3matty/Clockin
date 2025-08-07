@@ -22,7 +22,6 @@ export function useNotificationSync() {
     // Debounce: Don't sync if we synced less than 2 seconds ago
     const now = Date.now()
     if (now - lastSyncTime.value < 2000) {
-      console.log('🔔 Notification sync skipped (debounced)')
       return
     }
 
@@ -30,7 +29,6 @@ export function useNotificationSync() {
       syncInProgress.value = true
       lastSyncTime.value = now
       
-      console.log(`🔔 Syncing notifications (${reason})`)
       await fetchNotifications(user.value.id)
     } catch (error) {
       console.error('Failed to sync notifications:', error)
@@ -51,7 +49,6 @@ export function useNotificationSync() {
       syncInProgress.value = true
       lastSyncTime.value = Date.now()
       
-      console.log(`🔔 Force syncing notifications (${reason})`)
       await fetchNotifications(user.value.id)
     } catch (error) {
       console.error('Failed to force sync notifications:', error)

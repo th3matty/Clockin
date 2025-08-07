@@ -63,7 +63,6 @@ export const useAuthStore = defineStore('auth', () => {
       // Listen for auth changes (only set up once)
       if (!initialized.value) {
         supabase.auth.onAuthStateChange(async (event, session) => {
-          console.log('Auth state change:', event, session?.user?.id)
 
           if (event === 'SIGNED_IN' && session?.user) {
             // Only load profile if we don't already have it or it's different user

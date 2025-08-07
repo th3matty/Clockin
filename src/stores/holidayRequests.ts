@@ -16,8 +16,6 @@ export const useHolidayRequestsStore = defineStore('holidayRequests', () => {
   const error = ref<string | null>(null)
   const holidayRequests = ref<HolidayRequest[]>([])
 
-  console.log('🏪 Store: Holiday requests store initialized')
-
   // Get user reactively
   const { user } = useAuth()
 
@@ -43,14 +41,6 @@ export const useHolidayRequestsStore = defineStore('holidayRequests', () => {
     })
     const totalUsed = currentYearApproved.reduce((total, request) => total + request.days_requested, 0)
 
-    console.log('🔍 Store: usedHolidayDays calculation:', {
-      currentYear,
-      totalRequests: holidayRequests.value.length,
-      approvedRequests: approved.length,
-      currentYearApproved: currentYearApproved.length,
-      totalUsed
-    })
-
     return totalUsed
   })
 
@@ -59,22 +49,13 @@ export const useHolidayRequestsStore = defineStore('holidayRequests', () => {
     const used = usedHolidayDays.value
     const remaining = Math.max(0, totalAllowance - used)
 
-    console.log('🔍 Store: remainingHolidayDays calculation:', {
-      totalAllowance,
-      used,
-      remaining
-    })
-
     return remaining
   })
 
   // Actions
   async function fetchHolidayRequests(year?: number): Promise<DetailedApiResponse<HolidayRequest[]>> {
-    console.log('🔍 Store: fetchHolidayRequests called with year:', year)
-    console.log('👤 Store: Current user:', user.value)
 
     if (!user.value) {
-      console.log('❌ Store: No user authenticated')
       return {
         data: null,
         error: { message: 'Not authenticated' },
@@ -87,28 +68,21 @@ export const useHolidayRequestsStore = defineStore('holidayRequests', () => {
       loading.value = true
       error.value = null
 
-      console.log('🔧 Store: Building query for user_id:', user.value.id)
-
       let query = supabase
         .from('holiday_requests')
         .select('*')
         .eq('user_id', user.value.id)
         .order('start_date', { ascending: false })
 
-      console.log('📋 Store: Query built, about to execute...')
 
       if (year) {
-        console.log('📅 Store: Adding year filter for:', year)
         const startOfYear = `${year}-01-01`
         const endOfYear = `${year}-12-31`
         query = query.gte('start_date', startOfYear).lte('start_date', endOfYear)
       }
 
-      console.log('⚡ Store: Executing database query...')
       const { data, error: fetchError } = await query
-      console.log('⚡ Store: Query completed!')
 
-      console.log('🗃️ Store: Database query result:', { data, fetchError })
 
       if (fetchError) {
         console.error('❌ Store: Fetch error:', fetchError)
@@ -124,9 +98,7 @@ export const useHolidayRequestsStore = defineStore('holidayRequests', () => {
         }
       }
 
-      console.log('✅ Store: Setting holidayRequests to:', data)
       holidayRequests.value = data || []
-      console.log('📊 Store: holidayRequests.value is now:', holidayRequests.value)
 
       return {
         data: data || [],
@@ -151,7 +123,6 @@ export const useHolidayRequestsStore = defineStore('holidayRequests', () => {
 
   async function createHolidayRequest(requestData: HolidayRequestInput): Promise<DetailedApiResponse<HolidayRequest>> {
     if (!user.value) {
-      console.log('❌ Not authenticated')
       return {
         data: null,
         error: { message: 'Not authenticated' },
@@ -164,14 +135,8 @@ export const useHolidayRequestsStore = defineStore('holidayRequests', () => {
       loading.value = true
       error.value = null
 
-      console.log('🔄 Starting holiday request creation...')
-      console.log('📅 Request data:', requestData)
-      console.log('👤 User ID:', user.value.id)
-
       // Calculate business days
-      console.log('🧮 Calculating business days...')
       const daysRequested = calculateBusinessDays(requestData.start_date, requestData.end_date)
-      console.log('📊 Days requested:', daysRequested)
 
       const insertData = {
         user_id: user.value.id,
@@ -182,15 +147,11 @@ export const useHolidayRequestsStore = defineStore('holidayRequests', () => {
         status: 'pending'
       }
 
-      console.log('💾 Inserting data:', insertData)
-
       const { data, error: createError } = await supabase
         .from('holiday_requests')
         .insert(insertData)
         .select()
         .single()
-
-      console.log('📤 Database response:', { data, createError })
 
       if (createError) {
         console.error('Create holiday request error:', createError)
@@ -206,12 +167,9 @@ export const useHolidayRequestsStore = defineStore('holidayRequests', () => {
         }
       }
 
-      console.log('✅ Holiday request created successfully:', data)
-
       // Add to local state
       if (data) {
         holidayRequests.value.unshift(data)
-        console.log('📝 Added to local state. Total requests:', holidayRequests.value.length)
       }
 
       return {
@@ -232,16 +190,13 @@ export const useHolidayRequestsStore = defineStore('holidayRequests', () => {
         success: false
       }
     } finally {
-      console.log('🏁 Finally block - setting loading to false')
       loading.value = false
     }
   }
 
   async function cancelHolidayRequest(requestId: string): Promise<DetailedApiResponse<boolean>> {
-    console.log('🗑️ Store: cancelHolidayRequest called for:', requestId)
 
     if (!user.value) {
-      console.log('❌ Store: Not authenticated')
       return {
         data: false,
         error: { message: 'Not authenticated' },
@@ -290,15 +245,11 @@ export const useHolidayRequestsStore = defineStore('holidayRequests', () => {
       if (notificationError) {
         console.warn('Failed to clean up related notifications:', notificationError)
         // Don't fail the whole operation if notification cleanup fails
-      } else {
-        console.log('✅ Successfully cleaned up related notifications for request:', requestId)
       }
 
       // Remove from local state
-      console.log('🗑️ Store: Removing request from local state. Before:', holidayRequests.value.length)
       holidayRequests.value = holidayRequests.value.filter(r => r.id !== requestId)
-      console.log('🗑️ Store: After removal:', holidayRequests.value.length)
-
+                  
       return {
         data: true,
         error: null,
@@ -321,12 +272,9 @@ export const useHolidayRequestsStore = defineStore('holidayRequests', () => {
   }
 
   function calculateBusinessDays(startDate: string, endDate: string): number {
-    console.log('🧮 calculateBusinessDays called with:', { startDate, endDate })
 
     const start = parseISO(startDate)
     const end = parseISO(endDate)
-
-    console.log('📅 Parsed dates:', { start, end })
 
     if (isNaN(start.getTime()) || isNaN(end.getTime())) {
       console.error('❌ Invalid dates provided')
@@ -345,7 +293,6 @@ export const useHolidayRequestsStore = defineStore('holidayRequests', () => {
       current.setDate(current.getDate() + 1)
     }
 
-    console.log('📊 Calculated business days:', days)
     return days
   }
 
