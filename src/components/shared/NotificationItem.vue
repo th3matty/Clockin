@@ -1,8 +1,8 @@
 <template>
   <div
     :class="[
-      'px-4 py-3 hover:bg-gray-50 transition-colors cursor-pointer',
-      !notification.read ? 'bg-blue-50' : ''
+      'px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer',
+      !notification.read ? 'bg-blue-50 dark:bg-blue-900/20' : ''
     ]"
     @click="handleNotificationClick"
   >
@@ -22,16 +22,16 @@
       <!-- Notification Content -->
       <div class="flex-1 min-w-0">
         <div class="flex items-center justify-between">
-          <p class="text-sm font-medium text-gray-900">{{ notification.title }}</p>
+          <p class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ notification.title }}</p>
           <div class="flex items-center space-x-2">
-            <span class="text-xs text-gray-500">{{ formattedTime }}</span>
+            <span class="text-xs text-gray-500 dark:text-gray-400">{{ formattedTime }}</span>
             <div
               v-if="!notification.read"
               class="w-2 h-2 bg-blue-500 rounded-full"
             ></div>
           </div>
         </div>
-        <p class="text-sm text-gray-600 mt-1">{{ notification.message }}</p>
+        <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">{{ formattedMessage }}</p>
       </div>
     </div>
   </div>
@@ -62,6 +62,7 @@ const { getNotificationColor, getNotificationIcon, formatTime } = useNotificatio
 const iconColor = computed(() => getNotificationColor(props.notification.type))
 const iconPath = computed(() => getNotificationIcon(props.notification.type))
 const formattedTime = computed(() => formatTime(props.notification.created_at))
+const formattedMessage = computed(() => formatMessageDates(props.notification.message))
 
 // Methods
 function handleNotificationClick() {
@@ -132,5 +133,32 @@ function convertGermanDateToISO(germanDate: string): string {
   // Convert DD.MM.YYYY to YYYY-MM-DD
   const [day, month, year] = germanDate.split('.')
   return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
+}
+
+function convertISOToGerman(isoDate: string): string {
+  // Convert YYYY-MM-DD to DD.MM.YYYY
+  const [year, month, day] = isoDate.split('-')
+  return `${day}.${month}.${year}`
+}
+
+function formatMessageDates(message: string): string {
+  // Convert ISO dates (YYYY-MM-DD) in the message to German format (DD.MM.YYYY)
+  // Handle date ranges like "2025-08-11 to 2025-08-15"
+  const isoRangeRegex = /(\d{4}-\d{2}-\d{2})\s+to\s+(\d{4}-\d{2}-\d{2})/g
+  const isoSingleRegex = /(\d{4}-\d{2}-\d{2})/g
+  
+  let formattedMessage = message
+  
+  // Replace date ranges first
+  formattedMessage = formattedMessage.replace(isoRangeRegex, (match, startDate, endDate) => {
+    return `${convertISOToGerman(startDate)} - ${convertISOToGerman(endDate)}`
+  })
+  
+  // Replace remaining single dates
+  formattedMessage = formattedMessage.replace(isoSingleRegex, (match, date) => {
+    return convertISOToGerman(date)
+  })
+  
+  return formattedMessage
 }
 </script>
