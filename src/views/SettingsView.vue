@@ -272,12 +272,14 @@ import AvatarUpload from '@/components/shared/AvatarUpload.vue'
 import { useAuth } from '@/composables/useAuth'
 import { useUserSettings } from '@/composables/useUserSettings'
 import { useOvertimeBalance } from '@/composables/useOvertimeBalance'
+import { useNotificationSync } from '@/composables/useNotificationSync'
 import type { UserSettingsFormData } from '@/types'
 
 // Composables
 const { user, updateProfile } = useAuth()
 const { currentSettings, updateSettings, validateTimeSettings, loading, error, clearError } = useUserSettings()
 const { calculateDailyTarget, validateDailyTarget, validateWorkingDaysSettings } = useOvertimeBalance()
+const { syncNotifications } = useNotificationSync()
 
 // Form state
 const profileForm = ref({
@@ -456,7 +458,8 @@ watch(error, (newError) => {
 })
 
 // Lifecycle
-onMounted(() => {
+onMounted(async () => {
   initializeForms()
+  await syncNotifications('settings-load')
 })
 </script>

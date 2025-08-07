@@ -83,11 +83,13 @@ import Layout from '@/components/shared/Layout.vue'
 import UserCard from '@/components/admin/UserCard.vue'
 import ActivityFeed from '@/components/admin/ActivityFeed.vue'
 import { useAdminDashboard } from '@/composables/useAdminDashboard'
+import { useNotificationSync } from '@/composables/useNotificationSync'
 import type { AdminUser } from '@/types'
 
 // Composables
 const router = useRouter()
 const { teamMembers, loading, fetchTeamMembers, fetchActivities, totalTeamMembers, pendingRequests } = useAdminDashboard()
+const { syncNotifications } = useNotificationSync()
 
 function viewUserDetail(user: AdminUser) {
   router.push(`/admin/users/${user.id}`)
@@ -97,7 +99,8 @@ function viewUserDetail(user: AdminUser) {
 onMounted(async () => {
   await Promise.all([
     fetchTeamMembers(),
-    fetchActivities()
+    fetchActivities(),
+    syncNotifications('admin-dashboard-load')
   ])
 })
 </script>

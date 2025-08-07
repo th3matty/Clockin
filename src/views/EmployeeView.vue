@@ -91,10 +91,12 @@ import TimeEntryForm from '@/components/employee/TimeEntryForm.vue'
 import QuickStats from '@/components/employee/QuickStats.vue'
 import { useAuth } from '@/composables/useAuth'
 import { useTimeEntries } from '@/composables/useTimeEntries'
+import { useNotificationSync } from '@/composables/useNotificationSync'
 
 // Composables
 const { user } = useAuth()
 const { loading, timeEntries, fetchTimeEntries } = useTimeEntries()
+const { syncNotifications } = useNotificationSync()
 
 // Computed
 const recentEntries = computed(() => {
@@ -132,6 +134,9 @@ onMounted(async () => {
   const thirtyDaysAgo = new Date()
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
 
-  await fetchTimeEntries(thirtyDaysAgo.toISOString().split('T')[0])
+  await Promise.all([
+    fetchTimeEntries(thirtyDaysAgo.toISOString().split('T')[0]),
+    syncNotifications('employee-dashboard-load')
+  ])
 })
 </script>

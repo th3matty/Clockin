@@ -39,8 +39,18 @@
 </template>
 
 <script setup lang="ts">
+import { onMounted } from 'vue'
 import ProtectedRoute from '@/components/auth/ProtectedRoute.vue'
 import Layout from '@/components/shared/Layout.vue'
 import HolidayCalendar from '@/components/employee/HolidayCalendar.vue'
 import HolidayRequestsList from '@/components/employee/HolidayRequestsList.vue'
+import { useNotificationSync } from '@/composables/useNotificationSync'
+
+// Composables
+const { syncNotifications } = useNotificationSync()
+
+// Lifecycle
+onMounted(async () => {
+  await syncNotifications('calendar-load')
+})
 </script>

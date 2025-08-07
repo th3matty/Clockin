@@ -67,6 +67,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, watch, computed } from 'vue'
+import { useRoute } from 'vue-router'
 import { useAuth } from '@/composables/useAuth'
 import { useNotifications } from '@/composables/useNotifications'
 import NotificationItem from './NotificationItem.vue'
@@ -75,6 +76,7 @@ import notificationAnimationData from '@/assets/notification-V3.json'
 
 // Composables
 const { user } = useAuth()
+const route = useRoute()
 const {
   sortedNotifications: notifications,
   unreadCount,
@@ -91,6 +93,7 @@ const {
 const showNotifications = ref(false)
 const notificationLottieRef = ref()
 const notificationAnimation = notificationAnimationData
+const refreshTimeout = ref<NodeJS.Timeout | null>(null)
 
 // Dark mode detection
 const isDarkMode = ref(false)
@@ -101,6 +104,26 @@ function updateDarkMode() {
     isDarkMode.value = document.documentElement.classList.contains('dark') ||
       window.matchMedia('(prefers-color-scheme: dark)').matches
   }
+}
+
+// Debounced notification refresh function
+async function refreshNotificationsDebounced() {
+  // Clear existing timeout
+  if (refreshTimeout.value) {
+    clearTimeout(refreshTimeout.value)
+  }
+  
+  // Set new timeout to debounce rapid navigation
+  refreshTimeout.value = setTimeout(async () => {
+    if (user.value && !loading.value) {
+      console.log('🔔 Refreshing notifications due to route change:', route.path)
+      try {
+        await fetchNotifications(user.value.id)
+      } catch (error) {
+        console.error('Failed to refresh notifications on route change:', error)
+      }
+    }
+  }, 500) // 500ms debounce
 }
 
 // Methods
@@ -139,6 +162,23 @@ function viewAllNotifications() {
   console.log('Navigate to notifications page')
 }
 
+// Manual refresh function that can be called externally
+async function refreshNotifications() {
+  if (user.value && !loading.value) {
+    console.log('🔔 Manual notification refresh requested')
+    try {
+      await fetchNotifications(user.value.id)
+    } catch (error) {
+      console.error('Failed to manually refresh notifications:', error)
+    }
+  }
+}
+
+// Expose refresh function for external use
+defineExpose({
+  refreshNotifications
+})
+
 function handleClickOutside(event: MouseEvent) {
   const target = event.target as Element
   if (!target.closest('.relative')) {
@@ -168,6 +208,14 @@ watch(user, async (newUser, oldUser) => {
     clearRealtimeSubscription()
   }
 }, { immediate: true })
+
+// Watch for route changes to refresh notifications
+watch(() => route.path, (newPath, oldPath) => {
+  // Only refresh if user is authenticated and route actually changed
+  if (user.value && newPath !== oldPath) {
+    refreshNotificationsDebounced()
+  }
+})
 
 // Watch for unread count changes to control animation
 watch(unreadCount, (newCount, oldCount) => {
@@ -204,10 +252,21 @@ onMounted(async () => {
   // Also listen for system theme changes
   const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
   mediaQuery.addEventListener('change', updateDarkMode)
+  
+  // Listen for window focus to refresh notifications when user returns to tab
+  const handleWindowFocus = () => {
+    if (user.value && !loading.value) {
+      console.log('🔔 Refreshing notifications due to window focus')
+      refreshNotificationsDebounced()
+    }
+  }
+  
+  window.addEventListener('focus', handleWindowFocus)
 
-    // Store observer for cleanup
+    // Store observer and listeners for cleanup
     ; (document as any)._themeObserver = observer
     ; (document as any)._mediaQuery = mediaQuery
+    ; (document as any)._focusHandler = handleWindowFocus
 
   // Fetch notifications immediately if user is already authenticated
   if (user.value && notifications.value.length === 0) {
@@ -233,6 +292,11 @@ onMounted(async () => {
 onUnmounted(() => {
   document.removeEventListener('click', handleClickOutside)
   clearRealtimeSubscription()
+  
+  // Clean up refresh timeout
+  if (refreshTimeout.value) {
+    clearTimeout(refreshTimeout.value)
+  }
 
   // Clean up theme observers
   if ((document as any)._themeObserver) {
@@ -243,6 +307,11 @@ onUnmounted(() => {
   if ((document as any)._mediaQuery) {
     ; (document as any)._mediaQuery.removeEventListener('change', updateDarkMode)
     delete (document as any)._mediaQuery
+  }
+  
+  if ((document as any)._focusHandler) {
+    window.removeEventListener('focus', (document as any)._focusHandler)
+    delete (document as any)._focusHandler
   }
 })
 </script>
