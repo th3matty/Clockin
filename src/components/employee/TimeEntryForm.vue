@@ -27,13 +27,6 @@
               You can adjust working hours for the last 7 days only
             </p>
           </div>
-          <div v-if="existingEntry" class="flex items-center text-green-600 dark:text-green-400">
-            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-            </svg>
-            <span class="text-sm font-medium">Saved</span>
-          </div>
         </div>
         <input :value="selectedDate" type="date" :min="minSelectableDate" :max="maxSelectableDate"
           class="px-3 py-1 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"

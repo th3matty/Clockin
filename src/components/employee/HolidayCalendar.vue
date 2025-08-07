@@ -71,7 +71,8 @@
             day.isCurrentMonth ? 'text-gray-900 dark:text-gray-100' : 'text-gray-300 dark:text-gray-600',
             day.isToday ? 'bg-primary-50 dark:bg-primary-900/20 border-primary-200 dark:border-primary-700' : 'hover:bg-gray-50 dark:hover:bg-gray-700',
             day.isWeekend ? 'bg-gray-50 dark:bg-gray-700/50' : '',
-            day.hasHoliday ? getHolidayClasses(day.holidayStatus!) : ''
+            day.hasHoliday ? getHolidayClasses(day.holidayStatus!) : '',
+            isDateHighlighted(day.date) ? 'ring-2 ring-yellow-400 dark:ring-yellow-500 bg-yellow-50 dark:bg-yellow-900/30' : ''
           ]"
         >
           <span class="font-medium">{{ day.date.getDate() }}</span>
@@ -121,8 +122,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { format } from 'date-fns'
+import { useRoute } from 'vue-router'
 import { useAuth } from '@/composables/useAuth'
 import { useHolidayRequests } from '@/composables/useHolidayRequests'
 import HolidayRequestModal from './HolidayRequestModal.vue'
@@ -130,6 +132,7 @@ import type { CalendarDay } from '@/types'
 
 // Composables
 const { user } = useAuth()
+const route = useRoute()
 const { 
   remainingHolidayDays, 
   fetchHolidayRequests,
@@ -139,6 +142,8 @@ const {
 // State
 const currentDate = ref(new Date())
 const showRequestModal = ref(false)
+const highlightedDates = ref<string[]>([])
+const highlightTimeout = ref<NodeJS.Timeout | null>(null)
 
 // Computed
 const currentYear = computed(() => currentDate.value.getFullYear())
@@ -219,13 +224,72 @@ function getHolidayClasses(status: 'approved' | 'pending' | 'denied'): string {
   }
 }
 
+function isDateHighlighted(date: Date): boolean {
+  const dateString = format(date, 'yyyy-MM-dd')
+  return highlightedDates.value.includes(dateString)
+}
+
+function navigateToHighlightedDate(startDate: string, endDate?: string) {
+  // Parse the start date and navigate to that month
+  const targetDate = new Date(startDate)
+  currentDate.value = new Date(targetDate.getFullYear(), targetDate.getMonth(), 1)
+  
+  // Set up highlighted dates
+  const dates = [startDate]
+  if (endDate && endDate !== startDate) {
+    // Add all dates in the range
+    const start = new Date(startDate)
+    const end = new Date(endDate)
+    const current = new Date(start)
+    
+    while (current <= end) {
+      const dateString = format(current, 'yyyy-MM-dd')
+      if (!dates.includes(dateString)) {
+        dates.push(dateString)
+      }
+      current.setDate(current.getDate() + 1)
+    }
+  }
+  
+  highlightedDates.value = dates
+  
+  // Clear highlight after 5 seconds
+  if (highlightTimeout.value) {
+    clearTimeout(highlightTimeout.value)
+  }
+  highlightTimeout.value = setTimeout(() => {
+    highlightedDates.value = []
+  }, 5000)
+}
+
 async function handleRequestSuccess() {
   showRequestModal.value = false
   // No need to refresh - the store will automatically update all components
 }
 
+// Watch for route changes to handle navigation from notifications
+watch(() => route.query, (newQuery) => {
+  if (newQuery.highlight && typeof newQuery.highlight === 'string') {
+    const endDate = typeof newQuery.endDate === 'string' ? newQuery.endDate : undefined
+    navigateToHighlightedDate(newQuery.highlight, endDate)
+  }
+}, { immediate: true })
+
 // Lifecycle
 onMounted(async () => {
   await fetchHolidayRequests(currentYear.value)
+  
+  // Handle initial route parameters
+  if (route.query.highlight && typeof route.query.highlight === 'string') {
+    const endDate = typeof route.query.endDate === 'string' ? route.query.endDate : undefined
+    navigateToHighlightedDate(route.query.highlight, endDate)
+  }
+})
+
+onUnmounted(() => {
+  // Clean up highlight timeout
+  if (highlightTimeout.value) {
+    clearTimeout(highlightTimeout.value)
+  }
 })
 </script>

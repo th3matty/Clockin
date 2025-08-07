@@ -46,7 +46,7 @@
         <!-- Notifications List -->
         <div v-else class="divide-y divide-gray-100">
           <NotificationItem v-for="notification in notifications" :key="notification.id" :notification="notification"
-            @mark-as-read="handleMarkAsRead" />
+            @mark-as-read="handleMarkAsRead" @navigate-to-calendar="handleNavigateToCalendar" />
         </div>
       </div>
 
@@ -67,7 +67,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, watch, computed } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useAuth } from '@/composables/useAuth'
 import { useNotifications } from '@/composables/useNotifications'
 import NotificationItem from './NotificationItem.vue'
@@ -77,6 +77,7 @@ import notificationAnimationData from '@/assets/notification-V3.json'
 // Composables
 const { user } = useAuth()
 const route = useRoute()
+const router = useRouter()
 const {
   sortedNotifications: notifications,
   unreadCount,
@@ -148,6 +149,24 @@ async function toggleNotifications() {
 
 async function handleMarkAsRead(notificationId: string) {
   await markAsRead(notificationId)
+}
+
+async function handleNavigateToCalendar(startDate: string, endDate: string) {
+  console.log('🎯 NotificationBell: Navigating to calendar with dates:', startDate, endDate)
+  
+  // Close the notification dropdown
+  showNotifications.value = false
+  
+  // Navigate to the employee calendar with date parameters
+  await router.push({
+    name: 'employee-calendar',
+    query: {
+      highlight: startDate,
+      endDate: endDate
+    }
+  })
+  
+  console.log('✅ Navigation completed')
 }
 
 async function handleMarkAllAsRead() {
