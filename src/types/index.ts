@@ -166,7 +166,19 @@ export interface UserCardData {
   remaining_holidays: number;
 }
 
-export type UserStatus = 'active' | 'on_holiday' | 'offline';
+export interface AdminUser {
+  id: string;
+  full_name: string;
+  email: string;
+  avatar_url?: string;
+  role: UserRole;
+  status: UserStatus;
+  daily_hours: number;
+  weekly_hours: number;
+  remaining_holidays: number;
+}
+
+export type UserStatus = 'active' | 'inactive' | 'on_holiday' | 'offline';
 
 export interface ActivityFeedItem {
   id: string;

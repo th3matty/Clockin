@@ -1,12 +1,12 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { supabase } from '@/utils/supabase'
-import type { 
-  AuthUser, 
-  User, 
-  LoginCredentials, 
+import type {
+  AuthUser,
+  User,
+  LoginCredentials,
   SignupCredentials,
-  DetailedApiResponse 
+  DetailedApiResponse
 } from '@/types'
 
 export const useAuthStore = defineStore('auth', () => {
@@ -32,7 +32,7 @@ export const useAuthStore = defineStore('auth', () => {
 
       // Get current session
       const { data: { session }, error: sessionError } = await supabase.auth.getSession()
-      
+
       if (sessionError) {
         console.error('Session error:', sessionError)
         initialized.value = true
@@ -42,12 +42,21 @@ export const useAuthStore = defineStore('auth', () => {
       if (session?.user && !user.value) {
         // Only load profile if we don't already have user data
         const success = await loadUserProfile(session.user.id)
-        
+
         // Load theme preference after successful profile load
-        if (success && user.value?.theme_preference) {
-          const { useThemeStore } = await import('./theme')
-          const themeStore = useThemeStore()
-          themeStore.setTheme(user.value.theme_preference)
+        // Safely apply saved theme preference if available
+        if (success && user.value) {
+          const u = user.value as AuthUser
+          const themePref = u.theme_preference
+          if (themePref) {
+            try {
+              const { useThemeStore } = await import('./theme')
+              const themeStore = useThemeStore()
+              themeStore.setTheme(themePref)
+            } catch (err) {
+              console.warn('Theme store not available:', err)
+            }
+          }
         }
       }
 
@@ -55,17 +64,26 @@ export const useAuthStore = defineStore('auth', () => {
       if (!initialized.value) {
         supabase.auth.onAuthStateChange(async (event, session) => {
           console.log('Auth state change:', event, session?.user?.id)
-          
+
           if (event === 'SIGNED_IN' && session?.user) {
             // Only load profile if we don't already have it or it's different user
             if (!user.value || user.value.id !== session.user.id) {
               const success = await loadUserProfile(session.user.id)
-              
+
               // Load theme preference after successful profile load
-              if (success && user.value?.theme_preference) {
-                const { useThemeStore } = await import('./theme')
-                const themeStore = useThemeStore()
-                themeStore.setTheme(user.value.theme_preference)
+              // Safely apply saved theme preference if available
+              if (success && user.value) {
+                const u = user.value as AuthUser
+                const themePref = u.theme_preference
+                if (themePref) {
+                  try {
+                    const { useThemeStore } = await import('./theme')
+                    const themeStore = useThemeStore()
+                    themeStore.setTheme(themePref)
+                  } catch (err) {
+                    console.warn('Theme store not available:', err)
+                  }
+                }
               }
             }
           } else if (event === 'SIGNED_OUT') {
@@ -108,10 +126,10 @@ export const useAuthStore = defineStore('auth', () => {
           default_lunch_minutes: data.default_lunch_minutes,
           default_end_time: data.default_end_time,
           holiday_allowance: data.holiday_allowance,
-          weekly_target_hours: data.weekly_target_hours,
-          working_days_per_week: data.working_days_per_week,
-          overtime_balance: data.overtime_balance,
-          theme_preference: data.theme_preference
+          weekly_target_hours: data.weekly_target_hours || 40,
+          working_days_per_week: data.working_days_per_week || 5,
+          overtime_balance: data.overtime_balance || 0,
+          theme_preference: data.theme_preference || 'system'
         }
         return true
       }
@@ -187,7 +205,7 @@ export const useAuthStore = defineStore('auth', () => {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Login failed'
       error.value = errorMessage
-      
+
       return {
         data: null,
         error: { message: errorMessage },
@@ -240,7 +258,7 @@ export const useAuthStore = defineStore('auth', () => {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Signup failed'
       error.value = errorMessage
-      
+
       return {
         data: null,
         error: { message: errorMessage },
@@ -265,7 +283,7 @@ export const useAuthStore = defineStore('auth', () => {
       const logoutPromise = supabase.auth.signOut()
 
       const { error: signOutError } = await Promise.race([logoutPromise, timeoutPromise]) as any
-      
+
       if (signOutError) {
         error.value = signOutError.message
         // Still clear user even if logout fails
@@ -327,15 +345,15 @@ export const useAuthStore = defineStore('auth', () => {
           default_lunch_minutes: data.default_lunch_minutes,
           default_end_time: data.default_end_time,
           holiday_allowance: data.holiday_allowance,
-          weekly_target_hours: data.weekly_target_hours,
-          working_days_per_week: data.working_days_per_week,
-          overtime_balance: data.overtime_balance,
-          theme_preference: data.theme_preference
+          weekly_target_hours: data.weekly_target_hours || 40,
+          working_days_per_week: data.working_days_per_week || 5,
+          overtime_balance: data.overtime_balance || 0,
+          theme_preference: data.theme_preference || 'system'
         }
       }
 
       return {
-        data: data,
+        data,
         error: null,
         loading: false,
         success: true
@@ -343,7 +361,7 @@ export const useAuthStore = defineStore('auth', () => {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Profile update failed'
       error.value = errorMessage
-      
+
       return {
         data: null,
         error: { message: errorMessage },
@@ -365,13 +383,13 @@ export const useAuthStore = defineStore('auth', () => {
     loading: readonly(loading),
     error: readonly(error),
     initialized: readonly(initialized),
-    
+
     // Getters
     isAuthenticated,
     isAdmin,
     isEmployee,
     userRole,
-    
+
     // Actions
     initialize,
     login,
@@ -383,6 +401,6 @@ export const useAuthStore = defineStore('auth', () => {
 })
 
 // Helper function to get readonly refs
-function readonly<T>(ref: any) {
-  return computed(() => ref.value)
+function readonly<T>(refValue: any) {
+  return computed(() => refValue.value)
 }
