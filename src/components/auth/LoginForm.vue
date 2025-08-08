@@ -58,10 +58,10 @@
       </div>
 
       <!-- Login Form -->
-      <form @submit.prevent="handleSubmit" class="bg-white py-8 px-6 shadow-lg rounded-lg space-y-6">
+      <form @submit.prevent="handleSubmit" class="bg-white dark:bg-gray-800 py-8 px-6 shadow-lg rounded-lg space-y-6">
         <!-- Email Field -->
         <div>
-          <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
+          <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             Email address
           </label>
           <input
@@ -71,18 +71,19 @@
             autocomplete="email"
             required
             :class="[
-              'appearance-none relative block w-full px-3 py-2 border rounded-md placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm',
-              errors.email ? 'border-red-300' : 'border-gray-300'
+              'appearance-none relative block w-full px-3 py-2 border rounded-md placeholder-gray-500 text-gray-900 dark:text-gray-100 dark:bg-gray-700 focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm',
+              errors.email ? 'border-red-300 dark:border-red-600' : 'border-gray-300 dark:border-gray-600'
             ]"
             placeholder="Enter your email"
             :disabled="loading"
+            @blur="touchedFields.email = true"
           />
           <p v-if="errors.email" class="mt-1 text-sm text-red-600">{{ errors.email }}</p>
         </div>
 
         <!-- Password Field -->
         <div>
-          <label for="password" class="block text-sm font-medium text-gray-700 mb-2">
+          <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             Password
           </label>
           <div class="relative">
@@ -93,11 +94,12 @@
               autocomplete="current-password"
               required
               :class="[
-                'appearance-none relative block w-full px-3 py-2 pr-10 border rounded-md placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm',
-                errors.password ? 'border-red-300' : 'border-gray-300'
+                'appearance-none relative block w-full px-3 py-2 pr-10 border rounded-md placeholder-gray-500 text-gray-900 dark:text-gray-100 dark:bg-gray-700 focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm',
+                errors.password ? 'border-red-300 dark:border-red-600' : 'border-gray-300 dark:border-gray-600'
               ]"
               placeholder="Enter your password"
               :disabled="loading"
+              @blur="touchedFields.password = true"
             />
             <button
               type="button"
@@ -162,7 +164,7 @@
 
         <!-- Sign up link -->
         <div class="text-center">
-          <p class="text-sm text-gray-600">
+          <p class="text-sm text-gray-600 dark:text-gray-400">
             Don't have an account?
             <router-link
               to="/signup"
@@ -173,9 +175,9 @@
           </p>
         </div>
       </form>
+      </div>
     </div>
   </div>
-</div>
 </template>
 
 <script setup lang="ts">
@@ -198,16 +200,39 @@ const formData = ref<LoginCredentials>({
 const showPassword = ref(false)
 const successMessage = ref<string | null>(null)
 
-// Validation
-const errors = computed(() => validateLoginForm(formData.value))
+// Track which fields have been touched/interacted with
+const touchedFields = ref<Record<string, boolean>>({
+  email: false,
+  password: false
+})
+
+const hasAttemptedSubmit = ref(false)
+
+// Validation - only show errors for touched fields or after submit attempt
+const allErrors = computed(() => validateLoginForm(formData.value))
+const errors = computed(() => {
+  const visibleErrors: Record<string, string> = {}
+  
+  // Only show errors for fields that have been touched or after submit attempt
+  Object.keys(allErrors.value).forEach(field => {
+    if (touchedFields.value[field] || hasAttemptedSubmit.value) {
+      visibleErrors[field] = allErrors.value[field]
+    }
+  })
+  
+  return visibleErrors
+})
+
 const isFormValid = computed(() => {
   return formData.value.email && 
          formData.value.password && 
-         Object.keys(errors.value).length === 0
+         Object.keys(allErrors.value).length === 0
 })
 
 // Methods
 async function handleSubmit() {
+  hasAttemptedSubmit.value = true
+  
   if (!isFormValid.value) return
 
   clearError()
