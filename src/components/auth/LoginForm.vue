@@ -216,7 +216,10 @@ const errors = computed(() => {
   // Only show errors for fields that have been touched or after submit attempt
   Object.keys(allErrors.value).forEach(field => {
     if (touchedFields.value[field] || hasAttemptedSubmit.value) {
-      visibleErrors[field] = allErrors.value[field]
+      const error = allErrors.value[field]
+      if (error) {
+        visibleErrors[field] = error
+      }
     }
   })
   

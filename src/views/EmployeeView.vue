@@ -79,16 +79,24 @@
           </div>
         </div>
       </div>
+
+      <!-- Holiday Request Modal -->
+      <HolidayRequestModal
+        v-if="showHolidayRequestModal"
+        @close="showHolidayRequestModal = false"
+        @success="handleHolidayRequestSuccess"
+      />
     </Layout>
   </ProtectedRoute>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import ProtectedRoute from '@/components/auth/ProtectedRoute.vue'
 import Layout from '@/components/shared/Layout.vue'
 import TimeEntryForm from '@/components/employee/TimeEntryForm.vue'
 import QuickStats from '@/components/employee/QuickStats.vue'
+import HolidayRequestModal from '@/components/employee/HolidayRequestModal.vue'
 import { useAuth } from '@/composables/useAuth'
 import { useTimeEntries } from '@/composables/useTimeEntries'
 import { useNotificationSync } from '@/composables/useNotificationSync'
@@ -97,6 +105,9 @@ import { useNotificationSync } from '@/composables/useNotificationSync'
 const { user } = useAuth()
 const { loading, timeEntries, fetchTimeEntries } = useTimeEntries()
 const { syncNotifications } = useNotificationSync()
+
+// State
+const showHolidayRequestModal = ref(false)
 
 // Computed
 const recentEntries = computed(() => {
@@ -124,8 +135,12 @@ function formatDate(dateString: string): string {
 }
 
 function handleHolidayRequest() {
-  // TODO: Implement holiday request modal
-  console.log('Holiday request clicked')
+  showHolidayRequestModal.value = true
+}
+
+function handleHolidayRequestSuccess() {
+  showHolidayRequestModal.value = false
+  // The modal will handle the success notification and data refresh
 }
 
 // Lifecycle
