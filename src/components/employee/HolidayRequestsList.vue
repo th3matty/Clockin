@@ -79,7 +79,7 @@
         <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">Recent Requests</h3>
       </div>
 
-      <div class="px-6 py-4">
+      <div class="px-6 py-4 max-h-96 overflow-y-auto custom-scrollbar">
         <div v-if="loading" class="text-center py-8">
           <svg class="animate-spin h-6 w-6 text-gray-400 mx-auto" fill="none" viewBox="0 0 24 24">
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -215,7 +215,7 @@ const usagePercentage = computed(() => {
 
 const recentRequests = computed(() => {
   const requests = holidayRequests.value || []
-  return requests.slice(0, 10) // Show last 10 requests
+  return requests.slice(0, 5) // Show last 5 requests
 })
 
 // Debug computed properties
@@ -348,3 +348,50 @@ onMounted(async () => {
   await fetchHolidayRequests()
 })
 </script>
+
+<style scoped>
+/* Custom scrollbar styling for light and dark modes */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  /* Firefox - Light mode default */
+  scrollbar-color: #d1d5db #f3f4f6; /* thumb track */
+}
+
+/* WebKit browsers (Chrome, Safari, Edge) */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background-color: #f3f4f6; /* gray-100 */
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #d1d5db; /* gray-300 */
+  border-radius: 3px;
+  transition: background-color 0.2s ease;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #9ca3af; /* gray-400 */
+}
+
+/* Dark mode styles */
+.dark .custom-scrollbar {
+  /* Firefox - Dark mode */
+  scrollbar-color: #4b5563 #1f2937; /* thumb track */
+}
+
+.dark .custom-scrollbar::-webkit-scrollbar-track {
+  background-color: #1f2937; /* gray-800 */
+}
+
+.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #4b5563; /* gray-600 */
+}
+
+.dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #6b7280; /* gray-500 */
+}
+</style>
