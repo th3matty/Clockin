@@ -1,12 +1,47 @@
 <template>
-  <div class="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-md w-full space-y-8">
-      <!-- Header -->
-      <div class="text-center">
-        <h1 class="text-4xl font-bold text-gray-900 mb-2">ClockIn</h1>
-        <h2 class="text-2xl font-semibold text-gray-700 mb-2">Welcome back</h2>
-        <p class="text-gray-600">Sign in to your account to continue</p>
+  <div class="min-h-screen bg-gray-50 dark:bg-gray-900 flex">
+    <!-- Left Side - Illustration -->
+    <div class="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary-600 to-primary-800 items-center justify-center p-12">
+      <div class="max-w-lg">
+        <!-- SVG Illustration -->
+        <div class="mb-8 flex justify-center">
+          <img 
+            src="/src/assets/time-management.svg" 
+            alt="Time Management Illustration" 
+            class="w-full h-auto max-w-md"
+          />
+        </div>
+        
+        <!-- Welcome Text -->
+        <div class="text-center text-white">
+          <h2 class="text-3xl font-bold mb-4">Welcome to ClockIn</h2>
+          <p class="text-xl text-primary-100 leading-relaxed">
+            Streamline your time tracking and manage your team's productivity with our modern, intuitive platform.
+          </p>
+        </div>
       </div>
+    </div>
+
+    <!-- Right Side - Login Form -->
+    <div class="w-full lg:w-1/2 flex items-center justify-center p-8">
+      <div class="max-w-md w-full space-y-8">
+        <!-- Header -->
+        <div class="text-center">
+          <!-- Mobile Logo (only visible on small screens) -->
+          <div class="lg:hidden mb-8">
+            <div class="flex justify-center mb-4">
+              <img 
+                src="/src/assets/time-management.svg" 
+                alt="Time Management Illustration" 
+                class="w-48 h-auto"
+              />
+            </div>
+          </div>
+          
+          <h1 class="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-2">ClockIn</h1>
+          <h2 class="text-2xl font-semibold text-gray-700 dark:text-gray-300 mb-2">Welcome back</h2>
+          <p class="text-gray-600 dark:text-gray-400">Sign in to your account to continue</p>
+        </div>
 
       <!-- Success message -->
       <div v-if="successMessage" class="bg-green-50 border border-green-200 rounded-md p-4">
@@ -140,6 +175,7 @@
       </form>
     </div>
   </div>
+</div>
 </template>
 
 <script setup lang="ts">
