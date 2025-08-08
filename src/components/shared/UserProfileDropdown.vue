@@ -3,7 +3,7 @@
     <!-- User Profile Button -->
     <button
       @click="toggleDropdown"
-      class="flex items-center space-x-2 p-1 rounded-full hover:bg-gray-100 transition-colors"
+      class="flex items-center space-x-2 p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
     >
       <!-- User Avatar -->
       <SecureAvatar 
@@ -14,7 +14,7 @@
       />
       
       <!-- User Name (hidden on mobile) -->
-      <span class="hidden sm:block text-sm font-medium text-gray-700 dark:text-gray-300">
+      <span class="hidden sm:block text-sm font-medium text-gray-700 dark:text-primary-400">
         {{ user?.full_name }}
       </span>
       

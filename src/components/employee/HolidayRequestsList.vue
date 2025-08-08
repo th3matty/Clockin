@@ -6,9 +6,9 @@
         <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">Holiday Summary</h3>
         <button @click="handleRefreshClick" :disabled="loading"
           class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 transition-colors">
-          <Vue3Lottie :animationData="refreshAnimation" :height="16" :width="16" :loop="false" :autoPlay="false"
-            ref="refreshLottieRef" class="mr-2" />
-          Refresh
+          <Vue3Lottie :animationData="refreshAnimation" :height="20" :width="20" :loop="false" :autoPlay="false"
+            ref="refreshLottieRef" class="mr-4 refresh-icon" />
+          <span class="ml-1">Refresh</span>
         </button>
       </div>
       <div class="space-y-4">
@@ -20,8 +20,8 @@
           <div class="flex items-center gap-2">
             <span class="text-sm text-gray-600 dark:text-gray-400">Used This Year</span>
             <div class="relative group">
-              <Vue3Lottie :animationData="helpAnimation" :height="16" :width="16" :loop="true" :autoPlay="false"
-                ref="helpLottieRef" class="cursor-help opacity-60 hover:opacity-100 transition-opacity"
+              <Vue3Lottie :animationData="helpAnimation" :height="20" :width="20" :loop="true" :autoPlay="false"
+                ref="helpLottieRef" class="cursor-help opacity-70 hover:opacity-100 transition-opacity help-icon"
                 @mouseenter="playHelpAnimation" />
 
               <!-- Tooltip -->
@@ -393,5 +393,23 @@ onMounted(async () => {
 
 .dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background-color: #6b7280; /* gray-500 */
+}
+
+/* Help icon styling for dark mode */
+.help-icon {
+  filter: none;
+}
+
+.dark .help-icon {
+  filter: brightness(0) invert(1);
+}
+
+/* Refresh icon styling for dark mode */
+.refresh-icon {
+  filter: none;
+}
+
+.dark .refresh-icon {
+  filter: brightness(0) invert(1);
 }
 </style>
