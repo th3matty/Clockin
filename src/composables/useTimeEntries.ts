@@ -65,7 +65,7 @@ export function useTimeEntries() {
 
     const total = globalTimeEntries.value
       .filter(entry => entry.date >= startDate && entry.date <= endDate)
-      .reduce((total, entry) => total + entry.total_hours, 0)
+      .reduce((total, entry) => total + entry.total_hours + (entry.overtime_hours || 0), 0)
     
     // Round to 2 decimal places to avoid floating-point precision issues
     return Math.round(total * 100) / 100
@@ -81,7 +81,7 @@ export function useTimeEntries() {
 
     const total = globalTimeEntries.value
       .filter(entry => entry.date >= startDate && entry.date <= endDate)
-      .reduce((total, entry) => total + entry.total_hours, 0)
+      .reduce((total, entry) => total + entry.total_hours + (entry.overtime_hours || 0), 0)
     
     // Round to 2 decimal places to avoid floating-point precision issues
     return Math.round(total * 100) / 100

@@ -70,8 +70,13 @@
                     </div>
                   </div>
                   <div class="text-right">
-                    <p class="text-lg font-semibold text-gray-900 dark:text-gray-100">{{ entry.total_hours.toFixed(1) }}h</p>
-                    <p class="text-xs text-gray-500 dark:text-gray-400">Total hours</p>
+                    <p class="text-lg font-semibold text-gray-900 dark:text-gray-100">{{ (entry.total_hours + (entry.overtime_hours || 0)).toFixed(1) }}h</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">
+                      <span v-if="entry.overtime_hours && entry.overtime_hours > 0">
+                        {{ entry.total_hours.toFixed(1) }}h + {{ entry.overtime_hours.toFixed(1) }}h OT
+                      </span>
+                      <span v-else>Total hours</span>
+                    </p>
                   </div>
                 </div>
               </div>

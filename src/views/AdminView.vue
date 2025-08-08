@@ -92,7 +92,7 @@ const { teamMembers, loading, fetchTeamMembers, fetchActivities, totalTeamMember
 const { syncNotifications } = useNotificationSync()
 
 function viewUserDetail(user: AdminUser) {
-  router.push(`/admin/users/${user.id}`)
+  router.push(`/admin/user/${user.id}`)
 }
 
 // Lifecycle
