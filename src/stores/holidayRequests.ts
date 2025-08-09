@@ -249,7 +249,7 @@ export const useHolidayRequestsStore = defineStore('holidayRequests', () => {
 
       // Remove from local state
       holidayRequests.value = holidayRequests.value.filter(r => r.id !== requestId)
-                  
+
       return {
         data: true,
         error: null,
