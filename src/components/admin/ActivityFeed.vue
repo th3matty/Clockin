@@ -17,7 +17,7 @@ e<template>
         </div>
 
         <!-- Activity List -->
-        <div class="max-h-96 overflow-y-auto">
+        <div class="max-h-96 overflow-y-auto custom-scrollbar">
             <div v-if="loading" class="p-6">
                 <!-- Loading Skeletons -->
                 <div v-for="i in 5" :key="i" class="animate-pulse mb-4 last:mb-0">
@@ -31,7 +31,7 @@ e<template>
                 </div>
             </div>
 
-            <div v-else-if="activities.length === 0" class="p-6 text-center">
+            <div v-else-if="recentActivities.length === 0" class="p-6 text-center">
                 <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -42,7 +42,7 @@ e<template>
             </div>
 
             <div v-else class="divide-y divide-gray-200 dark:divide-gray-700">
-                <div v-for="activity in activities" :key="activity.id"
+                <div v-for="activity in recentActivities" :key="activity.id"
                     class="p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
                     <div class="flex space-x-3">
                         <!-- Activity Type Icon -->
@@ -176,7 +176,7 @@ e<template>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { formatDistanceToNow, format, parseISO, isSameDay } from 'date-fns'
 import { useAdminDashboard } from '@/composables/useAdminDashboard'
 import type { ActivityFeedItem } from '@/types'
@@ -194,6 +194,11 @@ const denyReason = ref('')
 const emit = defineEmits<{
     'activities-updated': []
 }>()
+
+// Computed
+const recentActivities = computed(() => {
+    return activities.value.slice(0, 5) // Limit to 5 most recent items
+})
 
 // Methods
 async function refreshActivities() {
@@ -285,3 +290,50 @@ onMounted(async () => {
     await fetchActivities()
 })
 </script>
+
+<style scoped>
+/* Custom scrollbar styling for light and dark modes */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  /* Firefox - Light mode default */
+  scrollbar-color: #d1d5db #f3f4f6; /* thumb track */
+}
+
+/* WebKit browsers (Chrome, Safari, Edge) */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background-color: #f3f4f6; /* gray-100 */
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #d1d5db; /* gray-300 */
+  border-radius: 3px;
+  transition: background-color 0.2s ease;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #9ca3af; /* gray-400 */
+}
+
+/* Dark mode styles */
+.dark .custom-scrollbar {
+  /* Firefox - Dark mode */
+  scrollbar-color: #4b5563 #1f2937; /* thumb track */
+}
+
+.dark .custom-scrollbar::-webkit-scrollbar-track {
+  background-color: #1f2937; /* gray-800 */
+}
+
+.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #4b5563; /* gray-600 */
+}
+
+.dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #6b7280; /* gray-500 */
+}
+</style>
