@@ -96,6 +96,15 @@
                 >
                   {{ day.holidayCount > 9 ? '9+' : day.holidayCount }}
                 </div>
+                
+                <!-- Today Indicator (Blue Dot) -->
+                <div
+                  v-if="day.isToday"
+                  :class="[
+                    'absolute w-2 h-2 bg-blue-500 dark:bg-blue-400 rounded-full',
+                    day.hasHolidays ? '-top-0.5 -left-0.5' : '-top-0.5 -right-0.5'
+                  ]"
+                ></div>
               </div>
             </div>
           </div>
