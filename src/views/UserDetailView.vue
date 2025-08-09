@@ -4,10 +4,8 @@
       <div class="max-w-7xl mx-auto py-6 px-4">
         <!-- Back Navigation -->
         <div class="mb-6">
-          <button 
-            @click="$router.push('/admin')"
-            class="inline-flex items-center text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
-          >
+          <button @click="$router.push('/admin')"
+            class="inline-flex items-center text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
             </svg>
@@ -21,10 +19,13 @@
         </div>
 
         <!-- Error State -->
-        <div v-else-if="error" class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6">
+        <div v-else-if="error"
+          class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6">
           <div class="flex items-center">
-            <svg class="w-6 h-6 text-red-600 dark:text-red-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+            <svg class="w-6 h-6 text-red-600 dark:text-red-400 mr-3" fill="none" stroke="currentColor"
+              viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
             </svg>
             <div>
               <h3 class="text-lg font-medium text-red-800 dark:text-red-200">Error Loading User Details</h3>
@@ -41,19 +42,12 @@
               <div class="flex items-center space-x-6">
                 <!-- Avatar -->
                 <div class="relative">
-                  <SecureAvatar 
-                    :avatar-path="user.avatar_url"
-                    :name="user.full_name"
-                    size="xl"
-                    :alt="user.full_name"
-                    class="border-4 border-white dark:border-gray-700 shadow-lg"
-                  />
-                  <div 
-                    :class="[
-                      'absolute -bottom-1 -right-1 w-6 h-6 rounded-full border-2 border-white dark:border-gray-700',
-                      getUserStatusColor(user)
-                    ]"
-                  ></div>
+                  <SecureAvatar :avatar-path="user.avatar_url" :name="user.full_name" size="xl" :alt="user.full_name"
+                    class="border-4 border-white dark:border-gray-700 shadow-lg" />
+                  <div :class="[
+                    'absolute -bottom-1 -right-1 w-6 h-6 rounded-full border-2 border-white dark:border-gray-700',
+                    getUserStatusColor(user)
+                  ]"></div>
                 </div>
 
                 <!-- User Info -->
@@ -62,12 +56,10 @@
                   <p class="text-lg text-gray-600 dark:text-gray-400 capitalize">{{ user.role }}</p>
                   <p class="text-sm text-gray-500 dark:text-gray-500 mt-1">{{ user.email }}</p>
                   <div class="flex items-center mt-2">
-                    <span 
-                      :class="[
-                        'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium',
-                        getUserStatusClasses(user)
-                      ]"
-                    >
+                    <span :class="[
+                      'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium',
+                      getUserStatusClasses(user)
+                    ]">
                       {{ getUserStatusText(user) }}
                     </span>
                   </div>
@@ -76,21 +68,19 @@
 
               <!-- Quick Actions -->
               <div class="flex space-x-3">
-                <button 
-                  @click="showHolidayManagement = true"
-                  class="inline-flex items-center px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors"
-                >
+                <button @click="showHolidayManagement = true"
+                  class="inline-flex items-center px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors">
                   <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
                   Manage Holiday Allowance
                 </button>
-                <button 
-                  @click="exportUserData"
-                  class="inline-flex items-center px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors"
-                >
+                <button @click="exportUserData"
+                  class="inline-flex items-center px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors">
                   <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                   </svg>
                   Export Data
                 </button>
@@ -105,8 +95,10 @@
               <div class="flex items-center">
                 <div class="flex-shrink-0">
                   <div class="w-10 h-10 bg-blue-100 dark:bg-blue-900/20 rounded-lg flex items-center justify-center">
-                    <svg class="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    <svg class="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor"
+                      viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </div>
                 </div>
@@ -122,8 +114,10 @@
               <div class="flex items-center">
                 <div class="flex-shrink-0">
                   <div class="w-10 h-10 bg-green-100 dark:bg-green-900/20 rounded-lg flex items-center justify-center">
-                    <svg class="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    <svg class="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor"
+                      viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                     </svg>
                   </div>
                 </div>
@@ -138,9 +132,12 @@
             <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
               <div class="flex items-center">
                 <div class="flex-shrink-0">
-                  <div class="w-10 h-10 bg-yellow-100 dark:bg-yellow-900/20 rounded-lg flex items-center justify-center">
-                    <svg class="w-6 h-6 text-yellow-600 dark:text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                  <div
+                    class="w-10 h-10 bg-yellow-100 dark:bg-yellow-900/20 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-yellow-600 dark:text-yellow-400" fill="none" stroke="currentColor"
+                      viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
                     </svg>
                   </div>
                 </div>
@@ -163,27 +160,30 @@
                 </div>
                 <div class="p-6">
                   <div v-if="recentTimeEntries.length === 0" class="text-center py-8">
-                    <svg class="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    <svg class="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" fill="none"
+                      stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                     <p class="text-gray-500 dark:text-gray-400">No time entries found</p>
                   </div>
                   <div v-else class="space-y-4">
-                    <div 
-                      v-for="entry in recentTimeEntries" 
-                      :key="entry.id"
-                      class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg"
-                    >
+                    <div v-for="entry in recentTimeEntries" :key="entry.id"
+                      class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
                       <div class="flex items-center space-x-4">
                         <div class="flex-shrink-0">
-                          <div class="w-10 h-10 bg-primary-100 dark:bg-primary-900/20 rounded-lg flex items-center justify-center">
-                            <svg class="w-5 h-5 text-primary-600 dark:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          <div
+                            class="w-10 h-10 bg-primary-100 dark:bg-primary-900/20 rounded-lg flex items-center justify-center">
+                            <svg class="w-5 h-5 text-primary-600 dark:text-primary-400" fill="none"
+                              stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                           </div>
                         </div>
                         <div>
-                          <p class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ formatDate(entry.date) }}</p>
+                          <p class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ formatDate(entry.date) }}
+                          </p>
                           <p class="text-sm text-gray-500 dark:text-gray-400">
                             {{ entry.start_time.slice(0, 5) }} - {{ entry.end_time.slice(0, 5) }}
                             <span v-if="entry.lunch_break_minutes > 0">
@@ -193,7 +193,8 @@
                         </div>
                       </div>
                       <div class="text-right">
-                        <p class="text-lg font-semibold text-gray-900 dark:text-gray-100">{{ (entry.total_hours + (entry.overtime_hours || 0)).toFixed(1) }}h</p>
+                        <p class="text-lg font-semibold text-gray-900 dark:text-gray-100">{{ (entry.total_hours +
+                          (entry.overtime_hours || 0)).toFixed(1) }}h</p>
                         <p class="text-xs text-gray-500 dark:text-gray-400">
                           <span v-if="entry.overtime_hours && entry.overtime_hours > 0">
                             {{ entry.total_hours.toFixed(1) }}h + {{ entry.overtime_hours.toFixed(1) }}h OT
@@ -206,28 +207,7 @@
                 </div>
               </div>
 
-              <!-- Working Patterns Chart -->
-              <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg">
-                <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-                  <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">Working Patterns (Last 30 Days)</h3>
-                </div>
-                <div class="p-6">
-                  <div class="space-y-4">
-                    <div v-for="(hours, day) in weeklyPattern" :key="day" class="flex items-center">
-                      <div class="w-16 text-sm font-medium text-gray-600 dark:text-gray-400">{{ day }}</div>
-                      <div class="flex-1 mx-4">
-                        <div class="bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                          <div 
-                            class="bg-primary-600 h-2 rounded-full transition-all duration-300"
-                            :style="{ width: `${(hours / 10) * 100}%` }"
-                          ></div>
-                        </div>
-                      </div>
-                      <div class="w-12 text-sm font-medium text-gray-900 dark:text-gray-100 text-right">{{ hours.toFixed(1) }}h</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+
             </div>
 
             <!-- Sidebar (1/3 width) -->
@@ -240,7 +220,8 @@
                 <div class="p-6 space-y-4">
                   <div class="flex items-center justify-between">
                     <span class="text-sm text-gray-600 dark:text-gray-400">Total Allowance</span>
-                    <span class="font-semibold text-gray-900 dark:text-gray-100">{{ user.holiday_allowance || 25 }} days</span>
+                    <span class="font-semibold text-gray-900 dark:text-gray-100">{{ user.holiday_allowance || 25 }}
+                      days</span>
                   </div>
                   <div class="flex items-center justify-between">
                     <span class="text-sm text-gray-600 dark:text-gray-400">Used This Year</span>
@@ -252,12 +233,11 @@
                   </div>
                   <div class="mt-4">
                     <div class="bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                      <div 
-                        class="bg-primary-600 h-2 rounded-full transition-all duration-300"
-                        :style="{ width: `${holidayUsagePercentage}%` }"
-                      ></div>
+                      <div class="bg-primary-600 h-2 rounded-full transition-all duration-300"
+                        :style="{ width: `${holidayUsagePercentage}%` }"></div>
                     </div>
-                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ holidayUsagePercentage.toFixed(0) }}% used</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ holidayUsagePercentage.toFixed(0) }}%
+                      used</p>
                   </div>
                 </div>
               </div>
@@ -271,31 +251,76 @@
                   <div v-if="recentHolidayRequests.length === 0" class="text-center py-4">
                     <p class="text-sm text-gray-500 dark:text-gray-400">No recent requests</p>
                   </div>
-                  <div v-else class="space-y-3">
-                    <div 
-                      v-for="request in recentHolidayRequests" 
-                      :key="request.id"
-                      class="border border-gray-200 dark:border-gray-700 rounded-lg p-3"
-                    >
-                      <div class="flex items-center justify-between mb-2">
-                        <span 
-                          :class="[
-                            'inline-flex items-center px-2 py-1 rounded-full text-xs font-medium',
-                            getHolidayStatusClasses(request.status)
-                          ]"
-                        >
-                          {{ getHolidayStatusText(request.status) }}
-                        </span>
-                        <span class="text-xs text-gray-500 dark:text-gray-400">
-                          {{ request.days_requested }} {{ request.days_requested === 1 ? 'day' : 'days' }}
-                        </span>
+                  <div v-else class="space-y-4">
+                    <div v-for="request in recentHolidayRequests" :key="request.id"
+                      class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                      <!-- Request Header -->
+                      <div class="flex items-start justify-between mb-3">
+                        <div class="flex-1">
+                          <div class="flex items-center space-x-2 mb-2">
+                            <span :class="[
+                              'inline-flex items-center px-2 py-1 rounded-full text-xs font-medium',
+                              getHolidayStatusClasses(request.status)
+                            ]">
+                              {{ getHolidayStatusText(request.status) }}
+                            </span>
+                            <span class="text-xs text-gray-500 dark:text-gray-400">
+                              {{ request.days_requested }} {{ request.days_requested === 1 ? 'day' : 'days' }}
+                            </span>
+                          </div>
+
+                          <!-- Date Range -->
+                          <div class="flex items-center text-sm text-gray-900 dark:text-gray-100 mb-1">
+                            <svg class="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor"
+                              viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                            {{ formatDateRange(request.start_date, request.end_date) }}
+                          </div>
+
+                          <!-- Reason -->
+                          <div v-if="request.reason"
+                            class="flex items-start text-xs text-gray-500 dark:text-gray-400 mb-2">
+                            <svg class="w-3 h-3 mr-1 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor"
+                              viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+                            </svg>
+                            <span class="italic">"{{ request.reason }}"</span>
+                          </div>
+                        </div>
+
+                        <time class="text-xs text-gray-500 dark:text-gray-400 ml-2">
+                          {{ formatRequestDate(request.created_at) }}
+                        </time>
                       </div>
-                      <p class="text-sm text-gray-900 dark:text-gray-100">
-                        {{ formatDateRange(request.start_date, request.end_date) }}
-                      </p>
-                      <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                        {{ formatRequestDate(request.created_at) }}
-                      </p>
+
+                      <!-- Admin Notes -->
+                      <div v-if="request.admin_notes" class="mb-3 p-2 bg-gray-50 dark:bg-gray-700 rounded text-xs">
+                        <span class="font-medium text-gray-700 dark:text-gray-300">Admin Notes:</span>
+                        <span class="text-gray-600 dark:text-gray-400 ml-1">{{ request.admin_notes }}</span>
+                      </div>
+
+                      <!-- Action Buttons for Pending Requests -->
+                      <div v-if="request.status === 'pending'"
+                        class="flex space-x-2 pt-2 border-t border-gray-200 dark:border-gray-600">
+                        <button @click="approveRequest(request.id)" :disabled="processingRequest === request.id"
+                          class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                          <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                          </svg>
+                          {{ processingRequest === request.id ? 'Approving...' : 'Approve' }}
+                        </button>
+                        <button @click="showDenyModal(request)" :disabled="processingRequest === request.id"
+                          class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                          <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                          Deny
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -309,7 +334,8 @@
                 <div class="p-6 space-y-4">
                   <div class="flex items-center justify-between">
                     <span class="text-sm text-gray-600 dark:text-gray-400">Avg. Daily Hours</span>
-                    <span class="font-semibold text-gray-900 dark:text-gray-100">{{ averageDailyHours.toFixed(1) }}h</span>
+                    <span class="font-semibold text-gray-900 dark:text-gray-100">{{ averageDailyHours.toFixed(1)
+                    }}h</span>
                   </div>
                   <div class="flex items-center justify-between">
                     <span class="text-sm text-gray-600 dark:text-gray-400">Total This Month</span>
@@ -326,12 +352,52 @@
         </div>
 
         <!-- Holiday Management Modal -->
-        <HolidayManagementModal
-          v-if="showHolidayManagement && user"
-          :user="user"
-          @close="showHolidayManagement = false"
-          @updated="refreshUserData"
-        />
+        <HolidayManagementModal v-if="showHolidayManagement && user" :user="user" @close="showHolidayManagement = false"
+          @updated="refreshUserData" />
+
+        <!-- Deny Request Modal -->
+        <div v-if="showDenyModalFlag"
+          class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md mx-4">
+            <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+              <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">Deny Holiday Request</h3>
+            </div>
+            <div class="px-6 py-4">
+              <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                Are you sure you want to deny this holiday request from <strong>{{ user?.full_name }}</strong>?
+              </p>
+              <div v-if="selectedRequest" class="mb-4 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                <div class="text-sm text-gray-900 dark:text-gray-100 font-medium">
+                  {{ formatDateRange(selectedRequest.start_date, selectedRequest.end_date) }}
+                </div>
+                <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  {{ selectedRequest.days_requested }} {{ selectedRequest.days_requested === 1 ? 'day' : 'days' }}
+                </div>
+                <div v-if="selectedRequest.reason" class="text-xs text-gray-600 dark:text-gray-300 mt-2 italic">
+                  "{{ selectedRequest.reason }}"
+                </div>
+              </div>
+              <div>
+                <label for="deny-reason" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Reason (optional)
+                </label>
+                <textarea id="deny-reason" v-model="denyReason" rows="3"
+                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                  placeholder="Provide a reason for denying this request..."></textarea>
+              </div>
+            </div>
+            <div class="px-6 py-4 border-t border-gray-200 dark:border-gray-700 flex justify-end space-x-3">
+              <button @click="closeDenyModal"
+                class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors">
+                Cancel
+              </button>
+              <button @click="confirmDenyRequest" :disabled="processingRequest !== null"
+                class="px-4 py-2 bg-red-600 text-white rounded-md text-sm font-medium hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                {{ processingRequest ? 'Denying...' : 'Deny Request' }}
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </Layout>
   </ProtectedRoute>
@@ -360,11 +426,17 @@ const {
   loading,
   error,
   fetchUserDetail,
-  exportUserData: exportData
+  exportUserData: exportData,
+  approveHolidayRequest,
+  denyHolidayRequest
 } = useUserDetail()
 
 // State
 const showHolidayManagement = ref(false)
+const processingRequest = ref<string | null>(null)
+const showDenyModalFlag = ref(false)
+const selectedRequest = ref<HolidayRequest | null>(null)
+const denyReason = ref('')
 
 // Computed properties
 const todayHours = computed(() => {
@@ -377,7 +449,7 @@ const weeklyHours = computed(() => {
   const now = new Date()
   const weekStart = startOfWeek(now, { weekStartsOn: 1 }) // Monday
   const weekEnd = endOfWeek(now, { weekStartsOn: 1 })
-  
+
   return timeEntries.value
     .filter(entry => {
       const entryDate = parseISO(entry.date)
@@ -390,7 +462,7 @@ const monthlyHours = computed(() => {
   const now = new Date()
   const monthStart = startOfMonth(now)
   const monthEnd = endOfMonth(now)
-  
+
   return timeEntries.value
     .filter(entry => {
       const entryDate = parseISO(entry.date)
@@ -402,8 +474,8 @@ const monthlyHours = computed(() => {
 const usedHolidays = computed(() => {
   const currentYear = new Date().getFullYear()
   return holidayRequests.value
-    .filter(request => 
-      request.status === 'approved' && 
+    .filter(request =>
+      request.status === 'approved' &&
       new Date(request.start_date).getFullYear() === currentYear
     )
     .reduce((total, request) => total + request.days_requested, 0)
@@ -443,85 +515,47 @@ const daysWorked = computed(() => {
   const now = new Date()
   const monthStart = startOfMonth(now)
   const monthEnd = endOfMonth(now)
-  
+
   return timeEntries.value.filter(entry => {
     const entryDate = parseISO(entry.date)
     return entryDate >= monthStart && entryDate <= monthEnd
   }).length
 })
 
-const weeklyPattern = computed(() => {
-  const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-  const pattern: Record<string, number> = {}
-  
-  days.forEach(day => {
-    pattern[day] = 0
-  })
-  
-  // Calculate average hours per day of week from last 30 days
-  const thirtyDaysAgo = new Date()
-  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
-  
-  const recentEntries = timeEntries.value.filter(entry => 
-    parseISO(entry.date) >= thirtyDaysAgo
-  )
-  
-  const dayCount: Record<string, number> = {}
-  days.forEach(day => { dayCount[day] = 0 })
-  
-  recentEntries.forEach(entry => {
-    const dayOfWeek = format(parseISO(entry.date), 'EEE')
-    const dayKey = days.find(d => d === dayOfWeek)
-    if (dayKey) {
-      pattern[dayKey] += entry.total_hours + (entry.overtime_hours || 0)
-      dayCount[dayKey]++
-    }
-  })
-  
-  // Calculate averages
-  days.forEach(day => {
-    if (dayCount[day] > 0) {
-      pattern[day] = pattern[day] / dayCount[day]
-    }
-  })
-  
-  return pattern
-})
-
 // Methods
 function getUserStatusColor(user: User): string {
   // Check if user is currently on holiday
   const today = new Date().toISOString().split('T')[0]
-  const onHoliday = holidayRequests.value.some(request => 
+  const onHoliday = holidayRequests.value.some(request =>
     request.status === 'approved' &&
     request.start_date <= today &&
     request.end_date >= today
   )
-  
+
   return onHoliday ? 'bg-yellow-400' : 'bg-green-400'
 }
 
 function getUserStatusClasses(user: User): string {
   const today = new Date().toISOString().split('T')[0]
-  const onHoliday = holidayRequests.value.some(request => 
+  const onHoliday = holidayRequests.value.some(request =>
     request.status === 'approved' &&
     request.start_date <= today &&
     request.end_date >= today
   )
-  
-  return onHoliday 
+
+  return onHoliday
     ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200'
     : 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200'
 }
 
 function getUserStatusText(user: User): string {
   const today = new Date().toISOString().split('T')[0]
-  const onHoliday = holidayRequests.value.some(request => 
+  const onHoliday = holidayRequests.value.some(request =>
     request.status === 'approved' &&
     request.start_date <= today &&
     request.end_date >= today
   )
-  
+
   return onHoliday ? 'On Holiday' : 'Active'
 }
 
@@ -613,6 +647,50 @@ async function exportUserData() {
 async function refreshUserData() {
   if (userId) {
     await fetchUserDetail(userId)
+  }
+}
+
+async function approveRequest(requestId: string) {
+  processingRequest.value = requestId
+  try {
+    const result = await approveHolidayRequest(requestId)
+    if (!result.success) {
+      console.error('Failed to approve request:', result.error)
+    }
+  } catch (error) {
+    console.error('Failed to approve request:', error)
+  } finally {
+    processingRequest.value = null
+  }
+}
+
+function showDenyModal(request: HolidayRequest) {
+  selectedRequest.value = request
+  showDenyModalFlag.value = true
+  denyReason.value = ''
+}
+
+function closeDenyModal() {
+  showDenyModalFlag.value = false
+  selectedRequest.value = null
+  denyReason.value = ''
+}
+
+async function confirmDenyRequest() {
+  if (!selectedRequest.value?.id) return
+
+  processingRequest.value = selectedRequest.value.id
+  try {
+    const result = await denyHolidayRequest(selectedRequest.value.id, denyReason.value)
+    if (result.success) {
+      closeDenyModal()
+    } else {
+      console.error('Failed to deny request:', result.error)
+    }
+  } catch (error) {
+    console.error('Failed to deny request:', error)
+  } finally {
+    processingRequest.value = null
   }
 }
 

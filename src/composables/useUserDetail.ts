@@ -113,6 +113,55 @@ export function useUserDetail() {
     }
   }
 
+  async function approveHolidayRequest(requestId: string) {
+    try {
+      const { error } = await supabase
+        .from('holiday_requests')
+        .update({ 
+          status: 'approved',
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', requestId)
+
+      if (error) throw error
+
+      // Refresh holiday requests data
+      if (user.value) {
+        await fetchUserDetail(user.value.id)
+      }
+
+      return { success: true }
+    } catch (err: any) {
+      console.error('Error approving holiday request:', err)
+      return { success: false, error: err.message }
+    }
+  }
+
+  async function denyHolidayRequest(requestId: string, reason?: string) {
+    try {
+      const { error } = await supabase
+        .from('holiday_requests')
+        .update({ 
+          status: 'denied',
+          admin_notes: reason,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', requestId)
+
+      if (error) throw error
+
+      // Refresh holiday requests data
+      if (user.value) {
+        await fetchUserDetail(user.value.id)
+      }
+
+      return { success: true }
+    } catch (err: any) {
+      console.error('Error denying holiday request:', err)
+      return { success: false, error: err.message }
+    }
+  }
+
   function generateCSVContent(): string {
     const headers = ['Date', 'Start Time', 'End Time', 'Lunch Break (min)', 'Regular Hours', 'Overtime Hours', 'Total Hours']
     const rows = timeEntries.value.map(entry => [
@@ -144,6 +193,8 @@ export function useUserDetail() {
     // Methods
     fetchUserDetail,
     updateHolidayAllowance,
-    exportUserData
+    exportUserData,
+    approveHolidayRequest,
+    denyHolidayRequest
   }
 }

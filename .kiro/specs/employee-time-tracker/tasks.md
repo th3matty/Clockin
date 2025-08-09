@@ -153,8 +153,7 @@
   - _Requirements: 2.4, 4.1, 4.2, 4.4_
 
 - [ ] 14. Data Export Functionality
-  - Create export controls panel in admin sidebar with PDF, CSV, and Excel options
-  - Implement PDF export using jsPDF with proper formatting and icons
+  - Create export controls panel in admin sidebar with CSV and Excel options
   - Build CSV export functionality for time tracking data
   - Add Excel export capability with appropriate file icons and hover effects
   - Update CHANGELOG.md
