@@ -85,7 +85,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
               <span class="text-sm text-blue-800 dark:text-blue-200">
-                This holiday request is for <strong>{{ calculatedDays }}</strong> {{ calculatedDays === 1 ? 'day' : 'days' }}
+                This holiday request is for <strong>{{ calculatedDays }}</strong> business {{ calculatedDays === 1 ? 'day' : 'days' }} (weekends excluded)
               </span>
             </div>
           </div>
@@ -137,8 +137,9 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { differenceInDays, parseISO } from 'date-fns'
+import { parseISO } from 'date-fns'
 import SecureAvatar from '@/components/shared/SecureAvatar.vue'
+import { useHolidayRequests } from '@/composables/useHolidayRequests'
 import { supabase } from '@/utils/supabase'
 import type { User } from '@/types'
 
@@ -154,6 +155,9 @@ const emit = defineEmits<{
   close: []
   success: []
 }>()
+
+// Composables
+const { calculateBusinessDays } = useHolidayRequests()
 
 // State
 const loading = ref(false)
@@ -173,7 +177,8 @@ const calculatedDays = computed(() => {
   
   if (endDate < startDate) return 0
   
-  return differenceInDays(endDate, startDate) + 1
+  // Use the existing business days calculation function
+  return calculateBusinessDays(formData.value.start_date, formData.value.end_date)
 })
 
 const isFormValid = computed(() => {
