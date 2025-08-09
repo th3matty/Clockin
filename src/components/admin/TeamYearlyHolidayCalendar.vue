@@ -291,6 +291,11 @@ async function fetchTeamHolidays() {
   }
 }
 
+// Public method for refreshing data
+async function refreshData() {
+  await fetchTeamHolidays()
+}
+
 // Watch for year changes
 watch(currentYear, () => {
   fetchTeamHolidays()
@@ -299,5 +304,10 @@ watch(currentYear, () => {
 // Lifecycle
 onMounted(() => {
   fetchTeamHolidays()
+})
+
+// Expose methods for parent components
+defineExpose({
+  refreshData
 })
 </script>

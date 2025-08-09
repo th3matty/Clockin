@@ -67,13 +67,13 @@
 
           <!-- Activity Feed Sidebar (1/3 width) -->
           <div class="lg:col-span-1">
-            <ActivityFeed @activities-updated="fetchTeamMembers" />
+            <ActivityFeed @activities-updated="handleActivitiesUpdated" />
           </div>
         </div>
 
         <!-- Team Holiday Calendar -->
         <div class="mt-8">
-          <TeamYearlyHolidayCalendar />
+          <TeamYearlyHolidayCalendar ref="teamCalendarRef" />
         </div>
       </div>
     </Layout>
@@ -81,7 +81,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import ProtectedRoute from '@/components/auth/ProtectedRoute.vue'
 import Layout from '@/components/shared/Layout.vue'
@@ -97,8 +97,27 @@ const router = useRouter()
 const { teamMembers, loading, fetchTeamMembers, fetchActivities, totalTeamMembers, pendingRequests } = useAdminDashboard()
 const { syncNotifications } = useNotificationSync()
 
+// Refs
+const teamCalendarRef = ref()
+
 function viewUserDetail(user: AdminUser) {
   router.push(`/admin/user/${user.id}`)
+}
+
+// Handle comprehensive data refresh when activities are updated
+async function handleActivitiesUpdated() {
+  // Add a small delay to ensure database changes are committed
+  await new Promise(resolve => setTimeout(resolve, 100))
+  
+  // Explicitly refresh all data to ensure the AdminView's reactive references are updated
+  await Promise.all([
+    // Refresh activities data (this will update the pendingRequests counter)
+    fetchActivities(),
+    // Refresh the team holiday calendar
+    teamCalendarRef.value?.refreshData?.(),
+    // Sync notifications to update the notification bell
+    syncNotifications('holiday-request-processed')
+  ])
 }
 
 // Lifecycle
