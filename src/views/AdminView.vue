@@ -70,6 +70,11 @@
             <ActivityFeed @activities-updated="fetchTeamMembers" />
           </div>
         </div>
+
+        <!-- Team Holiday Calendar -->
+        <div class="mt-8">
+          <TeamYearlyHolidayCalendar />
+        </div>
       </div>
     </Layout>
   </ProtectedRoute>
@@ -82,6 +87,7 @@ import ProtectedRoute from '@/components/auth/ProtectedRoute.vue'
 import Layout from '@/components/shared/Layout.vue'
 import UserCard from '@/components/admin/UserCard.vue'
 import ActivityFeed from '@/components/admin/ActivityFeed.vue'
+import TeamYearlyHolidayCalendar from '@/components/admin/TeamYearlyHolidayCalendar.vue'
 import { useAdminDashboard } from '@/composables/useAdminDashboard'
 import { useNotificationSync } from '@/composables/useNotificationSync'
 import type { AdminUser } from '@/types'
