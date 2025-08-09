@@ -179,10 +179,12 @@ e<template>
 import { ref, computed, onMounted } from 'vue'
 import { formatDistanceToNow, format, parseISO, isSameDay } from 'date-fns'
 import { useAdminDashboard } from '@/composables/useAdminDashboard'
+import { useToast } from '@/composables/useToast'
 import type { ActivityFeedItem } from '@/types'
 
 // Composables
 const { activities, loading, fetchActivities, approveHolidayRequest, denyHolidayRequest } = useAdminDashboard()
+const { success } = useToast()
 
 // State
 const processingRequest = ref<string | null>(null)
@@ -210,6 +212,11 @@ async function approveRequest(requestId: string) {
     processingRequest.value = requestId
     try {
         await approveHolidayRequest(requestId)
+        // Show success toast
+        success(
+            'Holiday Request Approved',
+            'The holiday request has been approved successfully.'
+        )
         emit('activities-updated')
     } catch (error) {
         console.error('Failed to approve request:', error)
@@ -236,6 +243,11 @@ async function confirmDenyRequest() {
     processingRequest.value = selectedActivity.value.holiday_request_id
     try {
         await denyHolidayRequest(selectedActivity.value.holiday_request_id, denyReason.value)
+        // Show success toast with appropriate message
+        success(
+            'Holiday Request Processed',
+            'The holiday request has been reviewed and the employee has been notified.'
+        )
         closeDenyModal()
         emit('activities-updated')
     } catch (error) {

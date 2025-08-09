@@ -181,6 +181,7 @@ import { computed, onMounted, ref } from 'vue'
 import { format, parseISO } from 'date-fns'
 import { useAuth } from '@/composables/useAuth'
 import { useHolidayRequests } from '@/composables/useHolidayRequests'
+import { useToast } from '@/composables/useToast'
 import type { HolidayRequest } from '@/types'
 import { Vue3Lottie } from 'vue3-lottie'
 import helpAnimationData from '@/assets/help.json'
@@ -196,6 +197,7 @@ const {
   fetchHolidayRequests,
   cancelHolidayRequest
 } = useHolidayRequests()
+const { success } = useToast()
 
 // State
 const cancelLoading = ref(false)
@@ -311,6 +313,11 @@ async function handleCancelRequest(requestId: string) {
     const result = await cancelHolidayRequest(requestId)
 
     if (result.success) {
+      // Show success toast
+      success(
+        'Holiday Request Cancelled',
+        'Your holiday request has been successfully cancelled.'
+      )
       // Request will be removed from the list automatically by the store
     }
   } catch (err) {

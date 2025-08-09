@@ -152,6 +152,7 @@
 import { ref, computed, watch } from 'vue'
 import { useAuth } from '@/composables/useAuth'
 import { useHolidayRequests } from '@/composables/useHolidayRequests'
+import { useToast } from '@/composables/useToast'
 import type { HolidayRequestFormData } from '@/types'
 
 // Emits
@@ -172,6 +173,7 @@ const {
   validateHolidayRequest,
   clearError
 } = useHolidayRequests()
+const { success } = useToast()
 
 // State
 const formData = ref({
@@ -251,6 +253,12 @@ async function handleSubmit() {
     const result = await createHolidayRequest(requestData)
 
     if (result.success) {
+      // Show success toast
+      success(
+        'Holiday Request Submitted',
+        `Your ${calculatedDays.value} day${calculatedDays.value > 1 ? 's' : ''} holiday request has been submitted for approval.`
+      )
+
       // Reset form
       formData.value = {
         start_date: '',
