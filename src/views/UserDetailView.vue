@@ -38,10 +38,10 @@
         <div v-else-if="user" class="space-y-6">
           <!-- User Header -->
           <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-            <div class="flex items-start justify-between">
-              <div class="flex items-center space-x-6">
+            <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between space-y-4 lg:space-y-0">
+              <div class="flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-6">
                 <!-- Avatar -->
-                <div class="relative">
+                <div class="relative flex-shrink-0 self-center sm:self-auto">
                   <SecureAvatar :avatar-path="user.avatar_url" :name="user.full_name" size="xl" :alt="user.full_name"
                     class="border-4 border-white dark:border-gray-700 shadow-lg" />
                   <div :class="[
@@ -51,11 +51,11 @@
                 </div>
 
                 <!-- User Info -->
-                <div>
-                  <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100">{{ user.full_name }}</h1>
-                  <p class="text-lg text-gray-600 dark:text-gray-400 capitalize">{{ user.role }}</p>
+                <div class="text-center sm:text-left">
+                  <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100">{{ user.full_name }}</h1>
+                  <p class="text-base sm:text-lg text-gray-600 dark:text-gray-400 capitalize">{{ user.role }}</p>
                   <p class="text-sm text-gray-500 dark:text-gray-500 mt-1">{{ user.email }}</p>
-                  <div class="flex items-center mt-2">
+                  <div class="flex items-center justify-center sm:justify-start mt-2">
                     <span :class="[
                       'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium',
                       getUserStatusClasses(user)
@@ -67,17 +67,18 @@
               </div>
 
               <!-- Quick Actions -->
-              <div class="flex space-x-3">
+              <div class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3 lg:flex-shrink-0">
                 <button @click="showHolidayManagement = true"
-                  class="inline-flex items-center px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors">
+                  class="inline-flex items-center justify-center px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors text-sm">
                   <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                       d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
-                  Manage Holiday Allowance
+                  <span class="hidden sm:inline">Manage Holiday Allowance</span>
+                  <span class="sm:hidden">Manage Allowance</span>
                 </button>
                 <button @click="exportUserData"
-                  class="inline-flex items-center px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors">
+                  class="inline-flex items-center justify-center px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors text-sm">
                   <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                       d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -151,63 +152,13 @@
 
           <!-- Main Content Grid -->
           <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <!-- Time Tracking Details (2/3 width) -->
-            <div class="lg:col-span-2 space-y-6">
-              <!-- Recent Time Entries -->
-              <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg">
-                <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-                  <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">Recent Time Entries</h3>
-                </div>
-                <div class="p-6">
-                  <div v-if="recentTimeEntries.length === 0" class="text-center py-8">
-                    <svg class="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" fill="none"
-                      stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <p class="text-gray-500 dark:text-gray-400">No time entries found</p>
-                  </div>
-                  <div v-else class="space-y-4">
-                    <div v-for="entry in recentTimeEntries" :key="entry.id"
-                      class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                      <div class="flex items-center space-x-4">
-                        <div class="flex-shrink-0">
-                          <div
-                            class="w-10 h-10 bg-primary-100 dark:bg-primary-900/20 rounded-lg flex items-center justify-center">
-                            <svg class="w-5 h-5 text-primary-600 dark:text-primary-400" fill="none"
-                              stroke="currentColor" viewBox="0 0 24 24">
-                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                          </div>
-                        </div>
-                        <div>
-                          <p class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ formatDate(entry.date) }}
-                          </p>
-                          <p class="text-sm text-gray-500 dark:text-gray-400">
-                            {{ entry.start_time.slice(0, 5) }} - {{ entry.end_time.slice(0, 5) }}
-                            <span v-if="entry.lunch_break_minutes > 0">
-                              ({{ entry.lunch_break_minutes }}min lunch)
-                            </span>
-                          </p>
-                        </div>
-                      </div>
-                      <div class="text-right">
-                        <p class="text-lg font-semibold text-gray-900 dark:text-gray-100">{{ (entry.total_hours +
-                          (entry.overtime_hours || 0)).toFixed(1) }}h</p>
-                        <p class="text-xs text-gray-500 dark:text-gray-400">
-                          <span v-if="entry.overtime_hours && entry.overtime_hours > 0">
-                            {{ entry.total_hours.toFixed(1) }}h + {{ entry.overtime_hours.toFixed(1) }}h OT
-                          </span>
-                          <span v-else>Total hours</span>
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-
+            <!-- Holiday Calendar (2/3 width) -->
+            <div class="lg:col-span-2">
+              <YearlyHolidayCalendar
+                v-if="user"
+                :user="user"
+                :holiday-requests="holidayRequests"
+              />
             </div>
 
             <!-- Sidebar (1/3 width) -->
@@ -347,18 +298,61 @@
                   </div>
                 </div>
               </div>
+
+              <!-- Recent Time Entries -->
+              <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg">
+                <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                  <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">Recent Time Entries</h3>
+                </div>
+                <div class="p-6">
+                  <div v-if="recentTimeEntries.length === 0" class="text-center py-6">
+                    <svg class="w-8 h-8 text-gray-300 dark:text-gray-600 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">No time entries found</p>
+                  </div>
+                  <div v-else class="space-y-3">
+                    <div 
+                      v-for="entry in recentTimeEntries.slice(0, 5)" 
+                      :key="entry.id"
+                      class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg"
+                    >
+                      <div class="flex items-center space-x-3">
+                        <div class="flex-shrink-0">
+                          <div class="w-8 h-8 bg-primary-100 dark:bg-primary-900/20 rounded-lg flex items-center justify-center">
+                            <svg class="w-4 h-4 text-primary-600 dark:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                          </div>
+                        </div>
+                        <div class="min-w-0 flex-1">
+                          <p class="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">{{ formatDate(entry.date) }}</p>
+                          <p class="text-xs text-gray-500 dark:text-gray-400">
+                            {{ entry.start_time.slice(0, 5) }} - {{ entry.end_time.slice(0, 5) }}
+                            <span v-if="entry.lunch_break_minutes > 0">
+                              ({{ entry.lunch_break_minutes }}min)
+                            </span>
+                          </p>
+                        </div>
+                      </div>
+                      <div class="text-right flex-shrink-0">
+                        <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">{{ (entry.total_hours + (entry.overtime_hours || 0)).toFixed(1) }}h</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">
+                          <span v-if="entry.overtime_hours && entry.overtime_hours > 0">
+                            +{{ entry.overtime_hours.toFixed(1) }}h OT
+                          </span>
+                          <span v-else>Total</span>
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- Yearly Holiday Calendar -->
-        <div class="mt-6">
-          <YearlyHolidayCalendar
-            v-if="user"
-            :user="user"
-            :holiday-requests="holidayRequests"
-          />
-        </div>
+
 
         <!-- Holiday Management Modal -->
         <HolidayManagementModal v-if="showHolidayManagement && user" :user="user" @close="showHolidayManagement = false"
