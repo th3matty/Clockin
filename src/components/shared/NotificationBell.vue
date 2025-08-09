@@ -27,7 +27,7 @@
       </div>
 
       <!-- Notifications List -->
-      <div class="max-h-80 overflow-y-auto">
+      <div class="max-h-80 overflow-y-auto custom-scrollbar">
         <!-- Loading State -->
         <div v-if="loading" class="px-4 py-8 text-center">
           <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600 mx-auto mb-3"></div>
@@ -326,3 +326,50 @@ onUnmounted(() => {
   }
 })
 </script>
+
+<style scoped>
+/* Custom scrollbar styling for light and dark modes */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  /* Firefox - Light mode default */
+  scrollbar-color: #d1d5db #f3f4f6; /* thumb track */
+}
+
+/* WebKit browsers (Chrome, Safari, Edge) */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background-color: #f3f4f6; /* gray-100 */
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #d1d5db; /* gray-300 */
+  border-radius: 3px;
+  transition: background-color 0.2s ease;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #9ca3af; /* gray-400 */
+}
+
+/* Dark mode styles */
+.dark .custom-scrollbar {
+  /* Firefox - Dark mode */
+  scrollbar-color: #4b5563 #1f2937; /* thumb track */
+}
+
+.dark .custom-scrollbar::-webkit-scrollbar-track {
+  background-color: #1f2937; /* gray-800 */
+}
+
+.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #4b5563; /* gray-600 */
+}
+
+.dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #6b7280; /* gray-500 */
+}
+</style>
