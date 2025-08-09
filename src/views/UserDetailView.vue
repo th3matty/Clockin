@@ -351,6 +351,15 @@
           </div>
         </div>
 
+        <!-- Yearly Holiday Calendar -->
+        <div class="mt-6">
+          <YearlyHolidayCalendar
+            v-if="user"
+            :user="user"
+            :holiday-requests="holidayRequests"
+          />
+        </div>
+
         <!-- Holiday Management Modal -->
         <HolidayManagementModal v-if="showHolidayManagement && user" :user="user" @close="showHolidayManagement = false"
           @updated="refreshUserData" />
@@ -411,6 +420,7 @@ import ProtectedRoute from '@/components/auth/ProtectedRoute.vue'
 import Layout from '@/components/shared/Layout.vue'
 import HolidayManagementModal from '@/components/admin/HolidayManagementModal.vue'
 import SecureAvatar from '@/components/shared/SecureAvatar.vue'
+import YearlyHolidayCalendar from '@/components/admin/YearlyHolidayCalendar.vue'
 import { useUserDetail } from '@/composables/useUserDetail'
 import type { User, TimeEntry, HolidayRequest } from '@/types'
 

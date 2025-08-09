@@ -144,7 +144,9 @@
   - Update CHANGELOG.md
   - _Requirements: 2.5, 3.1, 3.2, 3.3, 3.4, 4.3_
 
-- [ ] 13. Holiday Request Management for Admins
+- [x] 13. Holiday Request Management for Admins
+
+
   - Create holiday request approval/denial interface
   - Implement holiday allowance setting functionality
   - Build holiday request notification handling in activity feed
