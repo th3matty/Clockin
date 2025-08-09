@@ -76,14 +76,15 @@
                 v-for="day in month.days"
                 :key="`${month.monthIndex}-${day.date.getTime()}`"
                 :class="[
-                  'relative text-xs h-7 flex items-center justify-center transition-colors cursor-pointer',
+                  'relative text-xs h-7 flex items-center justify-center transition-colors',
                   day.isCurrentMonth ? 'text-gray-900 dark:text-gray-100' : 'text-gray-300 dark:text-gray-600',
                   day.isToday ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-900 dark:text-primary-100 font-semibold rounded' : '',
                   day.isWeekend && day.isCurrentMonth ? 'text-gray-500 dark:text-gray-400' : '',
-                  day.hasHolidays ? 'bg-green-100 dark:bg-green-900/30 text-green-900 dark:text-green-100' : '',
-                  'hover:bg-gray-100 dark:hover:bg-gray-600 rounded'
+                  day.hasHolidays ? 'bg-green-100 dark:bg-green-900/30 text-green-900 dark:text-green-100 cursor-pointer' : '',
+                  day.hasHolidays ? 'hover:bg-green-200 dark:hover:bg-green-800/50' : 'hover:bg-gray-100 dark:hover:bg-gray-600',
+                  'rounded'
                 ]"
-                :title="getDateTitle(day)"
+                :title="day.hasHolidays ? getDateTitle(day) : ''"
               >
                 <span class="relative z-10">{{ day.date.getDate() }}</span>
                 
@@ -119,6 +120,8 @@
         </div>
       </div>
     </div>
+
+
   </div>
 </template>
 
@@ -215,10 +218,26 @@ function getDateTitle(day: CalendarDay & { hasHolidays: boolean; holidayCount: n
   
   if (holidaysOnDate.length === 0) return ''
   
-  const names = holidaysOnDate.map(h => h.user_name).join(', ')
-  const dateFormatted = format(day.date, 'MMM d, yyyy')
+  const dateFormatted = format(day.date, 'EEEE, MMMM d, yyyy')
+  const memberCount = holidaysOnDate.length
+  const memberText = memberCount === 1 ? 'member' : 'members'
   
-  return `${dateFormatted}: ${names} on holiday`
+  let tooltip = `${dateFormatted}\n${memberCount} team ${memberText} on holiday:\n\n`
+  
+  holidaysOnDate.forEach((holiday, index) => {
+    const period = holiday.start_date === holiday.end_date 
+      ? 'Single day' 
+      : `${format(new Date(holiday.start_date), 'MMM d')} - ${format(new Date(holiday.end_date), 'MMM d')}`
+    
+    tooltip += `${index + 1}. ${holiday.user_name}\n   ${period}`
+    
+    if (holiday.reason) {
+      tooltip += ` - "${holiday.reason}"`
+    }
+    tooltip += '\n'
+  })
+  
+  return tooltip.trim()
 }
 
 function previousYear() {
