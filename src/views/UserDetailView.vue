@@ -77,6 +77,13 @@
                   <span class="hidden sm:inline">Manage Holiday Allowance</span>
                   <span class="sm:hidden">Manage Allowance</span>
                 </button>
+                <button @click="showCreateHoliday = true"
+                  class="inline-flex items-center justify-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors text-sm">
+                  <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                  </svg>
+                  Create Holiday
+                </button>
                 <button @click="exportUserData"
                   class="inline-flex items-center justify-center px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors text-sm">
                   <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -358,6 +365,14 @@
         <HolidayManagementModal v-if="showHolidayManagement && user" :user="user" @close="showHolidayManagement = false"
           @updated="refreshUserData" />
 
+        <!-- Create Holiday Modal -->
+        <CreateHolidayModal
+          v-if="showCreateHoliday && user"
+          :user="user"
+          @close="showCreateHoliday = false"
+          @success="handleHolidayCreated"
+        />
+
         <!-- Deny Request Modal -->
         <div v-if="showDenyModalFlag"
           class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -413,6 +428,7 @@ import { format, parseISO, startOfWeek, endOfWeek, startOfMonth, endOfMonth } fr
 import ProtectedRoute from '@/components/auth/ProtectedRoute.vue'
 import Layout from '@/components/shared/Layout.vue'
 import HolidayManagementModal from '@/components/admin/HolidayManagementModal.vue'
+import CreateHolidayModal from '@/components/admin/CreateHolidayModal.vue'
 import SecureAvatar from '@/components/shared/SecureAvatar.vue'
 import YearlyHolidayCalendar from '@/components/admin/YearlyHolidayCalendar.vue'
 import { useUserDetail } from '@/composables/useUserDetail'
@@ -437,6 +453,7 @@ const {
 
 // State
 const showHolidayManagement = ref(false)
+const showCreateHoliday = ref(false)
 const processingRequest = ref<string | null>(null)
 const showDenyModalFlag = ref(false)
 const selectedRequest = ref<HolidayRequest | null>(null)
@@ -652,6 +669,11 @@ async function refreshUserData() {
   if (userId) {
     await fetchUserDetail(userId)
   }
+}
+
+async function handleHolidayCreated() {
+  showCreateHoliday.value = false
+  await refreshUserData()
 }
 
 async function approveRequest(requestId: string) {
