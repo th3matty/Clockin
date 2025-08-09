@@ -103,6 +103,11 @@ router.beforeEach(async (to, from, next) => {
       return next('/login')
     }
 
+    // Allow admins to access employee routes (elevated permissions)
+    if (to.meta.requiresRole === 'employee' && userRole === 'admin') {
+      return next()
+    }
+
     // Only redirect if not already on the correct path
     const redirectPath = userRole === 'admin' ? '/admin' : '/employee'
     if (to.path !== redirectPath) {

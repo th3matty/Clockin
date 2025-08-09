@@ -82,6 +82,10 @@ const canAccess = computed(() => {
 
   // If specific role is required
   if (props.requireRole && userRole.value !== props.requireRole) {
+    // Allow admins to access employee routes (admins have elevated permissions)
+    if (props.requireRole === 'employee' && userRole.value === 'admin') {
+      return true
+    }
     return false
   }
 
@@ -133,6 +137,10 @@ watch(
 
     // If specific role is required and user doesn't have it, redirect to appropriate dashboard
     if (authenticated && props.requireRole && role !== props.requireRole) {
+      // Allow admins to access employee routes (don't redirect)
+      if (props.requireRole === 'employee' && role === 'admin') {
+        return
+      }
       const dashboardPath = role === 'admin' ? '/admin' : '/employee'
       router.push(dashboardPath)
       return

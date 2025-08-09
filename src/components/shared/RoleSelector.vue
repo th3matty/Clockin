@@ -3,7 +3,7 @@
     <!-- Role Selector Button -->
     <button
       @click="toggleDropdown"
-      class="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
+      class="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
     >
       <span class="capitalize">{{ currentRole }} View</span>
       <svg
@@ -22,7 +22,7 @@
     <!-- Dropdown Menu -->
     <div
       v-if="showDropdown"
-      class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-50"
+      class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg border border-gray-200 dark:border-gray-600 z-50"
     >
       <div class="py-1">
         <button
@@ -30,8 +30,8 @@
           :class="[
             'w-full text-left px-4 py-2 text-sm transition-colors flex items-center space-x-3',
             currentRole === 'employee'
-              ? 'bg-primary-50 text-primary-700'
-              : 'text-gray-700 hover:bg-gray-50'
+              ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300'
+              : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
           ]"
         >
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -39,7 +39,7 @@
           </svg>
           <div>
             <div class="font-medium">Employee View</div>
-            <div class="text-xs text-gray-500">Track time and manage schedule</div>
+            <div class="text-xs text-gray-500 dark:text-gray-400">Track time and manage schedule</div>
           </div>
           <svg
             v-if="currentRole === 'employee'"
@@ -56,8 +56,8 @@
           :class="[
             'w-full text-left px-4 py-2 text-sm transition-colors flex items-center space-x-3',
             currentRole === 'admin'
-              ? 'bg-primary-50 text-primary-700'
-              : 'text-gray-700 hover:bg-gray-50'
+              ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300'
+              : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
           ]"
         >
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -65,7 +65,7 @@
           </svg>
           <div>
             <div class="font-medium">Admin View</div>
-            <div class="text-xs text-gray-500">Manage team and operations</div>
+            <div class="text-xs text-gray-500 dark:text-gray-400">Manage team and operations</div>
           </div>
           <svg
             v-if="currentRole === 'admin'"
@@ -124,7 +124,9 @@ async function switchRole(role: 'employee' | 'admin') {
   
   // Navigate to appropriate dashboard
   const targetPath = role === 'admin' ? '/admin' : '/employee'
-  if (route.path !== targetPath) {
+  const currentBasePath = route.path.startsWith('/admin') ? '/admin' : '/employee'
+  
+  if (currentBasePath !== targetPath) {
     await router.push(targetPath)
   }
 }
@@ -139,7 +141,7 @@ function handleClickOutside(event: MouseEvent) {
 // Lifecycle
 onMounted(() => {
   // Set initial role based on current route
-  if (route.path === '/admin') {
+  if (route.path.startsWith('/admin')) {
     currentRole.value = 'admin'
   } else {
     currentRole.value = 'employee'

@@ -19,7 +19,7 @@
         <!-- Navigation Items (only show when authenticated) -->
         <div v-if="isAuthenticated" class="hidden md:flex items-center space-x-8">
           <!-- Role Selector -->
-          <RoleSelector v-if="isAdmin" />
+          <RoleSelector v-if="isAdmin" @role-changed="handleRoleSwitch" />
 
           <!-- Navigation Links -->
           <div class="flex items-center space-x-6">
@@ -106,7 +106,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAuth } from '@/composables/useAuth'
 import RoleSelector from './RoleSelector.vue'
@@ -144,6 +144,15 @@ async function handleLogout() {
 function handleRoleSwitch(role: 'employee' | 'admin') {
   currentView.value = role
 }
+
+// Initialize current view based on route
+onMounted(() => {
+  if (route.path.startsWith('/admin')) {
+    currentView.value = 'admin'
+  } else {
+    currentView.value = 'employee'
+  }
+})
 
 // Expose methods for child components
 defineExpose({
